@@ -14,6 +14,9 @@ import os.path
 from graphUtils import printSummaryOfDifference, showgraph
 from printUtils import debugPrint
 
+# event2id = {'ManualStart': '1', 'ManualStop': '2', 'AutomaticStart': '3', 'ManualStart_with_PassiveTcpEstablishment': '4', 'AutomaticStart_with_PassiveTcpEstablishment': '5', 'AutomaticStart_with_DampPeerOscillations': '6', 'AutomaticStart_with_DampPeerOscillations_and_PassiveTcpEstablishment': '7', 'AutomaticStop': '8', 'ConnectRetryTimer_Expires': '9', 'HoldTimer_Expires': '10', 'KeepaliveTimer_Expires': '11', 'DelayOpenTimer_Expires': '12', 'IdleHoldTimer_Expires': '13', 'TcpConnection_Valid': '14', 'Tcp_CR_Invalid': '15', 'Tcp_CR_Acked': '16', 'TcpConnectionConfirmed': '17', 'TcpConnectionFails': '18', 'BGPOpen': '19', 'BGPOpen with DelayOpenTimer running': '20', 'BGPHeaderErr': '21', 'BGPOpenMsgErr': '22', 'OpenCollisionDump': '23', 'NotifMsgVerErr': '24', 'NotifMsg': '25', 'KeepAliveMsg': '26', 'UpdateMsg': '27', 'UpdateMsgErr': '28'}
+event2id = {'MANUALSTART': '1', 'MANUALSTOP': '2', 'AUTOMATICSTART': '3', 'MANUALSTART_WITH_PASSIVETCPESTABLISHMENT': '4', 'AUTOMATICSTART_WITH_PASSIVETCPESTABLISHMENT': '5', 'AUTOMATICSTART_WITH_DAMPPEEROSCILLATIONS': '6', 'AUTOMATICSTART_WITH_DAMPPEEROSCILLATIONS_AND_PASSIVETCPESTABLISHMENT': '7', 'AUTOMATICSTOP': '8', 'CONNECTRETRYTIMER_EXPIRES': '9', 'HOLDTIMER_EXPIRES': '10', 'KEEPALIVETIMER_EXPIRES': '11', 'DELAYOPENTIMER_EXPIRES': '12', 'IDLEHOLDTIMER_EXPIRES': '13', 'TCPCONNECTION_VALID': '14', 'TCP_CR_INVALID': '15', 'TCP_CR_ACKED': '16', 'TCPCONNECTIONCONFIRMED': '17', 'TCPCONNECTIONFAILS': '18', 'BGPOPEN': '19', 'BGPOPEN WITH DELAYOPENTIMER RUNNING': '20', 'BGPHEADERERR': '21', 'BGPOPENMSGERR': '22', 'OPENCOLLISIONDUMP': '23', 'NOTIFMSGVERERR': '24', 'NOTIFMSG': '25', 'KEEPALIVEMSG': '26', 'UPDATEMSG': '27', 'UPDATEMSGERR': '28'}
+
 # Class we use based on transitions package to represent FSMs
 class FSM:
 
@@ -29,43 +32,51 @@ class FSM:
 
         if labeled:
 
-	        T = []
-	        L = {}
+            T = []
+            L = {}
 
-	        for ((a, B, c), l) in list(transitions):
+            for ((a, B, c), l) in list(transitions):
+                # new_b = []
+                # for event in B:
+                #     new_b.append(event2id[event[:-1]] + event[-1])
+                # B = new_b
 
-	        	tr = (a, ";".join(B), c)
-	        	if not tr in T:
-	        		T.append(tr)
+                tr = (a, ";".join(B), c)
+                if not tr in T:
+                    T.append(tr)
 
-	        	if not tr in L:
-	        		L[tr] = [ l ]
-	        	else:
-	        		L[tr].append(l)
+                if not tr in L:
+                    L[tr] = [ l ]
+                else:
+                    L[tr].append(l)
 
-        	self.transitions = T
-        	self.labelmap    = L
+            self.transitions = T
+            self.labelmap    = L
 
         else:
+            for (a, B, c) in transitions:
+                new_b = []
+                for event in B:
+                    new_b.append(event2id[event[:-1]] + event[-1])
+                B = new_b
+                self.transitions = [(a, ";".join(B), c)
+                                ]
 
-        	self.transitions = [(a, ";".join(B), c) \
-                                for (a, B, c) in transitions]
-
-        	self.labelmap    = None
+            self.labelmap    = None
 
 
         self.states = states
         self.s0     = s0
         self.msgs   = msgs
 
-        debugPrint(                                   \
-            "\n\nstates = "      + str(self.states) + \
-            "\n\ns0 = "          + str(self.s0)     + \
+        debugPrint(
+            "\n\nstates = "      + str(self.states) +
+            "\n\ns0 = "          + str(self.s0)     +
             "\n\ntransitions = " + str(self.transitions))
 
-        self.machine = Machine(\
-            model=self,        \
-            states=self.states,\
+        self.machine = Machine(
+            model=self,
+            states=self.states,
             initial=self.s0)
 
         for (a, b, c) in self.transitions:
@@ -74,14 +85,14 @@ class FSM:
             
             if a in self.states and c in self.states:
 
-                self.machine.add_transition(\
+                self.machine.add_transition(
                     trigger=b, 
                     source=a, 
                     dest=c)
             else:
-                debugPrint(                         \
-                    "ERROR: (a, b, c) = (" + str(a) \
-                    + ", " + str(b) + ", " + str(c) \
+                debugPrint(
+                    "ERROR: (a, b, c) = (" + str(a)
+                    + ", " + str(b) + ", " + str(c)
                     + ") in states = " + str(self.states), True)
 
     def toPromela(self, numPeers=2, tranFilter=lambda t : True):
@@ -137,13 +148,13 @@ class FSM:
 
         return body
 
-    def compareTo(self, other,      \
-        showit=False,               \
-        printit=True,               \
-        comm_transitions=None,      \
-        user_call_transitions=None, \
-        rst_transitions=None,       \
-        transition_filter=lambda x : True):
+    def compareTo(self, other,
+                  showit=False,
+                  printit=True,
+                  comm_transitions=None,
+                  user_call_transitions=None,
+                  rst_transitions=None,
+                  transition_filter=lambda x : True):
 
         S1 , S2  = self.states     , other.states
         T1 , T2  = self.transitions, other.transitions
@@ -163,31 +174,31 @@ class FSM:
         green_transitions = set(T2) - set(T1)
         
         if showit == True:
-            showgraph(self,             \
-                      other,            \
-                      blue_nodes,       \
-                      blue_transitions, \
-                      red_nodes,        \
-                      red_transitions,  \
-                      green_nodes,      \
+            showgraph(self,
+                      other,
+                      blue_nodes,
+                      blue_transitions,
+                      red_nodes,
+                      red_transitions,
+                      green_nodes,
                       green_transitions)
 
         # PRINT SUMMARY
         if printit == True:
 
-            printSummaryOfDifference(  \
-                blue_nodes,            \
-                blue_transitions,      \
-                red_nodes,             \
-                red_transitions,       \
-                green_nodes,           \
-                green_transitions,     \
-                self.getLabelMap(),    \
-                other.getLabelMap(),   \
-                self.removedLines,     \
-                comm_transitions,      \
-                user_call_transitions, \
-                rst_transitions,       \
+            printSummaryOfDifference(
+                blue_nodes,
+                blue_transitions,
+                red_nodes,
+                red_transitions,
+                green_nodes,
+                green_transitions,
+                self.getLabelMap(),
+                other.getLabelMap(),
+                self.removedLines,
+                comm_transitions,
+                user_call_transitions,
+                rst_transitions,
                 transition_filter)
 
     def writePromela(self, name, numPeers=2, tranFilter=lambda t : True):
@@ -199,8 +210,8 @@ class FSM:
     def writeImage(self, name):
         self.get_graph().draw(name + ".png", prog='dot')
 
-    def save(self, writepng, writepromela, name, \
-             numPeers=2,                         \
+    def save(self, writepng, writepromela, name,
+             numPeers=2,
              tranFilter=lambda t : True):
         if writepng:
             self.writeImage(name)
@@ -208,7 +219,7 @@ class FSM:
             self.writePromela(name, numPeers, tranFilter)
 
     def getLabelMap(self):
-    	return self.labelmap
+        return self.labelmap
 
 def network(AtoN, NtoA, BtoN, NtoB, symbols):
     ret = "\nactive proctype network() {\n\tdo"
@@ -231,7 +242,7 @@ def proctype(states, transitions, name="translated", inC="c", outC="c", s0=None)
               + "Defaulting to states[0] = " + str(states[0]))
 
     body = "active proctype " + name + "(){\n"
-    body += "\tgoto " + s0.upper() + ";\n"; # go to initial state s0
+    body += "\tgoto " + s0.upper() + ";\n"  # go to initial state s0
     # ORDER THE STATES FOR DETERMINISM!!!
     states = sorted(states)
     for state in states:

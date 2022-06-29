@@ -4,8 +4,8 @@ import re
 import argparse
 import nltk
 from collections import Counter
-from nltk_opennlp.chunkers import OpenNLPChunker
-from nltk_opennlp.taggers import OpenNLPTagger
+# from nltk_opennlp.chunkers import OpenNLPChunker
+# from nltk_opennlp.taggers import OpenNLPTagger
 
 def cleanFile(file):
     filename, extension = file.rsplit(".", 1)

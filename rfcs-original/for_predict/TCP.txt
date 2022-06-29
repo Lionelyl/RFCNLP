@@ -1,22 +1,22 @@
-ƒ
+
 
 RFC: 793
-
-
-
-
-
-
-
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
                      TRANSMISSION CONTROL PROTOCOL
-
-
+                                    
+                                    
                          DARPA INTERNET PROGRAM
-
+                                    
                          PROTOCOL SPECIFICATION
-
-
-
+                                    
+                                    
+                                    
                              September 1981
 
 
@@ -32,7 +32,7 @@ RFC: 793
 
 
                               prepared for
-
+                                    
                Defense Advanced Research Projects Agency
                 Information Processing Techniques Office
                          1400 Wilson Boulevard
@@ -53,7 +53,7 @@ RFC: 793
 
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
 
 
@@ -168,10 +168,10 @@ Transmission Control Protocol
 
 
 
-[Page ii]
+[Page ii]                                                               
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
 
 
@@ -346,10 +346,10 @@ Introduction
   protocols and in its interactions with other TCPs.  The rest of this
 
 
-[Page 2]
+[Page 2]                                                                
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
                                                             Introduction
 
@@ -464,10 +464,10 @@ Introduction
 
 
 
-[Page 4]
+[Page 4]                                                                
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
                                                             Introduction
 
@@ -515,7 +515,7 @@ September 1981
     communication.  Provision is made for default values to be used when
     these features are not needed.
 
-
+    
 
 
 
@@ -582,10 +582,10 @@ Transmission Control Protocol
 
 
 
-[Page 6]
+[Page 6]                                                                
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
 
 
@@ -700,10 +700,10 @@ Philosophy
 
 
 
-[Page 8]
+[Page 8]                                                                
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
                                                               Philosophy
 
@@ -727,22 +727,22 @@ September 1981
   The following diagram illustrates the place of the TCP in the protocol
   hierarchy:
 
-
-       +------+ +-----+ +-----+       +-----+
-       |Telnet| | FTP | |Voice|  ...  |     |  Application Level
-       +------+ +-----+ +-----+       +-----+
-             |   |         |             |
-            +-----+     +-----+       +-----+
-            | TCP |     | RTP |  ...  |     |  Host Level
-            +-----+     +-----+       +-----+
-               |           |             |
-            +-------------------------------+
-            |    Internet Protocol & ICMP   |  Gateway Level
-            +-------------------------------+
-                           |
-              +---------------------------+
-              |   Local Network Protocol  |    Network Level
-              +---------------------------+
+                                    
+       +------+ +-----+ +-----+       +-----+                    
+       |Telnet| | FTP | |Voice|  ...  |     |  Application Level 
+       +------+ +-----+ +-----+       +-----+                    
+             |   |         |             |                       
+            +-----+     +-----+       +-----+                    
+            | TCP |     | RTP |  ...  |     |  Host Level        
+            +-----+     +-----+       +-----+                    
+               |           |             |                       
+            +-------------------------------+                    
+            |    Internet Protocol & ICMP   |  Gateway Level     
+            +-------------------------------+                    
+                           |                                     
+              +---------------------------+                      
+              |   Local Network Protocol  |    Network Level     
+              +---------------------------+                      
 
                          Protocol Relationships
 
@@ -818,10 +818,10 @@ Philosophy
   foreign socket arguments.  In return, the TCP supplies a (short) local
 
 
-[Page 10]
+[Page 10]                                                               
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
                                                               Philosophy
 
@@ -830,7 +830,7 @@ September 1981
   connection name by which the user refers to the connection in
   subsequent calls.  There are several things that must be remembered
   about a connection.  To store this information we imagine that there
-  is a data structure called a Transmission Control Block (<def_var>TCB</def_var>).  One
+  is a data structure called a Transmission Control Block (TCB).  One
   implementation strategy would have the local connection name be a
   pointer to the TCB for this connection.  The OPEN call also specifies
   whether the connection establishment is to be actively pursued, or to
@@ -936,10 +936,10 @@ Philosophy
   at some point further along in the data stream than the receiver is
 
 
-[Page 12]
+[Page 12]                                                               
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
                                                               Philosophy
 
@@ -973,7 +973,7 @@ September 1981
   conservative in what you do, be liberal in what you accept from
   others.
 
-
+  
 
 
 
@@ -1054,10 +1054,10 @@ Transmission Control Protocol
 
 
 
-[Page 14]
+[Page 14]                                                               
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
 
 
@@ -1075,9 +1075,9 @@ September 1981
 
   TCP Header Format
 
-
-    0                   1                   2                   3
-    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+                                    
+    0                   1                   2                   3   
+    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    |          Source Port          |       Destination Port        |
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -1146,12 +1146,12 @@ Functional Specification
 
   Control Bits:  6 bits (from left to right):
 
-    URG:  <def_var>Urgent Pointer</def_var> field significant
-    <def_event id="7">ACK</def_event>:  Acknowledgment field significant
-    <def_event id="8">PSH</def_event>:  Push Function
-    <def_event id="9">RST</def_event>:  Reset the connection
-    <def_event id="10">SYN</def_event>:  Synchronize sequence numbers
-    <def_event id="11">FIN</def_event>:  No more data from sender
+    URG:  Urgent Pointer field significant
+    ACK:  Acknowledgment field significant
+    PSH:  Push Function
+    RST:  Reset the connection
+    SYN:  Synchronize sequence numbers
+    FIN:  No more data from sender
 
   Window:  16 bits
 
@@ -1172,10 +1172,10 @@ Functional Specification
     The checksum also covers a 96 bit pseudo header conceptually
 
 
-[Page 16]
+[Page 16]                                                               
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
                                                 Functional Specification
 
@@ -1247,7 +1247,7 @@ Functional Specification
        0         -       End of option list.
        1         -       No-Operation.
        2         4       Maximum Segment Size.
-
+      
 
     Specific Option Definitions
 
@@ -1290,10 +1290,10 @@ Functional Specification
 
 
 
-[Page 18]
+[Page 18]                                                               
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
                                                 Functional Specification
 
@@ -1328,21 +1328,21 @@ September 1981
 
     Send Sequence Variables
 
-      <def_var>SND.UNA</def_var> - send unacknowledged
-      <def_var>SND.NXT</def_var> - send next
-      <def_var>SND.WND</def_var> - send window
-      <def_var>SND.UP</def_var>  - send urgent pointer
-      <def_var>SND.WL1</def_var> - segment sequence number used for last window update
-      <def_var>SND.WL2</def_var> - segment acknowledgment number used for last window
+      SND.UNA - send unacknowledged
+      SND.NXT - send next
+      SND.WND - send window
+      SND.UP  - send urgent pointer
+      SND.WL1 - segment sequence number used for last window update
+      SND.WL2 - segment acknowledgment number used for last window
                 update
-      <def_var>ISS</def_var>     - initial send sequence number
+      ISS     - initial send sequence number
 
     Receive Sequence Variables
 
-      <def_var>RCV.NXT</def_var> - receive next
-      <def_var>RCV.WND</def_var> - receive window
-      <def_var>RCV.UP</def_var>  - receive urgent pointer
-      <def_var>IRS</def_var>     - initial receive sequence number
+      RCV.NXT - receive next
+      RCV.WND - receive window
+      RCV.UP  - receive urgent pointer
+      IRS     - initial receive sequence number
 
 
 
@@ -1363,41 +1363,41 @@ Functional Specification
 
   Send Sequence Space
 
-                   1         2          3          4
-              ----------|----------|----------|----------
-                     SND.UNA    SND.NXT    SND.UNA
-                                          +SND.WND
+                   1         2          3          4      
+              ----------|----------|----------|---------- 
+                     SND.UNA    SND.NXT    SND.UNA        
+                                          +SND.WND        
 
-        1 - old sequence numbers which have been acknowledged
-        2 - sequence numbers of unacknowledged data
-        3 - sequence numbers allowed for new data transmission
-        4 - future sequence numbers which are not yet allowed
+        1 - old sequence numbers which have been acknowledged  
+        2 - sequence numbers of unacknowledged data            
+        3 - sequence numbers allowed for new data transmission 
+        4 - future sequence numbers which are not yet allowed  
 
                           Send Sequence Space
 
                                Figure 4.
-
-
+    
+    
 
   The send window is the portion of the sequence space labeled 3 in
   figure 4.
 
   Receive Sequence Space
 
-                       1          2          3
-                   ----------|----------|----------
-                          RCV.NXT    RCV.NXT
-                                    +RCV.WND
+                       1          2          3      
+                   ----------|----------|---------- 
+                          RCV.NXT    RCV.NXT        
+                                    +RCV.WND        
 
-        1 - old sequence numbers which have been acknowledged
-        2 - sequence numbers allowed for new reception
-        3 - future sequence numbers which are not yet allowed
+        1 - old sequence numbers which have been acknowledged  
+        2 - sequence numbers allowed for new reception         
+        3 - future sequence numbers which are not yet allowed  
 
                          Receive Sequence Space
 
                                Figure 5.
-
-
+    
+    
 
   The receive window is the portion of the sequence space labeled 2 in
   figure 5.
@@ -1408,10 +1408,10 @@ Functional Specification
 
 
 
-[Page 20]
+[Page 20]                                                               
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
                                                 Functional Specification
 
@@ -1419,17 +1419,17 @@ September 1981
 
     Current Segment Variables
 
-      <def_var>SEG.SEQ</def_var> - segment sequence number
-      <def_var>SEG.ACK</def_var> - segment acknowledgment number
-      <def_var>SEG.LEN</def_var> - segment length
-      <def_var>SEG.WND</def_var> - segment window
-      <def_var>SEG.UP</def_var>  - segment urgent pointer
-      <def_var>SEG.PRC</def_var> - segment precedence value
+      SEG.SEQ - segment sequence number
+      SEG.ACK - segment acknowledgment number
+      SEG.LEN - segment length
+      SEG.WND - segment window
+      SEG.UP  - segment urgent pointer
+      SEG.PRC - segment precedence value
 
   A connection progresses through a series of states during its
-  lifetime.  The states are:  <def_state id="1">LISTEN</def_state>, <def_state id="2">SYN-SENT</def_state>, <def_state id="3">SYN-RECEIVED</def_state>,
-  <def_state id="4">ESTABLISHED</def_state>, <def_state id="5">FIN-WAIT-1</def_state>, <def_state id="6">FIN-WAIT-2</def_state>, <def_state id="7">CLOSE-WAIT</def_state>, <def_state id="8">CLOSING</def_state>, <def_state id="9">LAST-ACK</def_state>,
-  <def_state id="10">TIME-WAIT</def_state>, and the fictional state <def_state id="11">CLOSED</def_state>.  CLOSED is fictional
+  lifetime.  The states are:  LISTEN, SYN-SENT, SYN-RECEIVED,
+  ESTABLISHED, FIN-WAIT-1, FIN-WAIT-2, CLOSE-WAIT, CLOSING, LAST-ACK,
+  TIME-WAIT, and the fictional state CLOSED.  CLOSED is fictional
   because it represents the state when there is no TCB, and therefore,
   no connection.  Briefly the meanings of the states are:
 
@@ -1526,29 +1526,29 @@ Functional Specification
 
 
 
-[Page 22]
+[Page 22]                                                               
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
                                                 Functional Specification
 
 
 
-
-                              +---------+ ---------\      active OPEN
-                              |  CLOSED |            \    -----------
-                              +---------+<---------\   \   create TCB
-                                |     ^              \   \  snd SYN
-                   passive OPEN |     |   CLOSE        \   \
-                   ------------ |     | ----------       \   \
-                    create TCB  |     | delete TCB         \   \
-                                V     |                      \   \
-                              +---------+            CLOSE    |    \
-                              |  LISTEN |          ---------- |     |
-                              +---------+          delete TCB |     |
-                   rcv SYN      |     |     SEND              |     |
-                  -----------   |     |    -------            |     V
+                                    
+                              +---------+ ---------\      active OPEN  
+                              |  CLOSED |            \    -----------  
+                              +---------+<---------\   \   create TCB  
+                                |     ^              \   \  snd SYN    
+                   passive OPEN |     |   CLOSE        \   \           
+                   ------------ |     | ----------       \   \         
+                    create TCB  |     | delete TCB         \   \       
+                                V     |                      \   \     
+                              +---------+            CLOSE    |    \   
+                              |  LISTEN |          ---------- |     |  
+                              +---------+          delete TCB |     |  
+                   rcv SYN      |     |     SEND              |     |  
+                  -----------   |     |    -------            |     V  
  +---------+      snd SYN,ACK  /       \   snd SYN          +---------+
  |         |<-----------------           ------------------>|         |
  |   SYN   |                    rcv SYN                     |   SYN   |
@@ -1556,27 +1556,27 @@ September 1981
  |         |                    snd ACK                     |         |
  |         |------------------           -------------------|         |
  +---------+   rcv ACK of SYN  \       /  rcv SYN,ACK       +---------+
-   |           --------------   |     |   -----------
-   |                  x         |     |     snd ACK
-   |                            V     V
-   |  CLOSE                   +---------+
-   | -------                  |  ESTAB  |
-   | snd FIN                  +---------+
-   |                   CLOSE    |     |    rcv FIN
-   V                  -------   |     |    -------
+   |           --------------   |     |   -----------                  
+   |                  x         |     |     snd ACK                    
+   |                            V     V                                
+   |  CLOSE                   +---------+                              
+   | -------                  |  ESTAB  |                              
+   | snd FIN                  +---------+                              
+   |                   CLOSE    |     |    rcv FIN                     
+   V                  -------   |     |    -------                     
  +---------+          snd FIN  /       \   snd ACK          +---------+
  |  FIN    |<-----------------           ------------------>|  CLOSE  |
  | WAIT-1  |------------------                              |   WAIT  |
  +---------+          rcv FIN  \                            +---------+
-   | rcv ACK of FIN   -------   |                            CLOSE  |
-   | --------------   snd ACK   |                           ------- |
-   V        x                   V                           snd FIN V
+   | rcv ACK of FIN   -------   |                            CLOSE  |  
+   | --------------   snd ACK   |                           ------- |  
+   V        x                   V                           snd FIN V  
  +---------+                  +---------+                   +---------+
  |FINWAIT-2|                  | CLOSING |                   | LAST-ACK|
  +---------+                  +---------+                   +---------+
-   |                rcv ACK of FIN |                 rcv ACK of FIN |
-   |  rcv FIN       -------------- |    Timeout=2MSL -------------- |
-   |  -------              x       V    ------------        x       V
+   |                rcv ACK of FIN |                 rcv ACK of FIN |  
+   |  rcv FIN       -------------- |    Timeout=2MSL -------------- |  
+   |  -------              x       V    ------------        x       V  
     \ snd ACK                 +---------+delete TCB         +---------+
      ------------------------>|TIME WAIT|------------------>| CLOSED  |
                               +---------+                   +---------+
@@ -1644,10 +1644,10 @@ Functional Specification
 
 
 
-[Page 24]
+[Page 24]                                                               
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
                                                 Functional Specification
 
@@ -1762,10 +1762,10 @@ Functional Specification
 
 
 
-[Page 26]
+[Page 26]                                                               
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
                                                 Functional Specification
 
@@ -1880,10 +1880,10 @@ Functional Specification
     such an assumption, two distinct TCP segments could conceivably be
 
 
-[Page 28]
+[Page 28]                                                               
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
                                                 Functional Specification
 
@@ -1998,10 +1998,10 @@ Functional Specification
 
 
 
-[Page 30]
+[Page 30]                                                               
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
                                                 Functional Specification
 
@@ -2024,7 +2024,7 @@ September 1981
   fields such as window, addresses, lengths, and text have been left out
   in the interest of clarity.
 
-
+  
 
       TCP A                                                TCP B
 
@@ -2070,7 +2070,7 @@ Functional Specification
   figure 8.  Each TCP cycles from CLOSED to SYN-SENT to SYN-RECEIVED to
   ESTABLISHED.
 
-
+  
 
       TCP A                                            TCP B
 
@@ -2116,16 +2116,16 @@ Functional Specification
 
 
 
-[Page 32]
+[Page 32]                                                               
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
                                                 Functional Specification
 
 
 
-
+  
 
       TCP A                                                TCP B
 
@@ -2138,7 +2138,7 @@ September 1981
   4.  SYN-SENT    <-- <SEQ=300><ACK=91><CTL=SYN,ACK>  <-- SYN-RECEIVED
 
   5.  SYN-SENT    --> <SEQ=91><CTL=RST>               --> LISTEN
-
+  
 
   6.              ... <SEQ=100><CTL=SYN>               --> SYN-RECEIVED
 
@@ -2203,7 +2203,7 @@ Functional Specification
   re-open the connection.  TCP B, in the meantime, thinks the connection
   is open.
 
-
+  
 
       TCP A                                           TCP B
 
@@ -2234,10 +2234,10 @@ Functional Specification
 
 
 
-[Page 34]
+[Page 34]                                                               
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
                                                 Functional Specification
 
@@ -2253,7 +2253,7 @@ September 1981
   exists, so TCP A sends a RST.  The RST is acceptable so TCP B
   processes it and aborts the connection.
 
-
+  
 
         TCP A                                              TCP B
 
@@ -2273,7 +2273,7 @@ September 1981
   generate a RST (the ACK in line 3 is not acceptable).  TCP B accepts
   the reset and returns to its passive LISTEN state.
 
-
+  
 
       TCP A                                         TCP B
 
@@ -2352,10 +2352,10 @@ Functional Specification
 
 
 
-[Page 36]
+[Page 36]                                                               
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
                                                 Functional Specification
 
@@ -2377,19 +2377,19 @@ September 1981
 
   Reset Processing
 
-  <control relevant="true"><trigger>In all states except <ref_state id="2">SYN-SENT</ref_state>,</trigger> <action>all reset (RST) segments are validated
-  by checking their SEQ-fields.</action>  <control relevant="true">A reset is valid <trigger>if its sequence number
-  is in the window.</trigger></control></control>  <control relevant="true"><trigger>In the <ref_state id="2">SYN-SENT</ref_state> state</trigger> (a <ref_event type="receive" id="9">RST</ref_event> received in response
-  to an initial SYN), <control relevant="true">the RST is acceptable <trigger>if the <ref_event type="receive" id="7">ACK</ref_event> field
-  acknowledges the SYN.</trigger></control></control>
+  In all states except SYN-SENT, all reset (RST) segments are validated
+  by checking their SEQ-fields.  A reset is valid if its sequence number
+  is in the window.  In the SYN-SENT state (a RST received in response
+  to an initial SYN), the RST is acceptable if the ACK field
+  acknowledges the SYN.
 
-  <control relevant="true"><trigger>The receiver of a <ref_event type="receive" id="9">RST</ref_event></trigger> first validates it, then changes state.  <control relevant="true"><trigger>If the
-  receiver was in the <ref_state id="1">LISTEN</ref_state> state,</trigger> <action>it ignores it.</action>  <control relevant="true"><trigger>If the receiver was
-  in <ref_state id="3">SYN-RECEIVED</ref_state> state and had previously been in the <ref_state id="1">LISTEN</ref_state> state,</trigger>
-  then <transition>the receiver returns to the <ref_state id="1">LISTEN</ref_state> state,</transition> <control relevant="true"><trigger>otherwise</trigger> <action>the receiver
-  aborts the connection</action> and <transition>goes to the <ref_state id="11">CLOSED</ref_state> state.</transition></control>  <control relevant="true"><trigger>If the receiver
-  was in any other state,</trigger> <action>it aborts the connection</action> and advises the user
-  and <transition>goes to the <ref_state id="11">CLOSED</ref_state> state.</transition></control></control></control></control>
+  The receiver of a RST first validates it, then changes state.  If the
+  receiver was in the LISTEN state, it ignores it.  If the receiver was
+  in SYN-RECEIVED state and had previously been in the LISTEN state,
+  then the receiver returns to the LISTEN state, otherwise the receiver
+  aborts the connection and goes to the CLOSED state.  If the receiver
+  was in any other state, it aborts the connection and advises the user
+  and goes to the CLOSED state.
 
 3.5.  Closing a Connection
 
@@ -2470,16 +2470,16 @@ Functional Specification
 
 
 
-[Page 38]
+[Page 38]                                                               
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
                                                 Functional Specification
 
 
 
-
+  
 
       TCP A                                                TCP B
 
@@ -2496,13 +2496,13 @@ September 1981
   5.  TIME-WAIT   --> <SEQ=101><ACK=301><CTL=ACK>      --> CLOSED
 
   6.  (2 MSL)
-      CLOSED
+      CLOSED                                                      
 
                          Normal Close Sequence
 
                                Figure 13.
 
-
+  
 
       TCP A                                                TCP B
 
@@ -2588,10 +2588,10 @@ Functional Specification
   sends an acknowledgment.  When the data sender receives an
 
 
-[Page 40]
+[Page 40]                                                               
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
                                                 Functional Specification
 
@@ -2706,10 +2706,10 @@ Functional Specification
   The sending TCP packages the data to be transmitted into segments
 
 
-[Page 42]
+[Page 42]                                                               
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
                                                 Functional Specification
 
@@ -2824,10 +2824,10 @@ Functional Specification
 
 
 
-[Page 44]
+[Page 44]                                                               
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
                                                 Functional Specification
 
@@ -2843,7 +2843,7 @@ September 1981
         (b) replies to specific user commands indicating success or
         various types of failure.
 
-      <event-upper>Open
+      Open
 
         Format:  OPEN (local port, foreign socket, active/passive
         [, timeout] [, precedence] [, security/compartment] [, options])
@@ -2860,8 +2860,8 @@ September 1981
         process can masquerade as another without the collusion of the
         TCP.
 
-        <control relevant="true"><trigger>If the active/passive flag is set to passive,</trigger> then this is a
-        call to <ref_state id="1">LISTEN</ref_state> for an incoming connection.</control>  A passive open may
+        If the active/passive flag is set to passive, then this is a
+        call to LISTEN for an incoming connection.  A passive open may
         have either a fully specified foreign socket to wait for a
         particular connection or an unspecified foreign socket to wait
         for any call.  A fully specified passive call can be made active
@@ -2873,11 +2873,11 @@ September 1981
         On an active OPEN command, the TCP will begin the procedure to
         synchronize (i.e., establish) the connection at once.
 
-        <timer>The timeout, if present, permits the caller to set up a timeout
+        The timeout, if present, permits the caller to set up a timeout
         for all data submitted to TCP.  If data is not successfully
         delivered to the destination within the timeout period, the TCP
         will abort the connection.  The present global default is five
-        minutes.</timer>
+        minutes.
 
         The TCP or some component of the operating system will verify
         the users authority to open a connection with the specified
@@ -2901,10 +2901,10 @@ Functional Specification
         the precedence is equal to or higher than the precedence
         requested in the OPEN call.
 
-        <variable>The precedence for the connection is the higher of the values
+        The precedence for the connection is the higher of the values
         requested in the OPEN call and received from the incoming
         request, and fixed at that value for the life of the
-        connection.</variable> Implementers may want to give the user control of
+        connection.Implementers may want to give the user control of
         this precedence negotiation.  For example, the user might be
         allowed to specify that the precedence must be exactly matched,
         or that any attempt to raise the precedence be confirmed by the
@@ -2913,16 +2913,16 @@ Functional Specification
         A local connection name will be returned to the user by the TCP.
         The local connection name can then be used as a short hand term
         for the connection defined by the <local socket, foreign socket>
-        pair.</event-upper>
+        pair.
 
-      <event-upper>Send
+      Send
 
         Format:  SEND (local connection name, buffer address, byte
         count, PUSH flag, URGENT flag [,timeout])
 
         This call causes the data contained in the indicated user buffer
-        to be sent on the indicated connection.  <transition>If the connection has
-        not been opened, the SEND is considered an error.</transition>  Some
+        to be sent on the indicated connection.  If the connection has
+        not been opened, the SEND is considered an error.  Some
         implementations may allow users to SEND first; in which case, an
         automatic OPEN would be done.  If the calling process is not
         authorized to use this connection, an error is returned.
@@ -2942,10 +2942,10 @@ Functional Specification
         indicate to the receiver when all the currently known urgent
 
 
-[Page 46]
+[Page 46]                                                               
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
                                                 Functional Specification
 
@@ -2970,8 +2970,8 @@ September 1981
         implementations the TCP may notify the user when an unspecified
         socket is bound.
 
-        <timer>If a timeout is specified, the current user timeout for this
-        connection is changed to the new one.</timer>
+        If a timeout is specified, the current user timeout for this
+        connection is changed to the new one.
 
         In the simplest implementation, SEND would not return control to
         the sending process until either the transmission was complete
@@ -3013,17 +3013,17 @@ Functional Specification
         buffer address to be returned along with the coded response to
         the SEND request.  TCP-to-user signals are discussed below,
         indicating the information which should be returned to the
-        calling process.</event-upper>
+        calling process.
 
-      <event-upper>Receive
+      Receive
 
         Format:  RECEIVE (local connection name, buffer address, byte
         count) -> byte count, urgent flag, push flag
 
         This command allocates a receiving buffer associated with the
-        specified connection.  <transition>If no OPEN precedes this command or the
+        specified connection.  If no OPEN precedes this command or the
         calling process is not authorized to use this connection, an
-        error is returned.</transition>
+        error is returned.
 
         In the simplest implementation, control would not return to the
         calling program until either the buffer was filled, or some
@@ -3060,25 +3060,25 @@ Functional Specification
 
 
 
-[Page 48]
+[Page 48]                                                               
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
                                                 Functional Specification
 
 
 
         allocate buffer storage, or the TCP might share a ring buffer
-        with the user.</event-upper>
+        with the user.
 
-      <event-upper>Close
+      Close
 
         Format:  CLOSE (local connection name)
 
-        This command causes the connection specified to be closed.  <transition>If
+        This command causes the connection specified to be closed.  If
         the connection is not open or the calling process is not
-        authorized to use this connection, an error is returned.</transition>
+        authorized to use this connection, an error is returned.
         Closing connections is intended to be a graceful operation in
         the sense that outstanding SENDs will be transmitted (and
         retransmitted), as flow control permits, until all have been
@@ -3103,7 +3103,7 @@ September 1981
         short time.  Attempts to reopen the connection before the TCP
         replies to the CLOSE command will result in error responses.
 
-        Close also implies push function.</event-upper>
+        Close also implies push function.
 
       Status
 
@@ -3178,10 +3178,10 @@ Functional Specification
         Urgent flag                              Receive
 
 
-[Page 50]
+[Page 50]                                                               
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
                                                 Functional Specification
 
@@ -3263,22 +3263,22 @@ Functional Specification
 
       User Calls
 
-        <def_event id="1">OPEN</def_event>
-        <def_event id="2">SEND</def_event>
-        <def_event id="3">RECEIVE</def_event>
-        <def_event id="4">CLOSE</def_event>
-        <def_event id="5">ABORT</def_event>
-        <def_event id="6">STATUS</def_event>
+        OPEN
+        SEND
+        RECEIVE
+        CLOSE
+        ABORT
+        STATUS
 
       Arriving Segments
 
-        <def_event id="12">SEGMENT ARRIVES</def_event>
+        SEGMENT ARRIVES
 
       Timeouts
 
-        <def_event id="13">USER TIMEOUT</def_event>
-        <def_event id="14">RETRANSMISSION TIMEOUT</def_event>
-        <def_event id="15">TIME-WAIT TIMEOUT</def_event>
+        USER TIMEOUT
+        RETRANSMISSION TIMEOUT
+        TIME-WAIT TIMEOUT
 
   The model of the TCP/user interface is that user commands receive an
   immediate return and possibly a delayed response via an event or
@@ -3296,10 +3296,10 @@ Functional Specification
 
 
 
-[Page 52]
+[Page 52]                                                               
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
                                                 Functional Specification
 
@@ -3365,43 +3365,43 @@ Functional Specification
 
 
 
-  <control relevant="true"><trigger><ref_event type="receive" id="1">OPEN</ref_event> Call</trigger>
+  OPEN Call
 
-    <control relevant="true"><trigger><ref_state id="11">CLOSED</ref_state> STATE</trigger> (i.e., TCB does not exist)
+    CLOSED STATE (i.e., TCB does not exist)
 
-      <variable>Create a new transmission control block (TCB) to hold connection
-      state information.</variable>  <variable>Fill in local socket identifier, foreign
+      Create a new transmission control block (TCB) to hold connection
+      state information.  Fill in local socket identifier, foreign
       socket, precedence, security/compartment, and user timeout
-      information.</variable>  Note that some parts of the foreign socket may be
+      information.  Note that some parts of the foreign socket may be
       unspecified in a passive OPEN and are to be filled in by the
-      parameters of the incoming SYN segment.  <control relevant="true"><trigger>Verify the security and
-      precedence requested are allowed for this user, if not</trigger> <error>return
+      parameters of the incoming SYN segment.  Verify the security and
+      precedence requested are allowed for this user, if not return
       "error:  precedence not allowed" or "error:  security/compartment
-      not allowed."</error></control>  <control relevant="true"><trigger>If passive</trigger> <transition>enter the <ref_state id="1">LISTEN</ref_state> state</transition> and <action>return.</action></control>  <control relevant="true"><trigger>If
-      active and the foreign socket is unspecified,</trigger> <error>return "error:
-      foreign socket unspecified";</error></control> <control relevant="true"><trigger>if active and the foreign socket is
-      specified,</trigger> <action type=issue>issue <arg>a <ref_event type="compute" id="10">SYN</ref_event> segment.</arg></action>  <variable>An initial send sequence number
-      (ISS) is selected.</variable>  <action type=send><arg>A <ref_event type="send" id="10">SYN</ref_event> segment of the form <SEQ=ISS><CTL=SYN></arg>
-      is sent.</action>  <variable>Set SND.UNA to ISS, SND.NXT to ISS+1,</variable> <transition>enter <ref_state id="2">SYN-SENT</ref_state>
-      state,</transition> and <action>return</action></control>.
+      not allowed."  If passive enter the LISTEN state and return.  If
+      active and the foreign socket is unspecified, return "error:
+      foreign socket unspecified"; if active and the foreign socket is
+      specified, issue a SYN segment.  An initial send sequence number
+      (ISS) is selected.  A SYN segment of the form <SEQ=ISS><CTL=SYN>
+      is sent.  Set SND.UNA to ISS, SND.NXT to ISS+1, enter SYN-SENT
+      state, and return.
 
-      <control relevant="true"><trigger>If the caller does not have access to the local socket specified,</trigger>
-      <error>return "error:  connection illegal for this process".</error></control>  <control relevant="true"><trigger>If there is
-      no room to create a new connection,</trigger> <error>return "error:  insufficient
-      resources".</error></control></control>
+      If the caller does not have access to the local socket specified,
+      return "error:  connection illegal for this process".  If there is
+      no room to create a new connection, return "error:  insufficient
+      resources".
 
-    <control relevant="true"><trigger><ref_state id="1">LISTEN</ref_state> STATE</trigger>
+    LISTEN STATE
 
-      <control relevant="true"><trigger>If active and the foreign socket is specified,</trigger> then <variable>change the
-      connection from passive to active,</variable> <variable>select an ISS.</variable>  <action type=send>Send <arg>a <ref_event type="send" id="10">SYN</ref_event>
-      segment,</arg></action> <variable>set SND.UNA to ISS,</variable> <variable>SND.NXT to ISS+1.</variable>  <transition>Enter <ref_state id="2">SYN-SENT</ref_state>
-      state.</transition>  Data associated with SEND may be sent with SYN segment or
+      If active and the foreign socket is specified, then change the
+      connection from passive to active, select an ISS.  Send a SYN
+      segment, set SND.UNA to ISS, SND.NXT to ISS+1.  Enter SYN-SENT
+      state.  Data associated with SEND may be sent with SYN segment or
       queued for transmission after entering ESTABLISHED state.  The
       urgent bit if requested in the command must be sent with the data
-      segments sent as a result of this command.  <control relevant="true"><trigger>If there is no room to
-      queue the request,</trigger> <error>respond with "error:  insufficient resources".</error></control>
-      <control relevant="true"><trigger>If Foreign socket was not specified,</trigger> then <error>return "error:  foreign
-      socket unspecified".</error></control></control></control>
+      segments sent as a result of this command.  If there is no room to
+      queue the request, respond with "error:  insufficient resources".
+      If Foreign socket was not specified, then return "error:  foreign
+      socket unspecified".
 
 
 
@@ -3414,27 +3414,27 @@ Functional Specification
 
 
 
-[Page 54]
+[Page 54]                                                               
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
                                                 Functional Specification
 OPEN Call
 
 
 
-    <control relevant="true"><trigger><ref_state id="2">SYN-SENT</ref_state> STATE
-    <ref_state id="3">SYN-RECEIVED</ref_state> STATE
-    <ref_state id="4">ESTABLISHED</ref_state> STATE
-    <ref_state id="5">FIN-WAIT-1</ref_state> STATE
-    <ref_state id="6">FIN-WAIT-2</ref_state> STATE
-    <ref_state id="7">CLOSE-WAIT</ref_state> STATE
-    <ref_state id="8">CLOSING</ref_state> STATE
-    <ref_state id="9">LAST-ACK</ref_state> STATE
-    <ref_state id="10">TIME-WAIT</ref_state> STATE</trigger>
+    SYN-SENT STATE
+    SYN-RECEIVED STATE
+    ESTABLISHED STATE
+    FIN-WAIT-1 STATE
+    FIN-WAIT-2 STATE
+    CLOSE-WAIT STATE
+    CLOSING STATE
+    LAST-ACK STATE
+    TIME-WAIT STATE
 
-      <error>Return "error:  connection already exists".</error></control></control>
+      Return "error:  connection already exists".
 
 
 
@@ -3483,47 +3483,45 @@ Functional Specification
 
 
 
-  <control relevant="true"><trigger><ref_event type="receive" id="2">SEND</ref_event> Call</trigger>
+  SEND Call
 
-    <control relevant="true"><trigger><ref_state id="11">CLOSED</ref_state> STATE</trigger> (i.e., TCB does not exist)
+    CLOSED STATE (i.e., TCB does not exist)
 
-      <control relevant="true"><trigger>If the user does not have access to such a connection,</trigger> then <error>return
-      "error:  connection illegal for this process".</error>
+      If the user does not have access to such a connection, then return
+      "error:  connection illegal for this process".
 
-      <trigger>Otherwise,</trigger> <error>return "error:  connection does not exist".</error></control></control>
+      Otherwise, return "error:  connection does not exist".
 
-    <control relevant="true"><trigger><ref_state id="1">LISTEN</ref_state> STATE</trigger>
+    LISTEN STATE
 
-      <control relevant="true"><trigger>If the foreign socket is specified,</trigger> then <variable>change the connection
-      from passive to active,</variable> <variable>select an ISS.</variable>  <action type=send>Send a <arg><ref_event type="send" id="10">SYN</ref_event> segment,</arg></action> <variable>set
-      SND.UNA to ISS,</variable> <variable>SND.NXT to ISS+1.</variable>  <transition>Enter <ref_state id="2">SYN-SENT</ref_state> state.</transition></control>  Data
+      If the foreign socket is specified, then change the connection
+      from passive to active, select an ISS.  Send a SYN segment, set
+      SND.UNA to ISS, SND.NXT to ISS+1.  Enter SYN-SENT state.  Data
       associated with SEND may be sent with SYN segment or queued for
       transmission after entering ESTABLISHED state.  The urgent bit if
       requested in the command must be sent with the data segments sent
-      as a result of this command.  <control relevant="true"><trigger>If there is no room to queue the
-      request,</trigger> <error>respond with "error:  insufficient resources".</error></control>  <control relevant="true"><trigger>If
-      Foreign socket was not specified,</trigger> then <error>return "error:  foreign
-      socket unspecified".</error></control></control>
+      as a result of this command.  If there is no room to queue the
+      request, respond with "error:  insufficient resources".  If
+      Foreign socket was not specified, then return "error:  foreign
+      socket unspecified".
 
-    <control relevant="true"><trigger><ref_state id="2">SYN-SENT</ref_state> STATE
-    <ref_state id="3">SYN-RECEIVED</ref_state> STATE</trigger>
+    SYN-SENT STATE
+    SYN-RECEIVED STATE
 
-      <action>Queue the data for transmission</action> after entering <ref_state id="4">ESTABLISHED</ref_state> state.
-      <control relevant="true"><trigger>If no space to queue,</trigger> <error>respond with "error:  insufficient
-      resources".</error></control></control>
+      Queue the data for transmission after entering ESTABLISHED state.
+      If no space to queue, respond with "error:  insufficient
+      resources".
 
-    <control relevant="true"><trigger><ref_state id="4">ESTABLISHED</ref_state> STATE
-    <ref_state id="7">CLOSE-WAIT</ref_state> STATE</trigger>
+    ESTABLISHED STATE
+    CLOSE-WAIT STATE
 
       Segmentize the buffer and send it with a piggybacked
-      acknowledgment (acknowledgment value = RCV.NXT).  <control relevant="true"><trigger>If there is
-      insufficient space to remember this buffer,</trigger> simply <error>return "error:
-      insufficient resources".</error></control>
+      acknowledgment (acknowledgment value = RCV.NXT).  If there is
+      insufficient space to remember this buffer, simply return "error:
+      insufficient resources".
 
-      <control relevant="true"><trigger>If the urgent flag is set,</trigger> then <variable>SND.UP <- SND.NXT-1</variable> and <variable>set the
-      urgent pointer in the outgoing segments.</variable></control></control>
-
-
+      If the urgent flag is set, then SND.UP <- SND.NXT-1 and set the
+      urgent pointer in the outgoing segments.
 
 
 
@@ -3532,23 +3530,25 @@ Functional Specification
 
 
 
-[Page 56]
+
+
+[Page 56]                                                               
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
                                                 Functional Specification
 SEND Call
 
 
 
-    <control relevant="true"><trigger><ref_state id="5">FIN-WAIT-1</ref_state> STATE
-    <ref_state id="6">FIN-WAIT-2</ref_state> STATE
-    <ref_state id="8">CLOSING</ref_state> STATE
-    <ref_state id="9">LAST-ACK</ref_state> STATE
-    <ref_state id="10">TIME-WAIT</ref_state> STATE</trigger>
+    FIN-WAIT-1 STATE
+    FIN-WAIT-2 STATE
+    CLOSING STATE
+    LAST-ACK STATE
+    TIME-WAIT STATE
 
-      <error>Return "error:  connection closing" and do not service request.</error></control></control>
+      Return "error:  connection closing" and do not service request.
 
 
 
@@ -3601,43 +3601,43 @@ Functional Specification
 
 
 
-  <control relevant="true"><trigger><ref_event type="receive" id="3">RECEIVE</ref_event> Call</trigger>
+  RECEIVE Call
 
-    <control relevant="true"><trigger><ref_state id="11">CLOSED</ref_state> STATE</trigger> (i.e., TCB does not exist)
+    CLOSED STATE (i.e., TCB does not exist)
 
-      <control relevant="true"><trigger>If the user does not have access to such a connection,</trigger> return
-      <error>"error:  connection illegal for this process".</error>
+      If the user does not have access to such a connection, return
+      "error:  connection illegal for this process".
 
-      <trigger>Otherwise</trigger> <error>return "error:  connection does not exist".</error></control></control>
+      Otherwise return "error:  connection does not exist".
 
-    <control relevant="true"><trigger><ref_state id="1">LISTEN</ref_state> STATE
-    <ref_state id="2">SYN-SENT</ref_state> STATE
-    <ref_state id="3">SYN-RECEIVED</ref_state> STATE</trigger>
+    LISTEN STATE
+    SYN-SENT STATE
+    SYN-RECEIVED STATE
 
-      <action>Queue for processing</action> after entering <ref_state id="4">ESTABLISHED</ref_state> state.  <control relevant="true"><trigger>If there
-      is no room to queue this request,</trigger> <error>respond with "error:
-      insufficient resources".</error></control></control>
+      Queue for processing after entering ESTABLISHED state.  If there
+      is no room to queue this request, respond with "error:
+      insufficient resources".
 
-    <control relevant="true"><trigger><ref_state id="4">ESTABLISHED</ref_state> STATE
-    <ref_state id="5">FIN-WAIT-1</ref_state> STATE
-    <ref_state id="6">FIN-WAIT-2</ref_state> STATE</trigger>
+    ESTABLISHED STATE
+    FIN-WAIT-1 STATE
+    FIN-WAIT-2 STATE
 
-      <control relevant="true"><trigger>If insufficient incoming segments are queued to satisfy the
-      request,</trigger> <action>queue the request.</action></control>  <control relevant="true"><trigger>If there is no queue space to
-      remember the RECEIVE,</trigger> <error>respond with "error:  insufficient
-      resources".</error></control>
+      If insufficient incoming segments are queued to satisfy the
+      request, queue the request.  If there is no queue space to
+      remember the RECEIVE, respond with "error:  insufficient
+      resources".
 
-      <control relevant="true"><action>Reassemble queued incoming segments into receive buffer</action> and <action>return
-      to user.</action>  <variable>Mark "push seen" (PUSH)</variable> <trigger>if this is the case.</trigger></control>
+      Reassemble queued incoming segments into receive buffer and return
+      to user.  Mark "push seen" (PUSH) if this is the case.
 
-      <control relevant="false"><trigger>If RCV.UP is in advance of the data currently being passed to the
-      user</trigger> <action>notify the user of the presence of urgent data.</action></control>
+      If RCV.UP is in advance of the data currently being passed to the
+      user notify the user of the presence of urgent data.
 
       When the TCP takes responsibility for delivering data to the user
       that fact must be communicated to the sender via an
       acknowledgment.  The formation of such an acknowledgment is
       described below in the discussion of processing an incoming
-      segment.</control>
+      segment.
 
 
 
@@ -3650,29 +3650,29 @@ Functional Specification
 
 
 
-[Page 58]
+[Page 58]                                                               
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
                                                 Functional Specification
 RECEIVE Call
 
 
 
-    <control relevant="true"><trigger><ref_state id="7">CLOSE-WAIT</ref_state> STATE</trigger>
+    CLOSE-WAIT STATE
 
       Since the remote side has already sent FIN, RECEIVEs must be
       satisfied by text already on hand, but not yet delivered to the
-      user.  <control relevant="true"><trigger>If no text is awaiting delivery,</trigger> <error>the RECEIVE will get a
-      "error:  connection closing" response.</error>  <trigger>Otherwise,</trigger> any remaining
-      text can be used to satisfy the RECEIVE.</control></control>
+      user.  If no text is awaiting delivery, the RECEIVE will get a
+      "error:  connection closing" response.  Otherwise, any remaining
+      text can be used to satisfy the RECEIVE.
 
-    <control relevant="true"><trigger><ref_state id="8">CLOSING</ref_state> STATE
-    <ref_state id="9">LAST-ACK</ref_state> STATE
-    <ref_state id="10">TIME-WAIT</ref_state> STATE</trigger>
+    CLOSING STATE
+    LAST-ACK STATE
+    TIME-WAIT STATE
 
-      <error>Return "error:  connection closing".</error></control></control>
+      Return "error:  connection closing".
 
 
 
@@ -3719,44 +3719,44 @@ Functional Specification
 
 
 
-  <control relevant="true"><trigger><ref_event type="receive" id="4">CLOSE</ref_event> Call</trigger>
+  CLOSE Call
 
-    <control relevant="true"><trigger><ref_state id="11">CLOSED</ref_state> STATE</trigger> (i.e., TCB does not exist)
+    CLOSED STATE (i.e., TCB does not exist)
 
-      <control relevant="true"><trigger>If the user does not have access to such a connection,</trigger> <error>return
-      "error:  connection illegal for this process".</error>
+      If the user does not have access to such a connection, return
+      "error:  connection illegal for this process".
 
-      <trigger>Otherwise,</trigger> return <error>"error:  connection does not exist".</error></control></control>
+      Otherwise, return "error:  connection does not exist".
 
-    <control relevant="true"><trigger><ref_state id="1">LISTEN</ref_state> STATE</trigger>
+    LISTEN STATE
 
-      <error>Any outstanding RECEIVEs are returned with "error:  closing"</error>
-      responses.  <variable>Delete TCB,</variable> <transition>enter <ref_state id="11">CLOSED</ref_state> state,</transition> and <action>return.</action></control>
+      Any outstanding RECEIVEs are returned with "error:  closing"
+      responses.  Delete TCB, enter CLOSED state, and return.
 
-    <control relevant="true"><trigger><ref_state id="2">SYN-SENT</ref_state> STATE</trigger>
+    SYN-SENT STATE
 
-      <variable>Delete the TCB</variable> and <error>return "error:  closing" responses to any
-      queued SENDs, or RECEIVEs.</error></control>
+      Delete the TCB and return "error:  closing" responses to any
+      queued SENDs, or RECEIVEs.
 
-    <control relevant="true"><trigger><ref_state id="3">SYN-RECEIVED</ref_state> STATE</trigger>
+    SYN-RECEIVED STATE
 
-      <control relevant="true"><trigger>If no SENDs have been issued and there is no pending data to send,</trigger>
-      then <action type=issue>form <arg>a <ref_event type="send" id="11">FIN</ref_event> segment</arg></action> and <action type=send>send <arg><ref_event type="send" id="11">it</ref_event></arg>,</action> and <transition>enter <ref_state id="5">FIN-WAIT-1</ref_state> state;</transition>
-      <trigger>otherwise</trigger> <action>queue for processing</action> after entering <ref_state id="4">ESTABLISHED</ref_state> state.</control></control>
+      If no SENDs have been issued and there is no pending data to send,
+      then form a FIN segment and send it, and enter FIN-WAIT-1 state;
+      otherwise queue for processing after entering ESTABLISHED state.
 
-    <control relevant="true"><trigger><ref_state id="4">ESTABLISHED</ref_state> STATE</trigger>
+    ESTABLISHED STATE
 
-      <action>Queue this until all preceding SENDs have been segmentized</action>, then
-      <action type=issue>form <arg>a <ref_event type="send" id="11">FIN</ref_event> segment</arg></action> and <action type=send>send <arg><ref_event type="send" id="11">it</ref_event></arg>.</action>  In any case, <transition>enter <ref_state id="5">FIN-WAIT-1</ref_state>
-      state.</transition></control>
+      Queue this until all preceding SENDs have been segmentized, then
+      form a FIN segment and send it.  In any case, enter FIN-WAIT-1
+      state.
 
-    <control relevant="true"><trigger><ref_state id="5">FIN-WAIT-1</ref_state> STATE
-    <ref_state id="6">FIN-WAIT-2</ref_state> STATE</trigger>
+    FIN-WAIT-1 STATE
+    FIN-WAIT-2 STATE
 
-      Strictly speaking, this is an error and should receive a <error>"error:
-      connection closing"</error> response.  An "ok" response would be
+      Strictly speaking, this is an error and should receive a "error:
+      connection closing" response.  An "ok" response would be
       acceptable, too, as long as a second FIN is not emitted (the first
-      FIN may be retransmitted though).</control>
+      FIN may be retransmitted though).
 
 
 
@@ -3768,26 +3768,26 @@ Functional Specification
 
 
 
-[Page 60]
+[Page 60]                                                               
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
                                                 Functional Specification
 CLOSE Call
 
 
 
-    <control relevant="true"><trigger><ref_state id="7">CLOSE-WAIT</ref_state> STATE</trigger>
+    CLOSE-WAIT STATE
 
-      <action>Queue this request until all preceding SENDs have been
-      segmentized</action>; then <action type=send>send a <arg><ref_event type="send" id="11">FIN</ref_event> segment</arg></action>, <transition>enter <ref_state id="8">CLOSING</ref_state> state.</transition></control>
+      Queue this request until all preceding SENDs have been
+      segmentized; then send a FIN segment, enter CLOSING state.
 
-    <control relevant="true"><trigger><ref_state id="8">CLOSING</ref_state> STATE
-    <ref_state id="9">LAST-ACK</ref_state> STATE
-    <ref_state id="10">TIME-WAIT</ref_state> STATE</trigger>
+    CLOSING STATE
+    LAST-ACK STATE
+    TIME-WAIT STATE
 
-      <error>Respond with "error:  connection closing".</error></control></control>
+      Respond with "error:  connection closing".
 
 
 
@@ -3837,59 +3837,59 @@ Functional Specification
 
 
 
-  <control relevant="true"><trigger><ref_event type="receive" id="5">ABORT</ref_event> Call</trigger>
+  ABORT Call
 
-    <control relevant="true"><trigger><ref_state id="11">CLOSED</ref_state> STATE</trigger> (i.e., TCB does not exist)
+    CLOSED STATE (i.e., TCB does not exist)
 
-      <control relevant="true"><trigger>If the user should not have access to such a connection,</trigger> <error>return
-      "error:  connection illegal for this process".</error>
+      If the user should not have access to such a connection, return
+      "error:  connection illegal for this process".
 
-      <trigger>Otherwise</trigger> <error>return "error:  connection does not exist".</error></control></control>
+      Otherwise return "error:  connection does not exist".
 
-    <control relevant="true"><trigger><ref_state id="1">LISTEN</ref_state> STATE</trigger>
+    LISTEN STATE
 
-      Any outstanding RECEIVEs should be returned with <error>"error:
-      connection reset" responses.</error>  <variable>Delete TCB,</variable> <transition>enter <ref_state id="11">CLOSED</ref_state> state,</transition> and
-      <action>return.</action></control>
+      Any outstanding RECEIVEs should be returned with "error:
+      connection reset" responses.  Delete TCB, enter CLOSED state, and
+      return.
 
-    <control relevant="true"><trigger><ref_state id="2">SYN-SENT</ref_state> STATE</trigger>
+    SYN-SENT STATE
 
-      <action>All queued SENDs and RECEIVEs should be given "connection reset"
-      notification,</action> <variable>delete the TCB,</variable> <transition>enter <ref_state id="11">CLOSED</ref_state> state,</transition> and <action>return.</action></control>
+      All queued SENDs and RECEIVEs should be given "connection reset"
+      notification, delete the TCB, enter CLOSED state, and return.
 
-    <control relevant="true"><trigger><ref_state id="3">SYN-RECEIVED</ref_state> STATE
-    <ref_state id="4">ESTABLISHED</ref_state> STATE
-    <ref_state id="5">FIN-WAIT-1</ref_state> STATE
-    <ref_state id="6">FIN-WAIT-2</ref_state> STATE
-    <ref_state id="7">CLOSE-WAIT</ref_state> STATE</trigger>
+    SYN-RECEIVED STATE
+    ESTABLISHED STATE
+    FIN-WAIT-1 STATE
+    FIN-WAIT-2 STATE
+    CLOSE-WAIT STATE
 
-      <action type=send>Send a <arg><ref_event type="send" id="9">reset</ref_event> segment:</arg></action>
+      Send a reset segment:
 
-        <action><SEQ=SND.NXT><CTL=RST></action>
+        <SEQ=SND.NXT><CTL=RST>
 
-      <action>All queued SENDs and RECEIVEs should be given <ref_event type="send" id="9">"connection reset"</ref_event>
-      notification</action>; <action>all segments queued for transmission (except for the
-      RST formed above) or retransmission should be flushed</action>, <variable>delete the
-      TCB,</variable> <transition>enter <ref_state id="11">CLOSED</ref_state> state,</transition> and <action>return.</action></control>
+      All queued SENDs and RECEIVEs should be given "connection reset"
+      notification; all segments queued for transmission (except for the
+      RST formed above) or retransmission should be flushed, delete the
+      TCB, enter CLOSED state, and return.
 
-    <control relevant="true"><trigger><ref_state id="8">CLOSING</ref_state> STATE
-    <ref_state id="9">LAST-ACK</ref_state> STATE
-    <ref_state id="10">TIME-WAIT</ref_state> STATE</trigger>
+    CLOSING STATE
+    LAST-ACK STATE
+    TIME-WAIT STATE
 
-      <action>Respond with "ok"</action> and <variable>delete the TCB,</variable> <transition>enter <ref_state id="11">CLOSED</ref_state> state,</transition> and
-      <action>return.</action></control></control>
-
-
+      Respond with "ok" and delete the TCB, enter CLOSED state, and
+      return.
 
 
 
 
 
 
-[Page 62]
+
+
+[Page 62]                                                               
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
                                                 Functional Specification
 STATUS Call
@@ -4004,10 +4004,10 @@ Functional Specification
 
 
 
-[Page 64]
+[Page 64]                                                               
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
                                                 Functional Specification
 SEGMENT ARRIVES
@@ -4016,26 +4016,26 @@ SEGMENT ARRIVES
 
   SEGMENT ARRIVES
 
-    <control relevant="true"><trigger>If the state is <ref_state id="11">CLOSED</ref_state></trigger> (i.e., TCB does not exist) then
+    If the state is CLOSED (i.e., TCB does not exist) then
 
-      <action>all data in the incoming segment is discarded.</action> <control relevant="false"><trigger>An incoming
-      segment containing a <ref_event type="receive" id="9">RST</ref_event></trigger> <action>is discarded.</action></control> <control relevant="false"><trigger>An incoming segment not
-      containing a <ref_event type="receive" id="9">RST</ref_event></trigger> <action type=send>causes <arg>a <ref_event type="send" id="9">RST</ref_event></arg> to be sent in response.</action></control>  The
+      all data in the incoming segment is discarded.  An incoming
+      segment containing a RST is discarded.  An incoming segment not
+      containing a RST causes a RST to be sent in response.  The
       acknowledgment and sequence field values are selected to make the
       reset sequence acceptable to the TCP that sent the offending
       segment.
 
-      <control relevant="true"><trigger>If the <ref_event type="receive" id="7">ACK</ref_event> bit is off,</trigger> <variable>sequence number zero is used,</variable>
+      If the ACK bit is off, sequence number zero is used,
 
-        <variable><SEQ=0><ACK=SEG.SEQ+SEG.LEN><CTL=RST,ACK></variable>
+        <SEQ=0><ACK=SEG.SEQ+SEG.LEN><CTL=RST,ACK>
 
-      <trigger>If the <ref_event type="receive" id="7">ACK</ref_event> bit is on,</trigger>
+      If the ACK bit is on,
 
-        <variable><SEQ=SEG.ACK><CTL=RST>
+        <SEQ=SEG.ACK><CTL=RST>
 
-      </variable>Return.</control></control>
+      Return.
 
-    <control relevant="true"><trigger>If the state is <ref_state id="1">LISTEN</ref_state></trigger> then
+    If the state is LISTEN then
 
       first check for an RST
 
@@ -4054,12 +4054,12 @@ SEGMENT ARRIVES
 
       third check for a SYN
 
-        <control relevant="false"><trigger>If the <ref_event type="receive" id="10">SYN</ref_event> bit is set,</trigger> <action>check the security.</action> <control relevant="false"><trigger>If the
+        If the SYN bit is set, check the security.  If the
         security/compartment on the incoming segment does not exactly
-        match the security/compartment in the TCB</trigger> then <action type=send>send a <arg><ref_event type="send" id="9">reset</ref_event></arg></action> and
-        <action>return.</action>
+        match the security/compartment in the TCB then send a reset and
+        return.
 
-          <action><SEQ=SEG.ACK><CTL=RST></action></control>
+          <SEQ=SEG.ACK><CTL=RST>
 
 
 
@@ -4073,27 +4073,27 @@ Functional Specification
 
 
 
-        <control relevant="true"><trigger>If the SEG.PRC is greater than the TCB.PRC then if allowed by
-        the user and the system</trigger> <variable>set TCB.PRC<-SEG.PRC,</variable> <trigger>if not allowed</trigger>
-        <action type=send>send <arg>a reset</arg></action> and <action>return.</action>
+        If the SEG.PRC is greater than the TCB.PRC then if allowed by
+        the user and the system set TCB.PRC<-SEG.PRC, if not allowed
+        send a reset and return.
 
-          <action><SEQ=SEG.ACK><CTL=RST></action></control>
+          <SEQ=SEG.ACK><CTL=RST>
 
-        <control relevant="true"><trigger>If the SEG.PRC is less than the TCB.PRC</trigger> then <action>continue.</action></control>
+        If the SEG.PRC is less than the TCB.PRC then continue.
 
-        <variable>Set RCV.NXT to SEG.SEQ+1,</variable> <variable>IRS is set to SEG.SEQ</variable> and <action>any other
-        control or text should be queued for processing later.</action>  <variable>ISS
-        should be selected</variable> and a <action type=send>SYN segment sent of the form:
+        Set RCV.NXT to SEG.SEQ+1, IRS is set to SEG.SEQ and any other
+        control or text should be queued for processing later.  ISS
+        should be selected and a SYN segment sent of the form:
 
-          <arg><ref_event type="send" id="7"><SEQ=ISS><ACK=RCV.NXT><CTL=SYN,ACK></ref_event></arg></action>
+          <SEQ=ISS><ACK=RCV.NXT><CTL=SYN,ACK>
 
-        <variable>SND.NXT is set to ISS+1</variable> and <variable>SND.UNA to ISS.</variable>  The connection
-        <transition>state should be changed to <ref_state id="3">SYN-RECEIVED</ref_state>.</transition>  Note that any other
+        SND.NXT is set to ISS+1 and SND.UNA to ISS.  The connection
+        state should be changed to SYN-RECEIVED.  Note that any other
         incoming control or data (combined with SYN) will be processed
         in the SYN-RECEIVED state, but processing of SYN and ACK should
-        not be repeated.  <control relevant="true"><trigger>If the listen was not fully specified (i.e.,
-        the foreign socket was not fully specified),</trigger> then <variable>the
-        unspecified fields should be filled in now.</variable></control></control>
+        not be repeated.  If the listen was not fully specified (i.e.,
+        the foreign socket was not fully specified), then the
+        unspecified fields should be filled in now.
 
       fourth other text or control
 
@@ -4102,83 +4102,83 @@ Functional Specification
         processing.  An incoming RST segment could not be valid, since
         it could not have been sent in response to anything sent by this
         incarnation of the connection.  So you are unlikely to get here,
-        but if you do, drop the segment, and return.</control>
+        but if you do, drop the segment, and return.
 
-    <control relevant="true"><trigger>If the state is <ref_state id="2">SYN-SENT</ref_state></trigger> then
+    If the state is SYN-SENT then
 
       first check the ACK bit
 
-        <control relevant="unsure"><trigger>If the <ref_event type="receive" id="7">ACK</ref_event> bit is set
+        If the ACK bit is set
 
-          If SEG.ACK =< ISS, or SEG.ACK > SND.NXT,</trigger> <action type=send>send a <arg><ref_event type="send" id="9">reset</ref_event></arg></action> <control relevant="true"><trigger>(unless
-          the <ref_event type="receive" id="9">RST</ref_event> bit is set, if so </trigger> <action>drop the segment</action> and <action>return)</action></control>
+          If SEG.ACK =< ISS, or SEG.ACK > SND.NXT, send a reset (unless
+          the RST bit is set, if so drop the segment and return)
 
-            <action><SEQ=SEG.ACK><CTL=RST></action>
+            <SEQ=SEG.ACK><CTL=RST>
 
-          and <action>discard the segment.</action>  <action>Return.</action></control>
+          and discard the segment.  Return.
 
           If SND.UNA =< SEG.ACK =< SND.NXT then the ACK is acceptable.
 
       second check the RST bit
 
 
-[Page 66]
+[Page 66]                                                               
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
                                                 Functional Specification
 SEGMENT ARRIVES
 
 
 
-        <control relevant="true"><trigger>If the <ref_event type="receive" id="9">RST</ref_event> bit is set
+        If the RST bit is set
 
-          If the <ref_event type="receive" id="7">ACK</ref_event> was acceptable</trigger> then <error>signal the user "error:
-          connection reset",</error> <action>drop the segment,</action> <transition>enter <ref_state id="11">CLOSED</ref_state> state,</transition>
-          <variable>delete TCB,</variable> and <action>return.</action>  <trigger>Otherwise</trigger> (no ACK) <action>drop the segment</action>
-          and <action>return.</action></control>
+          If the ACK was acceptable then signal the user "error:
+          connection reset", drop the segment, enter CLOSED state,
+          delete TCB, and return.  Otherwise (no ACK) drop the segment
+          and return.
 
       third check the security and precedence
 
-        <control relevant="unsure"><trigger>If the security/compartment in the segment does not exactly
-        match the security/compartment in the TCB,</trigger>  <action type=send>send <arg>a reset</arg></action>
+        If the security/compartment in the segment does not exactly
+        match the security/compartment in the TCB, send a reset
 
-          <trigger>If there is an <ref_event type="receive" id="7">ACK</ref_event></trigger>
+          If there is an ACK
 
-            <action><SEQ=SEG.ACK><CTL=RST></action>
+            <SEQ=SEG.ACK><CTL=RST>
 
-          <trigger>Otherwise</trigger>
+          Otherwise
 
-            <action><SEQ=0><ACK=SEG.SEQ+SEG.LEN><CTL=RST,ACK></action></control>
+            <SEQ=0><ACK=SEG.SEQ+SEG.LEN><CTL=RST,ACK>
 
-        <control relevant="unsure"><trigger>If there is an <ref_event type="receive" id="7">ACK</ref_event>
+        If there is an ACK
 
           The precedence in the segment must match the precedence in the
-          TCB, if not,</trigger> <action type=send>send a <arg><ref_event type="send" id="9">reset</ref_event></arg></action>
+          TCB, if not, send a reset
 
-            <action><SEQ=SEG.ACK><CTL=RST></action></control>
+            <SEQ=SEG.ACK><CTL=RST>
 
-        <control relevant="unsure"><trigger>If there is no <ref_event type="receive" id="7">ACK</ref_event>
+        If there is no ACK
 
           If the precedence in the segment is higher than the precedence
-          in the TCB then if allowed by the user and the system</trigger> <variable>raise
-          the precedence in the TCB to that in the segment,</variable> <trigger>if not
-          allowed to raise the prec</trigger> then <action type=send>send a <arg><ref_event type="send" id="9">reset</ref_event>.</arg></action>
+          in the TCB then if allowed by the user and the system raise
+          the precedence in the TCB to that in the segment, if not
+          allowed to raise the prec then send a reset.
 
-            <action><SEQ=0><ACK=SEG.SEQ+SEG.LEN><CTL=RST,ACK></action></control>
+            <SEQ=0><ACK=SEG.SEQ+SEG.LEN><CTL=RST,ACK>
 
-          <control relevant="false"><trigger>If the precedence in the segment is lower than the precedence
-          in the TCB</trigger> <action>continue.</action></control>
+          If the precedence in the segment is lower than the precedence
+          in the TCB continue.
 
-        <control relevant="false"><trigger>If a reset was sent,</trigger> <action>discard the segment</action> and <action>return.</action></control>
+        If a reset was sent, discard the segment and return.
 
       fourth check the SYN bit
 
         This step should be reached only if the ACK is ok, or there is
         no ACK, and it the segment did not contain a RST.
 
-        <control relevant="true"><trigger>If the <ref_event type="receive" id="10">SYN</ref_event> bit is on and the security/compartment and precedence
+        If the SYN bit is on and the security/compartment and precedence
 
 
                                                                [Page 67]
@@ -4191,33 +4191,31 @@ Functional Specification
 
 
 
-        are acceptable then,</trigger> <variable>RCV.NXT is set to SEG.SEQ+1,</variable> <variable>IRS is set to
-        SEG.SEQ.</variable>  <variable>SND.UNA should be advanced to equal SEG.ACK (if there
-        is an ACK),</variable> and <action>any segments on the retransmission queue which
-        are thereby acknowledged should be removed.</action></control>
+        are acceptable then, RCV.NXT is set to SEG.SEQ+1, IRS is set to
+        SEG.SEQ.  SND.UNA should be advanced to equal SEG.ACK (if there
+        is an ACK), and any segments on the retransmission queue which
+        are thereby acknowledged should be removed.
 
-        <control relevant="true"><trigger>If SND.UNA > ISS (our SYN has been ACKed),</trigger> <transition>change the connection
-        state to <ref_state id="4">ESTABLISHED</ref_state>,</transition> <action type=issue>form an <arg><ref_event type="send" id="7">ACK</ref_event> segment</arg></action>
+        If SND.UNA > ISS (our SYN has been ACKed), change the connection
+        state to ESTABLISHED, form an ACK segment
 
-          <action><SEQ=SND.NXT><ACK=RCV.NXT><CTL=ACK></action>
+          <SEQ=SND.NXT><ACK=RCV.NXT><CTL=ACK>
 
-        and <action type=send>send it.</action>  Data or controls which were queued for
-        transmission may be included.</control>  <control relevant="unsure"><trigger>If there are other controls or
-        text in the segment then</trigger> <action>continue processing at the sixth step
-        below where the URG bit is checked,</action> <trigger>otherwise</trigger> <action>return.</action>
+        and send it.  Data or controls which were queued for
+        transmission may be included.  If there are other controls or
+        text in the segment then continue processing at the sixth step
+        below where the URG bit is checked, otherwise return.
 
-        <trigger>Otherwise</trigger> <transition>enter <ref_state id="3">SYN-RECEIVED</ref_state>,</transition> <action type=issue>form a <arg>SYN,ACK segment</arg></action>
+        Otherwise enter SYN-RECEIVED, form a SYN,ACK segment
 
-          <action><SEQ=ISS><ACK=RCV.NXT><CTL=SYN,ACK></action>
+          <SEQ=ISS><ACK=RCV.NXT><CTL=SYN,ACK>
 
-        and <action type=send>send <arg><ref_event type="send" id="7">it</ref_event></arg>.</action></control>  <control relevant="unsure"><trigger>If there are other controls or text in the
-        segment,</trigger> <action>queue them for processing after the <ref_state id="4">ESTABLISHED</ref_state> state
-        has been reached,</action> <action>return</action>.
+        and send it.  If there are other controls or text in the
+        segment, queue them for processing after the ESTABLISHED state
+        has been reached, return.
 
-      fifth, <control relevant="false"><trigger>if neither of the <ref_event type="receive" id="10">SYN</ref_event> or <ref_event type="receive" id="9">RST</ref_event> bits is set</trigger> then <action>drop the
-      segment</action> and <action>return.</action></control></control></control>
-
-
+      fifth, if neither of the SYN or RST bits is set then drop the
+      segment and return.
 
 
 
@@ -4240,10 +4238,12 @@ Functional Specification
 
 
 
-[Page 68]
+
+
+[Page 68]                                                               
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
                                                 Functional Specification
 SEGMENT ARRIVES
@@ -4254,14 +4254,14 @@ SEGMENT ARRIVES
 
     first check sequence number
 
-      <control relevant="true"><trigger><ref_state id="3">SYN-RECEIVED</ref_state> STATE
-      <ref_state id="4">ESTABLISHED</ref_state> STATE
-      <ref_state id="5">FIN-WAIT-1</ref_state> STATE
-      <ref_state id="6">FIN-WAIT-2</ref_state> STATE
-      <ref_state id="7">CLOSE-WAIT</ref_state> STATE
-      <ref_state id="8">CLOSING</ref_state> STATE
-      <ref_state id="9">LAST-ACK</ref_state> STATE
-      <ref_state id="10">TIME-WAIT</ref_state> STATE</trigger>
+      SYN-RECEIVED STATE
+      ESTABLISHED STATE
+      FIN-WAIT-1 STATE
+      FIN-WAIT-2 STATE
+      CLOSE-WAIT STATE
+      CLOSING STATE
+      LAST-ACK STATE
+      TIME-WAIT STATE
 
         Segments are processed in sequence.  Initial tests on arrival
         are used to discard old duplicates, but further processing is
@@ -4285,18 +4285,18 @@ SEGMENT ARRIVES
           >0      >0     RCV.NXT =< SEG.SEQ < RCV.NXT+RCV.WND
                       or RCV.NXT =< SEG.SEQ+SEG.LEN-1 < RCV.NXT+RCV.WND
 
-        <control relevant="true"><trigger>If the RCV.WND is zero,</trigger> <variable>no segments will be acceptable,</variable> but
+        If the RCV.WND is zero, no segments will be acceptable, but
         special allowance should be made to accept valid ACKs, URGs and
-        RSTs.</control>
+        RSTs.
 
-        <control relevant="unsure"><trigger>If an incoming segment is not acceptable,</trigger> <action type=send><arg>an acknowledgment</arg>
-        should be sent in reply</action> <trigger>(unless the <ref_event type="receive" id="9">RST</ref_event> bit is set, if so</trigger> <action>drop
-        the segment</action> and <action>return):</action>
+        If an incoming segment is not acceptable, an acknowledgment
+        should be sent in reply (unless the RST bit is set, if so drop
+        the segment and return):
 
-          <action><SEQ=SND.NXT><ACK=RCV.NXT><CTL=ACK></action></control>
+          <SEQ=SND.NXT><ACK=RCV.NXT><CTL=ACK>
 
-        <control relevant="unsure"><trigger>After sending the acknowledgment,</trigger> <action>drop the unacceptable segment</action>
-        and <action>return.</action></control>
+        After sending the acknowledgment, drop the unacceptable segment
+        and return.
 
 
                                                                [Page 69]
@@ -4315,53 +4315,53 @@ Functional Specification
         trimming off any portions that lie outside the window (including
         SYN and FIN), and only processing further if the segment then
         begins at RCV.NXT.  Segments with higher begining sequence
-        numbers may be held for later processing.</control>
+        numbers may be held for later processing.
 
     second check the RST bit,
 
-      <control relevant="true"><trigger><ref_state id="3">SYN-RECEIVED</ref_state> STATE</trigger>
+      SYN-RECEIVED STATE
 
-        <control relevant="true"><trigger>If the <ref_event type="receive" id="9">RST</ref_event> bit is set</trigger>
+        If the RST bit is set
 
-          <control relevant="true"><trigger>If this connection was initiated with a passive OPEN (i.e.,
-          came from the <ref_state id="1">LISTEN</ref_state> state),</trigger> then <transition>return this connection to
-          <ref_state id="1">LISTEN</ref_state> state</transition> and <action>return.</action>  The user need not be informed.</control>  <control relevant="true"><trigger>If
+          If this connection was initiated with a passive OPEN (i.e.,
+          came from the LISTEN state), then return this connection to
+          LISTEN state and return.  The user need not be informed.  If
           this connection was initiated with an active OPEN (i.e., came
-          from <ref_state id="2">SYN-SENT</ref_state> state)</trigger> then <error>the connection was refused, signal
-          the user "connection refused".</error></control>  <trigger>In either case,</trigger> <action>all segments
-          on the retransmission queue should be removed.</action>  And in the
-          active OPEN case, <transition>enter the <ref_state id="11">CLOSED</ref_state> state</transition> and <variable>delete the TCB,</variable>
-          and <action>return.</action></control></control>
+          from SYN-SENT state) then the connection was refused, signal
+          the user "connection refused".  In either case, all segments
+          on the retransmission queue should be removed.  And in the
+          active OPEN case, enter the CLOSED state and delete the TCB,
+          and return.
 
-      <control relevant="true"><trigger><ref_state id="4">ESTABLISHED</ref_state>
-      <ref_state id="5">FIN-WAIT-1</ref_state>
-      <ref_state id="6">FIN-WAIT-2</ref_state>
-      <ref_state id="7">CLOSE-WAIT</ref_state></trigger>
+      ESTABLISHED
+      FIN-WAIT-1
+      FIN-WAIT-2
+      CLOSE-WAIT
 
-        <control relevant="true"><trigger>If the <ref_event type="receive" id="9">RST</ref_event> bit is set then,</trigger> <action type=receive>any outstanding RECEIVEs and SEND
-        should receive <arg>"reset" responses.</arg></action>  <action>All segment queues should be
-        flushed.</action>  Users should also receive an unsolicited general
-        <error>"connection reset" signal.</error>  <transition>Enter the <ref_state id="11">CLOSED</ref_state> state,</transition> <variable>delete the
-        TCB,</variable> and <action>return.</action></control></control>
+        If the RST bit is set then, any outstanding RECEIVEs and SEND
+        should receive "reset" responses.  All segment queues should be
+        flushed.  Users should also receive an unsolicited general
+        "connection reset" signal.  Enter the CLOSED state, delete the
+        TCB, and return.
 
-      <control relevant="true"><trigger><ref_state id="8">CLOSING</ref_state> STATE
-      <ref_state id="9">LAST-ACK</ref_state> STATE
-      <ref_state id="10">TIME-WAIT</ref_state></trigger>
+      CLOSING STATE
+      LAST-ACK STATE
+      TIME-WAIT
 
-        <control relevant="true"><trigger>If the <ref_event type="receive" id="9">RST</ref_event> bit is set then,</trigger> <transition>enter the <ref_state id="11">CLOSED</ref_state> state,</transition> <variable>delete the
-        TCB</variable>, and <action>return.</action></control></control>
-
-
+        If the RST bit is set then, enter the CLOSED state, delete the
+        TCB, and return.
 
 
 
 
 
 
-[Page 70]
+
+
+[Page 70]                                                               
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
                                                 Functional Specification
 SEGMENT ARRIVES
@@ -4370,21 +4370,21 @@ SEGMENT ARRIVES
 
     third check security and precedence
 
-      <control relevant="true"><trigger><ref_state id="3">SYN-RECEIVED</ref_state></trigger>
+      SYN-RECEIVED
 
-        <control relevant="false"><trigger>If the security/compartment and precedence in the segment do not
-        exactly match the security/compartment and precedence in the TCB</trigger>
-        then <action type=send>send <arg>a <ref_event type="send" id="9">reset</ref_event>,</arg></action> and <action>return.</action></control></control>
+        If the security/compartment and precedence in the segment do not
+        exactly match the security/compartment and precedence in the TCB
+        then send a reset, and return.
 
-      <control relevant="true"><trigger><ref_state id="4">ESTABLISHED</ref_state> STATE</trigger>
+      ESTABLISHED STATE
 
-        <control relevant="true"><trigger>If the security/compartment and precedence in the segment do not
-        exactly match the security/compartment and precedence in the TCB</trigger>
-        then <action type=send>send <arg>a <ref_event type="send" id="9">reset</ref_event>,</arg></action> any outstanding RECEIVEs and SEND should
-        receive "reset" responses.  <action>All segment queues should be
-        flushed.</action>  <error>Users should also receive an unsolicited general
-        "connection reset" signal.</error>  <transition>Enter the <ref_state id="11">CLOSED</ref_state> state,</transition> <variable>delete the
-        TCB,</variable> and <action>return.</action></control></control>
+        If the security/compartment and precedence in the segment do not
+        exactly match the security/compartment and precedence in the TCB
+        then send a reset, any outstanding RECEIVEs and SEND should
+        receive "reset" responses.  All segment queues should be
+        flushed.  Users should also receive an unsolicited general
+        "connection reset" signal.  Enter the CLOSED state, delete the
+        TCB, and return.
 
       Note this check is placed following the sequence check to prevent
       a segment from an old connection between these ports with a
@@ -4393,24 +4393,24 @@ SEGMENT ARRIVES
 
     fourth, check the SYN bit,
 
-      <control relevant="true"><trigger><ref_state id="3">SYN-RECEIVED</ref_state>
-      <ref_state id="4">ESTABLISHED</ref_state> STATE
+      SYN-RECEIVED
+      ESTABLISHED STATE
       FIN-WAIT STATE-1
       FIN-WAIT STATE-2
-      <ref_state id="7">CLOSE-WAIT</ref_state> STATE
-      <ref_state id="8">CLOSING</ref_state> STATE
-      <ref_state id="9">LAST-ACK</ref_state> STATE
-      <ref_state id="10">TIME-WAIT</ref_state> STATE</trigger>
+      CLOSE-WAIT STATE
+      CLOSING STATE
+      LAST-ACK STATE
+      TIME-WAIT STATE
 
-        <control relevant="true"><trigger>If the <ref_event type="receive" id="10">SYN</ref_event> is in the window it is an error,</trigger> <action type=send>send a <arg><ref_event type="send" id="9">reset,</ref_event></arg></action> <action type=receive>any
-        outstanding RECEIVEs and SEND should receive <arg>"reset" responses,</arg></action>
-        <action>all segment queues should be flushed,</action> the user should also
-        receive an unsolicited general <error>"connection reset" signal,</error> <transition>enter
-        the <ref_state id="11">CLOSED</ref_state> state,</transition> <variable>delete the TCB,</variable> and <action>return.</action></control>
+        If the SYN is in the window it is an error, send a reset, any
+        outstanding RECEIVEs and SEND should receive "reset" responses,
+        all segment queues should be flushed, the user should also
+        receive an unsolicited general "connection reset" signal, enter
+        the CLOSED state, delete the TCB, and return.
 
         If the SYN is not in the window this step would not be reached
         and an ack would have been sent in the first step (sequence
-        number check).</control>
+        number check).
 
 
 
@@ -4429,44 +4429,44 @@ Functional Specification
 
     fifth check the ACK field,
 
-      <control relevant="false"><trigger>if the <ref_event type="receive" id="7">ACK</ref_event> bit is off</trigger> <action>drop the segment</action> and <action>return</action></control>
+      if the ACK bit is off drop the segment and return
 
-      <control relevant="true"><trigger>if the <ref_event type="receive" id="7">ACK</ref_event> bit is on</trigger>
+      if the ACK bit is on
 
-        <control relevant="true"><trigger><ref_state id="3">SYN-RECEIVED</ref_state> STATE</trigger>
+        SYN-RECEIVED STATE
 
-          <control relevant="true"><trigger>If SND.UNA =< SEG.ACK =< SND.NXT</trigger> then <transition>enter <ref_state id="4">ESTABLISHED</ref_state> state</transition>
+          If SND.UNA =< SEG.ACK =< SND.NXT then enter ESTABLISHED state
           and continue processing.
 
-            <control relevant="false"><trigger>If the segment acknowledgment is not acceptable,</trigger> <action type=issue>form a
-            <arg>reset segment,</arg></action>
+            If the segment acknowledgment is not acceptable, form a
+            reset segment,
 
-              <action><SEQ=SEG.ACK><CTL=RST></action>
+              <SEQ=SEG.ACK><CTL=RST>
 
-            and <action type=send>send it.</action></control></control></control></control>
+            and send it.
 
-        <control relevant="true"><trigger><ref_state id="4">ESTABLISHED</ref_state> STATE</trigger>
+        ESTABLISHED STATE
 
-          <control relevant="true"><trigger>If SND.UNA < SEG.ACK =< SND.NXT then,</trigger> <variable>set SND.UNA <- SEG.ACK.</variable>
-          <action>Any segments on the retransmission queue which are thereby
-          entirely acknowledged are removed.</action>  Users should receive
+          If SND.UNA < SEG.ACK =< SND.NXT then, set SND.UNA <- SEG.ACK.
+          Any segments on the retransmission queue which are thereby
+          entirely acknowledged are removed.  Users should receive
           positive acknowledgments for buffers which have been SENT and
           fully acknowledged (i.e., SEND buffer should be returned with
-          "ok" response).</control>  <control relevant="false"><trigger>If the ACK is a duplicate
-          (SEG.ACK < SND.UNA),</trigger> <action>it can be ignored.</action></control>  <control relevant="false"><trigger>If the ACK acks
-          something not yet sent (SEG.ACK > SND.NXT)</trigger> then <action type=send>send an <arg><ref_event type="send" id="7">ACK,</ref_event></arg></action>
-          <action>drop the segment,</action> and <action>return.</action></control>
+          "ok" response).  If the ACK is a duplicate
+          (SEG.ACK < SND.UNA), it can be ignored.  If the ACK acks
+          something not yet sent (SEG.ACK > SND.NXT) then send an ACK,
+          drop the segment, and return.
 
-          <control relevant="true"><trigger>If SND.UNA < SEG.ACK =< SND.NXT,</trigger> <action>the send window should be
-          updated.</action></control>  <control relevant="true"><trigger>If (SND.WL1 < SEG.SEQ or (SND.WL1 = SEG.SEQ and
-          SND.WL2 =< SEG.ACK)),</trigger> <variable>set SND.WND <- SEG.WND,</variable> <variable>set
-          SND.WL1 <- SEG.SEQ,</variable> and <variable>set SND.WL2 <- SEG.ACK.</variable></control>
+          If SND.UNA < SEG.ACK =< SND.NXT, the send window should be
+          updated.  If (SND.WL1 < SEG.SEQ or (SND.WL1 = SEG.SEQ and
+          SND.WL2 =< SEG.ACK)), set SND.WND <- SEG.WND, set
+          SND.WL1 <- SEG.SEQ, and set SND.WL2 <- SEG.ACK.
 
           Note that SND.WND is an offset from SND.UNA, that SND.WL1
           records the sequence number of the last segment used to update
           SND.WND, and that SND.WL2 records the acknowledgment number of
           the last segment used to update SND.WND.  The check here
-          prevents using old segments to update the window.</control>
+          prevents using old segments to update the window.
 
 
 
@@ -4476,21 +4476,21 @@ Functional Specification
 
 
 
-[Page 72]
+[Page 72]                                                               
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
                                                 Functional Specification
 SEGMENT ARRIVES
 
 
 
-        <control relevant="true"><trigger><ref_state id="5">FIN-WAIT-1</ref_state> STATE</trigger>
+        FIN-WAIT-1 STATE
 
-          In addition to the processing for the ESTABLISHED state, <control relevant="true"><trigger>if
-          our <ref_event type="receive" id="7">FIN is now acknowledged</ref_event></trigger> then <transition>enter <ref_state id="6">FIN-WAIT-2</ref_state></transition> and continue
-          processing in that state.</control></control>
+          In addition to the processing for the ESTABLISHED state, if
+          our FIN is now acknowledged then enter FIN-WAIT-2 and continue
+          processing in that state.
 
         FIN-WAIT-2 STATE
 
@@ -4502,36 +4502,36 @@ SEGMENT ARRIVES
 
           Do the same processing as for the ESTABLISHED state.
 
-        <control relevant="true"><trigger><ref_state id="8">CLOSING</ref_state> STATE</trigger>
+        CLOSING STATE
 
-          In addition to the processing for the ESTABLISHED state, <control relevant="true"><trigger>if
-          the <ref_event type="receive" id="7">ACK acknowledges our FIN</ref_event></trigger> then <transition>enter the <ref_state id="10">TIME-WAIT</ref_state> state,</transition>
-          <trigger>otherwise</trigger> <action>ignore the segment.</action></control></control>
+          In addition to the processing for the ESTABLISHED state, if
+          the ACK acknowledges our FIN then enter the TIME-WAIT state,
+          otherwise ignore the segment.
 
-        <control relevant="true"><trigger><ref_state id="9">LAST-ACK</ref_state> STATE</trigger>
+        LAST-ACK STATE
 
           The only thing that can arrive in this state is an
-          acknowledgment of our FIN.  <control relevant="true"><trigger>If our <ref_event type="receive" id="7">FIN is now acknowledged</ref_event>,</trigger>
-          <variable>delete the TCB,</variable> <transition>enter the <ref_state id="11">CLOSED</ref_state> state,</transition> and <action>return.</action></control></control>
+          acknowledgment of our FIN.  If our FIN is now acknowledged,
+          delete the TCB, enter the CLOSED state, and return.
 
-        <control relevant="true"><trigger><ref_state id="10">TIME-WAIT</ref_state> STATE</trigger>
+        TIME-WAIT STATE
 
           The only thing that can arrive in this state is a
-          retransmission of the remote FIN.  Acknowledge it, and <timer>restart
-          the 2 MSL timeout.</timer></control>
+          retransmission of the remote FIN.  Acknowledge it, and restart
+          the 2 MSL timeout.
 
     sixth, check the URG bit,
 
-      <control relevant="true"><trigger><ref_state id="4">ESTABLISHED</ref_state> STATE
-      <ref_state id="5">FIN-WAIT-1</ref_state> STATE
-      <ref_state id="6">FIN-WAIT-2</ref_state> STATE</trigger>
+      ESTABLISHED STATE
+      FIN-WAIT-1 STATE
+      FIN-WAIT-2 STATE
 
-        <control relevant="true"><trigger>If the URG bit is set,</trigger> <variable>RCV.UP <- max(RCV.UP,SEG.UP),</variable></control> and signal
+        If the URG bit is set, RCV.UP <- max(RCV.UP,SEG.UP), and signal
         the user that the remote side has urgent data if the urgent
         pointer (RCV.UP) is in advance of the data consumed.  If the
         user has already been signaled (or is still in the "urgent
         mode") for this continuous sequence of urgent data, do not
-        signal the user again.</control>
+        signal the user again.
 
 
 
@@ -4557,7 +4557,7 @@ Functional Specification
 
       ESTABLISHED STATE
       FIN-WAIT-1 STATE
-      <ref_state id="6">FIN-WAIT-2</ref_state> STATE
+      FIN-WAIT-2 STATE
 
         Once in the ESTABLISHED state, it is possible to deliver segment
         text to user RECEIVE buffers.  Text from segments can be moved
@@ -4594,10 +4594,10 @@ Functional Specification
 
 
 
-[Page 74]
+[Page 74]                                                               
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
                                                 Functional Specification
 SEGMENT ARRIVES
@@ -4618,39 +4618,39 @@ SEGMENT ARRIVES
       since the SEG.SEQ cannot be validated; drop the segment and
       return.
 
-      <control relevant="true"><trigger>If the <ref_event type="receive" id="11">FIN</ref_event> bit is set,</trigger> <error>signal the user "connection closing"</error> and
-      <action>return any pending RECEIVEs with same message,</action> <action>advance RCV.NXT
-      over the FIN,</action> and <action type=send>send <arg> <ref_event type="send" id="7">an acknowledgment for the FIN</ref_event>.</arg></action>  Note that
+      If the FIN bit is set, signal the user "connection closing" and
+      return any pending RECEIVEs with same message, advance RCV.NXT
+      over the FIN, and send an acknowledgment for the FIN.  Note that
       FIN implies PUSH for any segment text not yet delivered to the
       user.
 
-        <control relevant="true"><trigger><ref_state id="3">SYN-RECEIVED</ref_state> STATE
-        <ref_state id="4">ESTABLISHED</ref_state> STATE</trigger>
+        SYN-RECEIVED STATE
+        ESTABLISHED STATE
 
-          <transition>Enter the <ref_state id="7">CLOSE-WAIT</ref_state> state.</transition></control>
+          Enter the CLOSE-WAIT state.
 
-        <control relevant="true"><trigger><ref_state id="5">FIN-WAIT-1</ref_state> STATE</trigger>
+        FIN-WAIT-1 STATE
 
-          <control relevant="true"><trigger>If our FIN has been <ref_event type="receive" id="7">ACKed</ref_event> (perhaps in this segment),</trigger> then
-          <transition>enter <ref_state id="10">TIME-WAIT</ref_state>,</transition> <timer>start the time-wait timer,</timer> <timer>turn off the other
-          timers;</timer> <trigger>otherwise</trigger> <transition>enter the <ref_state id="8">CLOSING</ref_state> state.</transition></control></control>
+          If our FIN has been ACKed (perhaps in this segment), then
+          enter TIME-WAIT, start the time-wait timer, turn off the other
+          timers; otherwise enter the CLOSING state.
 
-        <control relevant="true"><trigger><ref_state id="6">FIN-WAIT-2</ref_state> STATE</trigger>
+        FIN-WAIT-2 STATE
 
-          <transition>Enter the <ref_state id="10">TIME-WAIT</ref_state> state.</transition>  <timer>Start the time-wait timer,</timer> <timer>turn
-          off the other timers.</timer></control>
+          Enter the TIME-WAIT state.  Start the time-wait timer, turn
+          off the other timers.
 
-        <control relevant="true"><trigger><ref_state id="7">CLOSE-WAIT</ref_state> STATE</trigger>
+        CLOSE-WAIT STATE
 
-          <transition>Remain in the <ref_state id="7">CLOSE-WAIT</ref_state> state.</transition></control>
+          Remain in the CLOSE-WAIT state.
 
-        <control relevant="true"><trigger><ref_state id="8">CLOSING</ref_state> STATE</trigger>
+        CLOSING STATE
 
-          <transition>Remain in the <ref_state id="8">CLOSING</ref_state> state.</transition></control>
+          Remain in the CLOSING state.
 
-        <control relevant="true"><trigger><ref_state id="9">LAST-ACK</ref_state> STATE</trigger>
+        LAST-ACK STATE
 
-          <transition>Remain in the <ref_state id="9">LAST-ACK</ref_state> state.</transition></control>
+          Remain in the LAST-ACK state.
 
 
                                                                [Page 75]
@@ -4663,14 +4663,12 @@ Functional Specification
 
 
 
-        <control relevant="true"><trigger><ref_state id="10">TIME-WAIT</ref_state> STATE</trigger>
+        TIME-WAIT STATE
 
-          <transition>Remain in the <ref_state id="10">TIME-WAIT</ref_state> state.</transition>  <timer>Restart the 2 MSL time-wait
-          timeout.</timer></control>
+          Remain in the TIME-WAIT state.  Restart the 2 MSL time-wait
+          timeout.
 
-    and <action>return.</action></control>
-
-
+    and return.
 
 
 
@@ -4712,36 +4710,38 @@ Functional Specification
 
 
 
-[Page 76]
+
+
+[Page 76]                                                               
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
                                                 Functional Specification
 USER TIMEOUT
 
 
 
-  <control relevant="true"><trigger>USER TIMEOUT</trigger>
+  USER TIMEOUT
 
-    For any state <control relevant="true"><trigger>if the user timeout expires,</trigger> <action>flush all queues,</action> <error>signal
-    the user "error:  connection aborted due to user timeout"</error> in general
-    and for any outstanding calls, <variable>delete the TCB,</variable> <transition>enter the <ref_state id="11">CLOSED</ref_state>
-    state</transition> and <action>return.</action></control></control>
+    For any state if the user timeout expires, flush all queues, signal
+    the user "error:  connection aborted due to user timeout" in general
+    and for any outstanding calls, delete the TCB, enter the CLOSED
+    state and return.
 
-  <control relevant="true"><trigger>RETRANSMISSION TIMEOUT</trigger>
+  RETRANSMISSION TIMEOUT
 
-    For any state <control relevant="true"><trigger>if the retransmission timeout expires on a segment in
-    the retransmission queue,</trigger> <action type=send>send <arg>the segment at the front of the
-    retransmission queue</arg> again,</action> <timer>reinitialize the retransmission timer,</timer>
-    and <action>return.</action></control></control>
+    For any state if the retransmission timeout expires on a segment in
+    the retransmission queue, send the segment at the front of the
+    retransmission queue again, reinitialize the retransmission timer,
+    and return.
 
-  <control relevant="true"><trigger>TIME-WAIT TIMEOUT</trigger>
+  TIME-WAIT TIMEOUT
 
-    <control relevant="true"><trigger>If the time-wait timeout expires on a connection</trigger> <variable>delete the TCB,</variable>
-    <transition>enter the <ref_state id="11">CLOSED</ref_state> state</transition> and <action>return.</action></control></control>
+    If the time-wait timeout expires on a connection delete the TCB,
+    enter the CLOSED state and return.
 
-
+   
 
 
 
@@ -4830,10 +4830,10 @@ Transmission Control Protocol
 
 
 
-[Page 78]
+[Page 78]                                                               
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
 
 
@@ -4948,10 +4948,10 @@ leader
 
 
 
-[Page 80]
+[Page 80]                                                               
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
                                                                 Glossary
 
@@ -5066,10 +5066,10 @@ SEG.UP
 
 
 
-[Page 82]
+[Page 82]                                                               
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
                                                                 Glossary
 
@@ -5180,14 +5180,14 @@ urgent pointer
           indicates the data octet associated with the sending user's
           urgent call.
 
+          
 
 
 
-
-[Page 84]
+[Page 84]                                                               
 
 
-September 1981
+September 1981                                                          
                                            Transmission Control Protocol
 
 

@@ -1,0 +1,15 @@
+  Reset Processing
+
+  <control relevant="true"><trigger>In all states except <ref_state id="2">SYN-SENT</ref_state>,</trigger> <action>all reset (RST) segments are validated
+  by checking their SEQ-fields.</action>  <control relevant="true">A reset is valid <trigger>if its sequence number
+  is in the window.</trigger></control></control>  <control relevant="true"><trigger>In the <ref_state id="2">SYN-SENT</ref_state> state</trigger> (a <ref_event type="receive" id="9">RST</ref_event> received in response
+  to an initial SYN), <control relevant="true">the RST is acceptable <trigger>if the <ref_event type="receive" id="7">ACK</ref_event> field
+  acknowledges the SYN.</trigger></control></control>
+
+  <control relevant="true"><trigger>The receiver of a <ref_event type="receive" id="9">RST</ref_event></trigger> first validates it, then changes state.  <control relevant="true"><trigger>If the
+  receiver was in the <ref_state id="1">LISTEN</ref_state> state,</trigger> <action>it ignores it.</action>  <control relevant="true"><trigger>If the receiver was
+  in <ref_state id="3">SYN-RECEIVED</ref_state> state and had previously been in the <ref_state id="1">LISTEN</ref_state> state,</trigger>
+  then <transition>the receiver returns to the <ref_state id="1">LISTEN</ref_state> state,</transition> <control relevant="true"><trigger>otherwise</trigger> <action>the receiver
+  aborts the connection</action> and <transition>goes to the <ref_state id="11">CLOSED</ref_state> state.</transition></control>  <control relevant="true"><trigger>If the receiver
+  was in any other state,</trigger> <action>it aborts the connection</action> and advises the user
+  and <transition>goes to the <ref_state id="11">CLOSED</ref_state> state.</transition></control></control></control></control>

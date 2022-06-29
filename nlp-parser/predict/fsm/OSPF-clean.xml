@@ -1,0 +1,64 @@
+<p><def_state id="1">down</def_state>
+<def_state id="2">loopback</def_state>
+<def_state id="3">waiting</def_state>
+<def_state id="4">point-to-point</def_state>
+<def_state id="5">dr other</def_state>
+<def_state id="6">backup</def_state>
+<def_state id="7">dr</def_state>
+<def_event id="1">interfaceup</def_event>
+<def_event id="2">waittimer</def_event>
+<def_event id="3">backupseen</def_event>
+<def_event id="4">neighborchange</def_event>
+<def_event id="5">loopind</def_event>
+<def_event id="6">unloopind</def_event>
+<def_event id="7">interfacedown</def_event>
+<control relevant="true">
+<trigger>state ( s ) : <ref_state id="1">down</ref_state> event : <ref_event id="1" type="receive">interfaceup</ref_event> new state : depends upon action routine action : start the interval hello timer , </trigger>
+<trigger>enabling the periodic sending of hello packets out the interface . </trigger>
+<trigger>if the attached network is a physical <ref_state id="4">point-to-point</ref_state> network , </trigger>
+<trigger>point-to-multipoint network or virtual link , </trigger>
+<transition>the interface state transitions to point-to- point . </transition>
+<error>else , </error>
+<transition>if the router is not eligible to become designated router the interface state transitions to <ref_state id="7">dr</ref_state> other . </transition>
+<trigger>otherwise , </trigger>
+<trigger>the attached network is a broadcast or nbma network and the router is eligible to become designated router . </trigger>in this case ,
+<transition>in an attempt to discover the attached network 's designated router the interface state is set to <ref_state id="3">waiting</ref_state> and the single shot wait timer is started . </transition>
+<trigger>additionally , </trigger>
+<action type="issue">if the network is an nbma network examine the configured list of neighbors for this interface and generate <arg> the neighbor event start for each neighbor that is also eligible to become designated router </arg> . </action>
+</control>
+<control relevant="true">
+<trigger>state ( s ) : <ref_state id="3">waiting</ref_state> event : <ref_event id="3" type="receive">backupseen</ref_event> new state : depends upon action routine . </trigger>
+<trigger>action : calculate the attached network 's <ref_state id="6">backup</ref_state> designated router and designated router , </trigger>as shown in section 9.4 .
+<trigger>as a result of this calculation , </trigger>
+<trigger>the new state of the interface will be either <ref_state id="7">dr</ref_state> other , </trigger>
+<trigger><ref_state id="6">backup</ref_state> or <ref_state id="7">dr</ref_state> . </trigger>
+</control>
+<control relevant="true">
+<trigger>state ( s ) : <ref_state id="3">waiting</ref_state> event : <ref_event id="2" type="receive">waittimer</ref_event> new state : depends upon action routine . </trigger>
+<trigger>action : calculate the attached network 's <ref_state id="6">backup</ref_state> designated router and designated router , </trigger>as shown in section 9.4 .
+<trigger>as a result of this calculation , </trigger>
+<trigger>the new state of the interface will be either <ref_state id="7">dr</ref_state> other , </trigger>
+<trigger><ref_state id="6">backup</ref_state> or <ref_state id="7">dr</ref_state> . </trigger>
+</control>
+<control relevant="true">
+<trigger>state ( s ) : <ref_state id="7">dr</ref_state> other , </trigger>
+<trigger><ref_state id="6">backup</ref_state> or <ref_state id="7">dr</ref_state> event : <ref_event id="4" type="receive">neighborchange</ref_event> new state : depends upon action routine . </trigger>
+<trigger>action : recalculate the attached network 's <ref_state id="6">backup</ref_state> designated router and designated router , </trigger>as shown in section 9.4 .
+<trigger>as a result of this calculation , </trigger>
+<trigger>the new state of the interface will be either <ref_state id="7">dr</ref_state> other , </trigger>
+<trigger><ref_state id="6">backup</ref_state> or <ref_state id="7">dr</ref_state> . </trigger>
+</control>
+<control relevant="true">
+<trigger>state ( s ) : any state event : <ref_event id="7" type="receive">interfacedown</ref_event> new state : <ref_state id="1">down</ref_state> action : all interface variables are reset , </trigger>
+<timer>and interface timers disabled . </timer>also ,
+<action type="receive">all neighbor connections associated with the interface are destroyed . </action>
+<action type="issue">this is done by generating <arg> the event killnbr </arg> on all associated neighbors ( see section 10.2 ) . </action>
+</control>
+<control relevant="true">
+<transition>state ( s ) : any state event : <ref_event id="5" type="None">loopind</ref_event> new state : <ref_state id="2">loopback</ref_state> action : since this interface is no longer connected to the attached network the actions associated with the above <ref_event id="7" type="None">interfacedown</ref_event> event are executed . </transition>
+</control>
+<control relevant="true">
+<trigger>state ( s ) : <ref_state id="2">loopback</ref_state> event : <ref_event id="6" type="receive">unloopind</ref_event> new state : <ref_state id="1">down</ref_state> action : no actions are necessary . </trigger>for example ,
+<transition>the interface variables have already been reset upon entering the <ref_state id="2">loopback</ref_state> state . </transition>
+</control>
+</p>

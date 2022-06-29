@@ -14,7 +14,7 @@ from fsmUtils         import FSM
 from xmlUtils         import *
 from printUtils       import printTransition, printHeuristicRemoval
 from testConstants    import *
-from testPromelaModel import *
+# from testPromelaModel import *
 
 # INPUT:
 #     we expect only a single argument, namely the path to the rfc .txt file
@@ -32,6 +32,7 @@ def main(writepromela=True, writepng=True):
 
     states  = [cleanUp(s) for s in S]
     initial = cleanUp(s0)
+    # initial = cleanUp(states[s0])
 
     promela_convenience = lambda x : "timeout" if x == "timeout" else x.upper()
 
@@ -111,31 +112,32 @@ def main(writepromela=True, writepng=True):
            DCCP_msgs() if "DCCP" in name else \
            None
 
-    result = FSM(states,                    \
-                 initial,                   \
-                 transitions,               \
-                 labeled=True,              \
-                 removedLines=removedLines, \
+    result = FSM(states,
+                 initial,
+                 transitions,
+                 labeled=True,
+                 removedLines=removedLines,
                  msgs=msgs)
 
-    if "TCP" in name:
-        result.save(writepng, writepromela, name, 2, TCPtranFilterHonest)
-        testTCP(result, TCPtranFilterHonest)
-        auto_evaluate_TCP_pml(name + ".pml")
-        if writepromela:
-            result.save(False, True, name,              2, TCPtranFilterHonest)
-            TCP().save( False, True, name + "_CORRECT", 2, TCPtranFilterHonest)
-    
-    elif "DCCP" in name:
-        result.save(writepng, writepromela, name, 2)
-        testDCCP(result)
-        auto_evaluate_DCCP_pml(name + ".pml")
-        if writepromela:
-            result.save(False, True, name, 2)
-            DCCP().save(False, True, name + "_CORRECT", 2)
-    
-    else:
-        result.save(writepng, writepromela, name)
+    result.save(writepng, writepromela, name)
+    # if "TCP" in name:
+    #     result.save(writepng, writepromela, name, 2, TCPtranFilterHonest)
+    #     testTCP(result, TCPtranFilterHonest)
+    #     # auto_evaluate_TCP_pml(name + ".pml")
+    #     if writepromela:
+    #         result.save(False, True, name,              2, TCPtranFilterHonest)
+    #         TCP().save( False, True, name + "_CORRECT", 2, TCPtranFilterHonest)
+    #
+    # elif "DCCP" in name:
+    #     result.save(writepng, writepromela, name, 2)
+    #     testDCCP(result)
+    #     # auto_evaluate_DCCP_pml(name + ".pml")
+    #     if writepromela:
+    #         result.save(False, True, name, 2)
+    #         DCCP().save(False, True, name + "_CORRECT", 2)
+    #
+    # else:
+    #     result.save(writepng, writepromela, name)
 
 if __name__ == "__main__":
     main()

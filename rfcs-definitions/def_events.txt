@@ -4,7 +4,7 @@ BGPv4	AutomaticStart	3
 BGPv4	ManualStart_with_PassiveTcpEstablishment	4
 BGPv4	AutomaticStart_with_PassiveTcpEstablishment	5
 BGPv4	AutomaticStart_with_DampPeerOscillations	6
-BGPv4	AutomaticStart_with_DampPeerOscillations_and_       PassiveTcpEstablishment	7
+BGPv4	AutomaticStart_with_DampPeerOscillations_and_PassiveTcpEstablishment	7
 BGPv4	AutomaticStop	8
 BGPv4	ConnectRetryTimer_Expires	9
 BGPv4	HoldTimer_Expires	10
@@ -62,3 +62,16 @@ TCP	SEGMENT ARRIVES	12
 TCP	USER TIMEOUT	13
 TCP	RETRANSMISSION TIMEOUT	14
 TCP	TIME-WAIT TIMEOUT	15
+ISIS	ESH PDU	1
+ISIS	ISH PDU	2
+ISIS	IIH PDU	3
+ISIS	Level n LAN IIH PDUs	4
+ISIS	Level 1 LAN IIH PDU	5
+ISIS	Level 2 LAN IIH PDU	6
+OSPF	InterfaceUp	1
+OSPF	WaitTimer	2
+OSPF	BackupSeen	3
+OSPF	NeighborChange	4
+OSPF	LoopInd	5
+OSPF	UnloopInd	6
+OSPF	InterfaceDown	7

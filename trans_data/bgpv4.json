@@ -1,0 +1,344 @@
+[
+  {
+    "text": "   Idle State:\n\n      Initially, the BGP peer FSM is in the Idle state.  Hereafter, the\n      BGP peer FSM will be shortened to BGP FSM.\n\n      In this state, BGP FSM refuses all incoming BGP connections for\n      this peer.  No resources are allocated to the peer.  In response\n      to a ManualStart event (Event 1) or an AutomaticStart event (Event\n      3), the local system:\n        - initializes all BGP resources for the peer connection,\n        - sets ConnectRetryCounter to zero,\n        - starts the ConnectRetryTimer with the initial value,\n        - initiates a TCP connection to the other BGP peer,\n        - listens for a connection that may be initiated by the remote\n          BGP peer, and\n        - changes its state to Connect.\n\n      The ManualStop event (Event 2) and AutomaticStop (Event 8) event\n      are ignored in the Idle state.\n\n      In response to a ManualStart_with_PassiveTcpEstablishment event\n      (Event 4) or AutomaticStart_with_PassiveTcpEstablishment event\n      (Event 5), the local system:\n        - initializes all BGP resources,\n        - sets the ConnectRetryCounter to zero,\n        - starts the ConnectRetryTimer with the initial value,\n        - listens for a connection that may be initiated by the remote\n          peer, and\n        - changes its state to Active.\n\n      The exact value of the ConnectRetryTimer is a local matter, but it\n      SHOULD be sufficiently large to allow TCP initialization.\n\n      If the DampPeerOscillations attribute is set to TRUE, the\n      following three additional events may occur within the Idle state:\n        - AutomaticStart_with_DampPeerOscillations (Event 6),\n        - AutomaticStart_with_DampPeerOscillations_and_\n          PassiveTcpEstablishment (Event 7),\n        - IdleHoldTimer_Expires (Event 13).\n\n      Upon receiving these 3 events, the local system will use these\n      events to prevent peer oscillations.  The method of preventing\n      persistent peer oscillation is outside the scope of this document.\n\n      Any other event (Events 9-12, 15-28) received in the Idle state\n      does not cause change in the state of the local system.\n\n\n",
+    "cur_state": "Idle",
+    "transition": [
+      {
+        "text": "In this state, BGP FSM refuses all incoming BGP connections for this peer.  No resources are allocated to the peer.  In response to a ManualStart event (Event 1) or an AutomaticStart event (Event 3), the local system: - initializes all BGP resources for the peer connection, - sets ConnectRetryCounter to zero, - starts the ConnectRetryTimer with the initial value, - initiates a TCP connection to the other BGP peer, - listens for a connection that may be initiated by the remote BGP peer, and - changes its state to Connect. ",
+        "cur_state": "Idle",
+        "event": "ManualStart\nAutomaticStart",
+        "new_state": "Connect"
+      },
+      {
+        "text": "In response to a ManualStart_with_PassiveTcpEstablishment event (Event 4) or AutomaticStart_with_PassiveTcpEstablishment event (Event 5), the local system: - initializes all BGP resources, - sets the ConnectRetryCounter to zero, - starts the ConnectRetryTimer with the initial value, - listens for a connection that may be initiated by the remote peer, and - changes its state to Active. ",
+        "cur_state": "Idle",
+        "event": "ManualStart_with_PassiveTcpEstablishment\nAutomaticStart_with_PassiveTcpEstablishment",
+        "new_state": "Active"
+      }
+    ]
+  },
+  {
+    "text": "   Connect State:\n\n      In this state, BGP FSM is waiting for the TCP connection to be\n      completed.\n\n      The start events (Events 1, 3-7) are ignored in the Connect state.\n\n      In response to a ManualStop event (Event 2), the local system:\n        - drops the TCP connection,\n        - releases all BGP resources,\n        - sets ConnectRetryCounter to zero,\n        - stops the ConnectRetryTimer and sets ConnectRetryTimer to\n          zero, and\n        - changes its state to Idle.\n\n      In response to the ConnectRetryTimer_Expires event (Event 9), the\n      local system:\n        - drops the TCP connection,\n        - restarts the ConnectRetryTimer,\n        - stops the DelayOpenTimer and resets the timer to zero,\n        - initiates a TCP connection to the other BGP peer,\n        - continues to listen for a connection that may be initiated by\n          the remote BGP peer, and\n        - stays in the Connect state.\n\n      If the DelayOpenTimer_Expires event (Event 12) occurs in the\n      Connect state, the local system:\n        - sends an OPEN message to its peer,\n        - sets the HoldTimer to a large value, and\n        - changes its state to OpenSent.\n\n      If the BGP FSM receives a TcpConnection_Valid event (Event 14),\n      the TCP connection is processed, and the connection remains in the\n      Connect state.\n\n      If the BGP FSM receives a Tcp_CR_Invalid event (Event 15), the\n      local system rejects the TCP connection, and the connection\n      remains in the Connect state.\n\n      If the TCP connection succeeds (Event 16 or Event 17), the local\n      system checks the DelayOpen attribute prior to processing.  If the\n      DelayOpen attribute is set to TRUE, the local system:\n        - stops the ConnectRetryTimer (if running) and sets the\n          ConnectRetryTimer to zero,\n        - sets the DelayOpenTimer to the initial value, and\n        - stays in the Connect state.\n\n      If the DelayOpen attribute is set to FALSE, the local system:\n        - stops the ConnectRetryTimer (if running) and sets the\n          ConnectRetryTimer to zero,\n        - completes BGP initialization\n        - sends an OPEN message to its peer,\n        - sets the HoldTimer to a large value, and\n        - changes its state to OpenSent.\n\n      A HoldTimer value of 4 minutes is suggested.\n\n      If the TCP connection fails (Event 18), the local system checks\n      the DelayOpenTimer.  If the DelayOpenTimer is running, the local\n      system:\n        - restarts the ConnectRetryTimer with the initial value,\n        - stops the DelayOpenTimer and resets its value to zero,\n        - continues to listen for a connection that may be initiated by\n          the remote BGP peer, and\n        - changes its state to Active.\n\n      If the DelayOpenTimer is not running, the local system:\n        - stops the ConnectRetryTimer to zero,\n        - drops the TCP connection,\n        - releases all BGP resources, and\n        - changes its state to Idle.\n\n      If an OPEN message is received while the DelayOpenTimer is running\n      (Event 20), the local system:\n        - stops the ConnectRetryTimer (if running) and sets the\n          ConnectRetryTimer to zero,\n        - completes the BGP initialization,\n        - stops and clears the DelayOpenTimer (sets the value to zero),\n        - sends an OPEN message,\n        - sends a KEEPALIVE message,\n        - if the HoldTimer initial value is non-zero,\n            - starts the KeepaliveTimer with the initial value and\n            - resets the HoldTimer to the negotiated value,\n          else, if the HoldTimer initial value is zero,\n            - resets the KeepaliveTimer and\n            - resets the HoldTimer value to zero,\n        - and changes its state to OpenConfirm.\n\n      If the value of the autonomous system field is the same as the\n      local Autonomous System number, set the connection status to an\n      internal connection; otherwise it will be \"external\".\n\n      If BGP message header checking (Event 21) or OPEN message checking\n      detects an error (Event 22) (see Section 6.2), the local system:\n        - (optionally) If the SendNOTIFICATIONwithoutOPEN attribute is\n          set to TRUE, then the local system first sends a NOTIFICATION\n          message with the appropriate error code, and then\n        - stops the ConnectRetryTimer (if running) and sets the\n          ConnectRetryTimer to zero,\n        - releases all BGP resources,\n        - drops the TCP connection,\n        - increments the ConnectRetryCounter by 1,\n        - (optionally) performs peer oscillation damping if the\n          DampPeerOscillations attribute is set to TRUE, and\n        - changes its state to Idle.\n\n      If a NOTIFICATION message is received with a version error (Event\n      24), the local system checks the DelayOpenTimer.  If the\n      DelayOpenTimer is running, the local system:\n        - stops the ConnectRetryTimer (if running) and sets the\n          ConnectRetryTimer to zero,\n        - stops and resets the DelayOpenTimer (sets to zero),\n        - releases all BGP resources,\n        - drops the TCP connection, and\n        - changes its state to Idle.\n\n      If the DelayOpenTimer is not running, the local system:\n        - stops the ConnectRetryTimer and sets the ConnectRetryTimer to\n          zero,\n        - releases all BGP resources,\n        - drops the TCP connection,\n        - increments the ConnectRetryCounter by 1,\n        - performs peer oscillation damping if the DampPeerOscillations\n          attribute is set to True, and\n        - changes its state to Idle.\n\n      In response to any other events (Events 8, 10-11, 13, 19, 23,\n      25-28), the local system:\n        - if the ConnectRetryTimer is running, stops and resets the\n          ConnectRetryTimer (sets to zero),\n        - if the DelayOpenTimer is running, stops and resets the\n          DelayOpenTimer (sets to zero),\n        - releases all BGP resources,\n        - drops the TCP connection,\n        - increments the ConnectRetryCounter by 1,\n        - performs peer oscillation damping if the DampPeerOscillations\n          attribute is set to True, and\n        - changes its state to Idle.\n\n\n",
+    "cur_state": "Connect",
+    "transition": [
+      {
+        "text": "In response to a ManualStop event (Event 2), the local system: - drops the TCP connection, - releases all BGP resources, - sets ConnectRetryCounter to zero, - stops the ConnectRetryTimer and sets ConnectRetryTimer to zero, and - changes its state to Idle. ",
+        "cur_state": "Connect",
+        "event": "ManualStop",
+        "new_state": "Idle"
+      },
+      {
+        "text": "In response to the ConnectRetryTimer_Expires event (Event 9), the local system: - drops the TCP connection, - restarts the ConnectRetryTimer, - stops the DelayOpenTimer and resets the timer to zero, - initiates a TCP connection to the other BGP peer, - continues to listen for a connection that may be initiated by the remote BGP peer, and - stays in the Connect state. ",
+        "cur_state": "Connect",
+        "event": "ConnectRetryTimer_Expires",
+        "new_state": "Connect"
+      },
+      {
+        "text": "If the DelayOpenTimer_Expires event (Event 12) occurs in the Connect state, the local system: - sends an OPEN message to its peer, - sets the HoldTimer to a large value, and - changes its state to OpenSent. ",
+        "cur_state": "Connect",
+        "event": "DelayOpenTimer_Expires",
+        "new_state": "OpenSent"
+      },
+      {
+        "text": "If the BGP FSM receives a TcpConnection_Valid event (Event 14), the TCP connection is processed, and the connection remains in the Connect state. ",
+        "cur_state": "Connect",
+        "event": "TcpConnection_Valid",
+        "new_state": "Connect"
+      },
+      {
+        "text": "If the BGP FSM receives a Tcp_CR_Invalid event (Event 15), the local system rejects the TCP connection, and the connection remains in the Connect state. ",
+        "cur_state": "Connect",
+        "event": "Tcp_CR_Invalid",
+        "new_state": "Connect"
+      },
+      {
+        "text": "If the TCP connection succeeds (Event 16 or Event 17), the local system checks the DelayOpen attribute prior to processing.  If the DelayOpen attribute is set to TRUE, the local system: - stops the ConnectRetryTimer (if running) and sets the ConnectRetryTimer to zero, - sets the DelayOpenTimer to the initial value, and - stays in the Connect state. ",
+        "cur_state": "Connect",
+        "event": "Tcp_CR_Acked\nTcpConnectionConfirmed",
+        "new_state": "Connect"
+      },
+      {
+        "text": "If the TCP connection fails (Event 18), the local system checks the DelayOpenTimer.  If the DelayOpenTimer is running, the local system: - restarts the ConnectRetryTimer with the initial value, - stops the DelayOpenTimer and resets its value to zero, - continues to listen for a connection that may be initiated by the remote BGP peer, and - changes its state to Active. ",
+        "cur_state": "Connect",
+        "event": "TcpConnectionFails",
+        "new_state": "Active"
+      },
+      {
+        "text": "If an OPEN message is received while the DelayOpenTimer is running (Event 20), the local system: - stops the ConnectRetryTimer (if running) and sets the ConnectRetryTimer to zero, - completes the BGP initialization, - stops and clears the DelayOpenTimer (sets the value to zero), - sends an OPEN message, - sends a KEEPALIVE message, - if the HoldTimer initial value is non-zero, - starts the KeepaliveTimer with the initial value and - resets the HoldTimer to the negotiated value, else, if the HoldTimer initial value is zero, - resets the KeepaliveTimer and - resets the HoldTimer value to zero, - and changes its state to OpenConfirm. ",
+        "cur_state": "Connect",
+        "event": "BGPOpen with DelayOpenTimer running",
+        "new_state": "OpenConfirm"
+      },
+      {
+        "text": "If BGP message header checking (Event 21) or OPEN message checking detects an error (Event 22) (see Section 6.2), the local system: - (optionally) If the SendNOTIFICATIONwithoutOPEN attribute is set to TRUE, then the local system first sends a NOTIFICATION message with the appropriate error code, and then - stops the ConnectRetryTimer (if running) and sets the ConnectRetryTimer to zero, - releases all BGP resources, - drops the TCP connection, - increments the ConnectRetryCounter by 1, - (optionally) performs peer oscillation damping if the DampPeerOscillations attribute is set to TRUE, and - changes its state to Idle. ",
+        "cur_state": "Connect",
+        "event": "BGPHeaderErr\nBGPOpenMsgErr",
+        "new_state": "Idle"
+      },
+      {
+        "text": "If a NOTIFICATION message is received with a version error (Event 24), the local system checks the DelayOpenTimer.  If the DelayOpenTimer is running, the local system: - stops the ConnectRetryTimer (if running) and sets the ConnectRetryTimer to zero, - stops and resets the DelayOpenTimer (sets to zero), - releases all BGP resources, - drops the TCP connection, and - changes its state to Idle. ",
+        "cur_state": "Connect",
+        "event": "NotifMsgVerErr",
+        "new_state": "Idle"
+      },
+      {
+        "text": "In response to any other events (Events 8, 10-11, 13, 19, 23, 25-28), the local system: - if the ConnectRetryTimer is running, stops and resets the ConnectRetryTimer (sets to zero), - if the DelayOpenTimer is running, stops and resets the DelayOpenTimer (sets to zero), - releases all BGP resources, - drops the TCP connection, - increments the ConnectRetryCounter by 1, - performs peer oscillation damping if the DampPeerOscillations attribute is set to True, and - changes its state to Idle. ",
+        "cur_state": "Connect",
+        "event": "AutomaticStop\nHoldTimer_Expires\nKeepaliveTimer_Expires\nIdleHoldTimer_Expires\nBGPOpen\nOpenCollisionDump\nNotifMsg\nKeepAliveMsg\nUpdateMsg\nUpdateMsgErr",
+        "new_state": "Idle"
+      }
+    ]
+  },
+  {
+    "text": "   Active State:\n\n      In this state, BGP FSM is trying to acquire a peer by listening\n      for, and accepting, a TCP connection.\n\n      The start events (Events 1, 3-7) are ignored in the Active state.\n\n      In response to a ManualStop event (Event 2), the local system:\n        - If the DelayOpenTimer is running and the\n          SendNOTIFICATIONwithoutOPEN session attribute is set, the\n          local system sends a NOTIFICATION with a Cease,\n        - releases all BGP resources including stopping the\n          DelayOpenTimer\n        - drops the TCP connection,\n        - sets ConnectRetryCounter to zero,\n        - stops the ConnectRetryTimer and sets the ConnectRetryTimer to\n          zero, and\n        - changes its state to Idle.\n\n      In response to a ConnectRetryTimer_Expires event (Event 9), the\n      local system:\n        - restarts the ConnectRetryTimer (with initial value),\n        - initiates a TCP connection to the other BGP peer,\n        - continues to listen for a TCP connection that may be initiated\n          by a remote BGP peer, and\n        - changes its state to Connect.\n\n      If the local system receives a DelayOpenTimer_Expires event (Event\n      12), the local system:\n        - sets the ConnectRetryTimer to zero,\n        - stops and clears the DelayOpenTimer (set to zero),\n        - completes the BGP initialization,\n        - sends the OPEN message to its remote peer,\n        - sets its hold timer to a large value, and\n        - changes its state to OpenSent.\n\n      A HoldTimer value of 4 minutes is also suggested for this state\n      transition.\n\n      If the local system receives a TcpConnection_Valid event (Event\n      14), the local system processes the TCP connection flags and stays\n      in the Active state.\n\n      If the local system receives a Tcp_CR_Invalid event (Event 15),\n      the local system rejects the TCP connection and stays in the\n      Active State.\n\n      In response to the success of a TCP connection (Event 16 or Event\n      17), the local system checks the DelayOpen optional attribute\n      prior to processing.\n        If the DelayOpen attribute is set to TRUE, the local system:\n          - stops the ConnectRetryTimer and sets the ConnectRetryTimer\n            to zero,\n          - sets the DelayOpenTimer to the initial value\n            (DelayOpenTime), and\n          - stays in the Active state.\n        If the DelayOpen attribute is set to FALSE, the local system:\n          - sets the ConnectRetryTimer to zero,\n          - completes the BGP initialization,\n          - sends the OPEN message to its peer,\n          - sets its HoldTimer to a large value, and\n          - changes its state to OpenSent.\n\n      A HoldTimer value of 4 minutes is suggested as a \"large value\" for\n      the HoldTimer.\n\n      If the local system receives a TcpConnectionFails event (Event\n      18), the local system:\n        - restarts the ConnectRetryTimer (with the initial value),\n        - stops and clears the DelayOpenTimer (sets the value to zero),\n        - releases all BGP resource,\n        - increments the ConnectRetryCounter by 1,\n        - optionally performs peer oscillation damping if the\n          DampPeerOscillations attribute is set to TRUE, and\n        - changes its state to Idle.\n\n      If an OPEN message is received and the DelayOpenTimer is running\n      (Event 20), the local system:\n        - stops the ConnectRetryTimer (if running) and sets the\n          ConnectRetryTimer to zero,\n        - stops and clears the DelayOpenTimer (sets to zero),\n        - completes the BGP initialization,\n        - sends an OPEN message,\n        - sends a KEEPALIVE message,\n        - if the HoldTimer value is non-zero,\n            - starts the KeepaliveTimer to initial value,\n            - resets the HoldTimer to the negotiated value,\n          else if the HoldTimer is zero\n            - resets the KeepaliveTimer (set to zero),\n            - resets the HoldTimer to zero, and\n        - changes its state to OpenConfirm.\n\n      If the value of the autonomous system field is the same as the\n      local Autonomous System number, set the connection status to an\n      internal connection; otherwise it will be external.\n\n      If BGP message header checking (Event 21) or OPEN message checking\n      detects an error (Event 22) (see Section 6.2), the local system:\n\n\n        - (optionally) sends a NOTIFICATION message with the appropriate\n          error code if the SendNOTIFICATIONwithoutOPEN attribute is set\n          to TRUE,\n        - sets the ConnectRetryTimer to zero,\n        - releases all BGP resources,\n        - drops the TCP connection,\n        - increments the ConnectRetryCounter by 1,\n        - (optionally) performs peer oscillation damping if the\n          DampPeerOscillations attribute is set to TRUE, and\n        - changes its state to Idle.\n\n      If a NOTIFICATION message is received with a version error (Event\n      24), the local system checks the DelayOpenTimer.  If the\n      DelayOpenTimer is running, the local system:\n        - stops the ConnectRetryTimer (if running) and sets the\n          ConnectRetryTimer to zero,\n        - stops and resets the DelayOpenTimer (sets to zero),\n        - releases all BGP resources,\n        - drops the TCP connection, and\n        - changes its state to Idle.\n\n      If the DelayOpenTimer is not running, the local system:\n        - sets the ConnectRetryTimer to zero,\n        - releases all BGP resources,\n        - drops the TCP connection,\n        - increments the ConnectRetryCounter by 1,\n        - (optionally) performs peer oscillation damping if the\n          DampPeerOscillations attribute is set to TRUE, and\n        - changes its state to Idle.\n\n      In response to any other event (Events 8, 10-11, 13, 19, 23,\n      25-28), the local system:\n        - sets the ConnectRetryTimer to zero,\n        - releases all BGP resources,\n        - drops the TCP connection,\n        - increments the ConnectRetryCounter by one,\n        - (optionally) performs peer oscillation damping if the\n          DampPeerOscillations attribute is set to TRUE, and\n        - changes its state to Idle.\n\n\n",
+    "cur_state": "Active",
+    "transition": [
+      {
+        "text": "In response to a ManualStop event (Event 2), the local system: - If the DelayOpenTimer is running and the SendNOTIFICATIONwithoutOPEN session attribute is set, the local system sends a NOTIFICATION with a Cease, - releases all BGP resources including stopping the DelayOpenTimer - drops the TCP connection, - sets ConnectRetryCounter to zero, - stops the ConnectRetryTimer and sets the ConnectRetryTimer to zero, and - changes its state to Idle. ",
+        "cur_state": "Active",
+        "event": "ManualStop",
+        "new_state": "Idle"
+      },
+      {
+        "text": "In response to a ConnectRetryTimer_Expires event (Event 9), the local system: - restarts the ConnectRetryTimer (with initial value), - initiates a TCP connection to the other BGP peer, - continues to listen for a TCP connection that may be initiated by a remote BGP peer, and - changes its state to Connect. ",
+        "cur_state": "Active",
+        "event": "ConnectRetryTimer_Expires",
+        "new_state": "Connect"
+      },
+      {
+        "text": "If the local system receives a DelayOpenTimer_Expires event (Event 12), the local system: - sets the ConnectRetryTimer to zero, - stops and clears the DelayOpenTimer (set to zero), - completes the BGP initialization, - sends the OPEN message to its remote peer, - sets its hold timer to a large value, and - changes its state to OpenSent. ",
+        "cur_state": "Active",
+        "event": "DelayOpenTimer_Expires",
+        "new_state": "OpenSent"
+      },
+      {
+        "text": "If the local system receives a TcpConnection_Valid event (Event 14), the local system processes the TCP connection flags and stays in the Active state. ",
+        "cur_state": "Active",
+        "event": "TcpConnection_Valid",
+        "new_state": "Active"
+      },
+      {
+        "text": "If the local system receives a Tcp_CR_Invalid event (Event 15), the local system rejects the TCP connection and stays in the Active State. ",
+        "cur_state": "Active",
+        "event": "Tcp_CR_Invalid",
+        "new_state": "Active"
+      },
+      {
+        "text": "In response to the success of a TCP connection (Event 16 or Event 17), the local system checks the DelayOpen optional attribute prior to processing. If the DelayOpen attribute is set to TRUE, the local system: - stops the ConnectRetryTimer and sets the ConnectRetryTimer to zero, - sets the DelayOpenTimer to the initial value (DelayOpenTime), and - stays in the Active state. If the DelayOpen attribute is set to FALSE, the local system: - sets the ConnectRetryTimer to zero, - completes the BGP initialization, - sends the OPEN message to its peer, - sets its HoldTimer to a large value, and - changes its state to OpenSent. ",
+        "cur_state": "Active",
+        "event": "Tcp_CR_Acked\nTcpConnectionConfirmed",
+        "new_state": "OpenSent"
+      },
+      {
+        "text": "If the local system receives a TcpConnectionFails event (Event 18), the local system: - restarts the ConnectRetryTimer (with the initial value), - stops and clears the DelayOpenTimer (sets the value to zero), - releases all BGP resource, - increments the ConnectRetryCounter by 1, - optionally performs peer oscillation damping if the DampPeerOscillations attribute is set to TRUE, and - changes its state to Idle. ",
+        "cur_state": "Active",
+        "event": "TcpConnectionFails",
+        "new_state": "Idle"
+      },
+      {
+        "text": "If an OPEN message is received and the DelayOpenTimer is running (Event 20), the local system: - stops the ConnectRetryTimer (if running) and sets the ConnectRetryTimer to zero, - stops and clears the DelayOpenTimer (sets to zero), - completes the BGP initialization, - sends an OPEN message, - sends a KEEPALIVE message, - if the HoldTimer value is non-zero, - starts the KeepaliveTimer to initial value, - resets the HoldTimer to the negotiated value, else if the HoldTimer is zero - resets the KeepaliveTimer (set to zero), - resets the HoldTimer to zero, and - changes its state to OpenConfirm. ",
+        "cur_state": "Active",
+        "event": "BGPOpen with DelayOpenTimer running",
+        "new_state": "OpenConfirm"
+      },
+      {
+        "text": "If a NOTIFICATION message is received with a version error (Event 24), the local system checks the DelayOpenTimer.  If the DelayOpenTimer is running, the local system: - stops the ConnectRetryTimer (if running) and sets the ConnectRetryTimer to zero, - stops and resets the DelayOpenTimer (sets to zero), - releases all BGP resources, - drops the TCP connection, and - changes its state to Idle. ",
+        "cur_state": "Active",
+        "event": "NotifMsgVerErr",
+        "new_state": "Idle"
+      },
+      {
+        "text": "In response to any other event (Events 8, 10-11, 13, 19, 23, 25-28), the local system: - sets the ConnectRetryTimer to zero, - releases all BGP resources, - drops the TCP connection, - increments the ConnectRetryCounter by one, - (optionally) performs peer oscillation damping if the DampPeerOscillations attribute is set to TRUE, and - changes its state to Idle. ",
+        "cur_state": "Active",
+        "event": "AutomaticStop\nHoldTimer_Expires\nKeepaliveTimer_Expires\nIdleHoldTimer_Expires\nBGPOpen\nOpenCollisionDump\nNotifMsg\nKeepAliveMsg\nUpdateMsg\nUpdateMsgErr",
+        "new_state": "Idle"
+      }
+    ]
+  },
+  {
+    "text": "   OpenSent State:\n\n      In this state, BGP FSM waits for an OPEN message from its peer.\n\n      The start events (Events 1, 3-7) are ignored in the OpenSent\n      state.\n\n      If a ManualStop event (Event 2) is issued in the OpenSent state,\n      the local system:\n        - sends the NOTIFICATION with a Cease,\n        - sets the ConnectRetryTimer to zero,\n        - releases all BGP resources,\n        - drops the TCP connection,\n        - sets the ConnectRetryCounter to zero, and\n        - changes its state to Idle.\n\n      If an AutomaticStop event (Event 8) is issued in the OpenSent\n      state, the local system:\n        - sends the NOTIFICATION with a Cease,\n        - sets the ConnectRetryTimer to zero,\n        - releases all the BGP resources,\n        - drops the TCP connection,        - increments the ConnectRetryCounter by 1,\n        - (optionally) performs peer oscillation damping if the\n          DampPeerOscillations attribute is set to TRUE, and\n        - changes its state to Idle.\n\n      If the HoldTimer_Expires (Event 10), the local system:\n        - sends a NOTIFICATION message with the error code Hold Timer\n          Expired,\n        - sets the ConnectRetryTimer to zero,\n        - releases all BGP resources,\n        - drops the TCP connection,\n        - increments the ConnectRetryCounter,\n        - (optionally) performs peer oscillation damping if the\n          DampPeerOscillations attribute is set to TRUE, and\n        - changes its state to Idle.\n\n      If a TcpConnection_Valid (Event 14), Tcp_CR_Acked (Event 16), or a\n      TcpConnectionConfirmed event (Event 17) is received, a second TCP\n      connection may be in progress.  This second TCP connection is\n      tracked per Connection Collision processing (Section 6.8) until an\n      OPEN message is received.\n\n      A TCP Connection Request for an Invalid port (Tcp_CR_Invalid\n      (Event 15)) is ignored.\n\n      If a TcpConnectionFails event (Event 18) is received, the local\n      system:\n        - closes the BGP connection,\n        - restarts the ConnectRetryTimer,\n        - continues to listen for a connection that may be initiated by\n          the remote BGP peer, and\n        - changes its state to Active.\n\n      When an OPEN message is received, all fields are checked for\n      correctness.  If there are no errors in the OPEN message (Event\n      19), the local system:\n        - resets the DelayOpenTimer to zero,\n        - sets the BGP ConnectRetryTimer to zero,\n        - sends a KEEPALIVE message, and\n        - sets a KeepaliveTimer (via the text below)\n        - sets the HoldTimer according to the negotiated value (see\n          Section 4.2),\n        - changes its state to OpenConfirm.\n\n      If the negotiated hold time value is zero, then the HoldTimer and\n      KeepaliveTimer are not started.  If the value of the Autonomous\n      System field is the same as the local Autonomous System number,\n      then the connection is an \"internal\" connection; otherwise, it is\n      an \"external\" connection.  (This will impact UPDATE processing as\n      described below.)\n\n      If the BGP message header checking (Event 21) or OPEN message\n      checking detects an error (Event 22)(see Section 6.2), the local\n      system:\n        - sends a NOTIFICATION message with the appropriate error code,\n        - sets the ConnectRetryTimer to zero,\n        - releases all BGP resources,\n        - drops the TCP connection,\n        - increments the ConnectRetryCounter by 1,\n        - (optionally) performs peer oscillation damping if the\n          DampPeerOscillations attribute is TRUE, and\n        - changes its state to Idle.\n\n      Collision detection mechanisms (Section 6.8) need to be applied\n      when a valid BGP OPEN message is received (Event 19 or Event 20).\n      Please refer to Section 6.8 for the details of the comparison.  A\n\n\n      CollisionDetectDump event occurs when the BGP implementation\n      determines, by means outside the scope of this document, that a\n      connection collision has occurred.\n\n      If a connection in the OpenSent state is determined to be the\n      connection that must be closed, an OpenCollisionDump (Event 23) is\n      signaled to the state machine.  If such an event is received in\n      the OpenSent state, the local system:\n        - sends a NOTIFICATION with a Cease,\n        - sets the ConnectRetryTimer to zero,\n        - releases all BGP resources,\n        - drops the TCP connection,\n        - increments the ConnectRetryCounter by 1,\n        - (optionally) performs peer oscillation damping if the\n          DampPeerOscillations attribute is set to TRUE, and\n        - changes its state to Idle.\n\n      If a NOTIFICATION message is received with a version error (Event\n      24), the local system:\n        - sets the ConnectRetryTimer to zero,\n        - releases all BGP resources,\n        - drops the TCP connection, and\n        - changes its state to Idle.\n\n      In response to any other event (Events 9, 11-13, 20, 25-28), the\n      local system:\n        - sends the NOTIFICATION with the Error Code Finite State\n          Machine Error,\n        - sets the ConnectRetryTimer to zero,\n        - releases all BGP resources,\n        - drops the TCP connection,\n        - increments the ConnectRetryCounter by 1,        - (optionally) performs peer oscillation damping if the\n          DampPeerOscillations attribute is set to TRUE, and\n        - changes its state to Idle.\n\n\n",
+    "cur_state": "OpenSent",
+    "transition": [
+      {
+        "text": "If a ManualStop event (Event 2) is issued in the OpenSent state, the local system: - sends the NOTIFICATION with a Cease, - sets the ConnectRetryTimer to zero, - releases all BGP resources, - drops the TCP connection, - sets the ConnectRetryCounter to zero, and - changes its state to Idle. ",
+        "cur_state": "OpenSent",
+        "event": "ManualStop",
+        "new_state": "Idle"
+      },
+      {
+        "text": "If an AutomaticStop event (Event 8) is issued in the OpenSent state, the local system: - sends the NOTIFICATION with a Cease, - sets the ConnectRetryTimer to zero, - releases all the BGP resources, - drops the TCP connection,        - increments the ConnectRetryCounter by 1, - (optionally) performs peer oscillation damping if the DampPeerOscillations attribute is set to TRUE, and - changes its state to Idle. ",
+        "cur_state": "OpenSent",
+        "event": "AutomaticStop",
+        "new_state": "Idle"
+      },
+      {
+        "text": "If the HoldTimer_Expires (Event 10), the local system: - sends a NOTIFICATION message with the error code Hold Timer Expired, - sets the ConnectRetryTimer to zero, - releases all BGP resources, - drops the TCP connection, - increments the ConnectRetryCounter, - (optionally) performs peer oscillation damping if the DampPeerOscillations attribute is set to TRUE, and - changes its state to Idle. ",
+        "cur_state": "OpenSent",
+        "event": "HoldTimer_Expires",
+        "new_state": "Idle"
+      },
+      {
+        "text": "If a TcpConnectionFails event (Event 18) is received, the local system: - closes the BGP connection, - restarts the ConnectRetryTimer, - continues to listen for a connection that may be initiated by the remote BGP peer, and - changes its state to Active. ",
+        "cur_state": "OpenSent",
+        "event": "TcpConnectionFails",
+        "new_state": "Active"
+      },
+      {
+        "text": "When an OPEN message is received, all fields are checked for correctness.  If there are no errors in the OPEN message (Event 19), the local system: - resets the DelayOpenTimer to zero, - sets the BGP ConnectRetryTimer to zero, - sends a KEEPALIVE message, and - sets a KeepaliveTimer (via the text below) - sets the HoldTimer according to the negotiated value (see Section 4.2), - changes its state to OpenConfirm. ",
+        "cur_state": "OpenSent",
+        "event": "BGPOpen",
+        "new_state": "OpenConfirm"
+      },
+      {
+        "text": "If the BGP message header checking (Event 21) or OPEN message checking detects an error (Event 22)(see Section 6.2), the local system: - sends a NOTIFICATION message with the appropriate error code, - sets the ConnectRetryTimer to zero, - releases all BGP resources, - drops the TCP connection, - increments the ConnectRetryCounter by 1, - (optionally) performs peer oscillation damping if the DampPeerOscillations attribute is TRUE, and - changes its state to Idle. ",
+        "cur_state": "OpenSent",
+        "event": "BGPHeaderErr\nBGPOpenMsgErr",
+        "new_state": "Idle"
+      },
+      {
+        "text": "If a connection in the OpenSent state is determined to be the connection that must be closed, an OpenCollisionDump (Event 23) is signaled to the state machine.  If such an event is received in the OpenSent state, the local system: - sends a NOTIFICATION with a Cease, - sets the ConnectRetryTimer to zero, - releases all BGP resources, - drops the TCP connection, - increments the ConnectRetryCounter by 1, - (optionally) performs peer oscillation damping if the DampPeerOscillations attribute is set to TRUE, and - changes its state to Idle. ",
+        "cur_state": "OpenSent",
+        "event": "OpenCollisionDump",
+        "new_state": "Idle"
+      },
+      {
+        "text": "If a NOTIFICATION message is received with a version error (Event 24), the local system: - sets the ConnectRetryTimer to zero, - releases all BGP resources, - drops the TCP connection, and - changes its state to Idle. ",
+        "cur_state": "OpenSent",
+        "event": "NotifMsgVerErr",
+        "new_state": "Idle"
+      },
+      {
+        "text": "In response to any other event (Events 9, 11-13, 20, 25-28), the local system: - sends the NOTIFICATION with the Error Code Finite State Machine Error, - sets the ConnectRetryTimer to zero, - releases all BGP resources, - drops the TCP connection, - increments the ConnectRetryCounter by 1,        - (optionally) performs peer oscillation damping if the DampPeerOscillations attribute is set to TRUE, and - changes its state to Idle. ",
+        "cur_state": "OpenSent",
+        "event": "ConnectRetryTimer_Expires\nKeepaliveTimer_Expires\nDelayOpenTimer_Expires\nIdleHoldTimer_Expires\nBGPOpen with DelayOpenTimer running\nNotifMsg\nKeepAliveMsg\nUpdateMsg\nUpdateMsgErr",
+        "new_state": "Idle"
+      }
+    ]
+  },
+  {
+    "text": "   OpenConfirm State:\n\n      In this state, BGP waits for a KEEPALIVE or NOTIFICATION message.\n\n      Any start event (Events 1, 3-7) is ignored in the OpenConfirm\n      state.\n\n      In response to a ManualStop event (Event 2) initiated by the\n      operator, the local system:\n        - sends the NOTIFICATION message with a Cease,\n        - releases all BGP resources,\n        - drops the TCP connection,\n        - sets the ConnectRetryCounter to zero,\n        - sets the ConnectRetryTimer to zero, and\n        - changes its state to Idle.\n\n      In response to the AutomaticStop event initiated by the system\n      (Event 8), the local system:\n        - sends the NOTIFICATION message with a Cease,\n        - sets the ConnectRetryTimer to zero,\n        - releases all BGP resources,\n        - drops the TCP connection,\n        - increments the ConnectRetryCounter by 1,\n        - (optionally) performs peer oscillation damping if the\n          DampPeerOscillations attribute is set to TRUE, and\n        - changes its state to Idle.\n\n      If the HoldTimer_Expires event (Event 10) occurs before a\n      KEEPALIVE message is received, the local system:\n        - sends the NOTIFICATION message with the Error Code Hold Timer\n          Expired,\n        - sets the ConnectRetryTimer to zero,\n        - releases all BGP resources,\n        - drops the TCP connection,\n        - increments the ConnectRetryCounter by 1,\n        - (optionally) performs peer oscillation damping if the\n          DampPeerOscillations attribute is set to TRUE, and\n        - changes its state to Idle.\n\n      If the local system receives a KeepaliveTimer_Expires event (Event\n      11), the local system:\n        - sends a KEEPALIVE message,\n        - restarts the KeepaliveTimer, and\n        - remains in the OpenConfirm state.\n\n      In the event of a TcpConnection_Valid event (Event 14), or the\n      success of a TCP connection (Event 16 or Event 17) while in\n      OpenConfirm, the local system needs to track the second\n      connection.\n\n      If a TCP connection is attempted with an invalid port (Event 15),\n      the local system will ignore the second connection attempt.\n\n      If the local system receives a TcpConnectionFails event (Event 18)\n      from the underlying TCP or a NOTIFICATION message (Event 25), the\n      local system:\n        - sets the ConnectRetryTimer to zero,\n        - releases all BGP resources,\n        - drops the TCP connection,\n        - increments the ConnectRetryCounter by 1,\n        - (optionally) performs peer oscillation damping if the\n          DampPeerOscillations attribute is set to TRUE, and\n        - changes its state to Idle.\n\n      If the local system receives a NOTIFICATION message with a version\n      error (NotifMsgVerErr (Event 24)), the local system:\n        - sets the ConnectRetryTimer to zero,\n        - releases all BGP resources,\n        - drops the TCP connection, and\n        - changes its state to Idle.\n\n      If the local system receives a valid OPEN message (BGPOpen (Event\n      19)), the collision detect function is processed per Section 6.8.\n      If this connection is to be dropped due to connection collision,\n      the local system:\n        - sends a NOTIFICATION with a Cease,\n        - sets the ConnectRetryTimer to zero,\n        - releases all BGP resources,\n        - drops the TCP connection (send TCP FIN),\n        - increments the ConnectRetryCounter by 1,\n        - (optionally) performs peer oscillation damping if the\n          DampPeerOscillations attribute is set to TRUE, and\n        - changes its state to Idle.\n\n      If an OPEN message is received, all fields are checked for\n      correctness.  If the BGP message header checking (BGPHeaderErr\n      (Event 21)) or OPEN message checking detects an error (see Section\n      6.2) (BGPOpenMsgErr (Event 22)), the local system:\n        - sends a NOTIFICATION message with the appropriate error code,\n        - sets the ConnectRetryTimer to zero,\n        - releases all BGP resources,\n        - drops the TCP connection,\n        - increments the ConnectRetryCounter by 1,\n        - (optionally) performs peer oscillation damping if the\n          DampPeerOscillations attribute is set to TRUE, and\n        - changes its state to Idle.\n\n      If, during the processing of another OPEN message, the BGP\n      implementation determines, by a means outside the scope of this\n      document, that a connection collision has occurred and this\n      connection is to be closed, the local system will issue an\n      OpenCollisionDump event (Event 23).  When the local system\n      receives an OpenCollisionDump event (Event 23), the local system:\n        - sends a NOTIFICATION with a Cease,\n        - sets the ConnectRetryTimer to zero,\n        - releases all BGP resources\n        - drops the TCP connection,\n        - increments the ConnectRetryCounter by 1,\n        - (optionally) performs peer oscillation damping if the\n          DampPeerOscillations attribute is set to TRUE, and\n        - changes its state to Idle.\n\n      If the local system receives a KEEPALIVE message (KeepAliveMsg\n      (Event 26)), the local system:\n        - restarts the HoldTimer and\n        - changes its state to Established.\n\n      In response to any other event (Events 9, 12-13, 20, 27-28), the\n      local system:\n        - sends a NOTIFICATION with a code of Finite State Machine\n          Error,\n        - sets the ConnectRetryTimer to zero,\n        - releases all BGP resources,\n        - drops the TCP connection,\n        - increments the ConnectRetryCounter by 1,\n        - (optionally) performs peer oscillation damping if the\n          DampPeerOscillations attribute is set to TRUE, and\n        - changes its state to Idle.\n\n\n",
+    "cur_state": "OpenConfirm",
+    "transition": [
+      {
+        "text": "In response to a ManualStop event (Event 2) initiated by the operator, the local system: - sends the NOTIFICATION message with a Cease, - releases all BGP resources, - drops the TCP connection, - sets the ConnectRetryCounter to zero, - sets the ConnectRetryTimer to zero, and - changes its state to Idle. ",
+        "cur_state": "OpenConfirm",
+        "event": "ManualStop",
+        "new_state": "Idle"
+      },
+      {
+        "text": "In response to the AutomaticStop event initiated by the system (Event 8), the local system: - sends the NOTIFICATION message with a Cease, - sets the ConnectRetryTimer to zero, - releases all BGP resources, - drops the TCP connection, - increments the ConnectRetryCounter by 1, - (optionally) performs peer oscillation damping if the DampPeerOscillations attribute is set to TRUE, and - changes its state to Idle. ",
+        "cur_state": "OpenConfirm",
+        "event": "AutomaticStop",
+        "new_state": "Idle"
+      },
+      {
+        "text": "If the HoldTimer_Expires event (Event 10) occurs before a KEEPALIVE message is received, the local system: - sends the NOTIFICATION message with the Error Code Hold Timer Expired, - sets the ConnectRetryTimer to zero, - releases all BGP resources, - drops the TCP connection, - increments the ConnectRetryCounter by 1, - (optionally) performs peer oscillation damping if the DampPeerOscillations attribute is set to TRUE, and - changes its state to Idle. ",
+        "cur_state": "OpenConfirm",
+        "event": "HoldTimer_Expires",
+        "new_state": "Idle"
+      },
+      {
+        "text": "If the local system receives a KeepaliveTimer_Expires event (Event 11), the local system: - sends a KEEPALIVE message, - restarts the KeepaliveTimer, and - remains in the OpenConfirmed state. ",
+        "cur_state": "OpenConfirm",
+        "event": "KeepaliveTimer_Expires",
+        "new_state": "OpenConfirmed"
+      },
+      {
+        "text": "If the local system receives a TcpConnectionFails event (Event 18) from the underlying TCP or a NOTIFICATION message (Event 25), the local system: - sets the ConnectRetryTimer to zero, - releases all BGP resources, - drops the TCP connection, - increments the ConnectRetryCounter by 1, - (optionally) performs peer oscillation damping if the DampPeerOscillations attribute is set to TRUE, and - changes its state to Idle. ",
+        "cur_state": "OpenConfirm",
+        "event": "TcpConnectionFails\nNotifMsg",
+        "new_state": "Idle"
+      },
+      {
+        "text": "If the local system receives a NOTIFICATION message with a version error (NotifMsgVerErr (Event 24)), the local system: - sets the ConnectRetryTimer to zero, - releases all BGP resources, - drops the TCP connection, and - changes its state to Idle. ",
+        "cur_state": "OpenConfirm",
+        "event": "NotifMsgVerErr",
+        "new_state": "Idle"
+      },
+      {
+        "text": "If the local system receives a valid OPEN message (BGPOpen (Event 19)), the collision detect function is processed per Section 6.8. If this connection is to be dropped due to connection collision, the local system: - sends a NOTIFICATION with a Cease, - sets the ConnectRetryTimer to zero, - releases all BGP resources, - drops the TCP connection (send TCP FIN), - increments the ConnectRetryCounter by 1, - (optionally) performs peer oscillation damping if the DampPeerOscillations attribute is set to TRUE, and - changes its state to Idle. ",
+        "cur_state": "OpenConfirm",
+        "event": "BGPOpen",
+        "new_state": "Idle"
+      },
+      {
+        "text": "If an OPEN message is received, all fields are checked for correctness.  If the BGP message header checking (BGPHeaderErr (Event 21)) or OPEN message checking detects an error (see Section 6.2) (BGPOpenMsgErr (Event 22)), the local system: - sends a NOTIFICATION message with the appropriate error code, - sets the ConnectRetryTimer to zero, - releases all BGP resources, - drops the TCP connection, - increments the ConnectRetryCounter by 1, - (optionally) performs peer oscillation damping if the DampPeerOscillations attribute is set to TRUE, and - changes its state to Idle. ",
+        "cur_state": "OpenConfirm",
+        "event": "BGPHeaderErr\nBGPOpenMsgErr",
+        "new_state": "Idle"
+      },
+      {
+        "text": "If, during the processing of another OPEN message, the BGP implementation determines, by a means outside the scope of this document, that a connection collision has occurred and this connection is to be closed, the local system will issue an OpenCollisionDump event (Event 23).  When the local system receives an OpenCollisionDump event (Event 23), the local system: - sends a NOTIFICATION with a Cease, - sets the ConnectRetryTimer to zero, - releases all BGP resources - drops the TCP connection, - increments the ConnectRetryCounter by 1, - (optionally) performs peer oscillation damping if the DampPeerOscillations attribute is set to TRUE, and - changes its state to Idle. ",
+        "cur_state": "OpenConfirm",
+        "event": "OpenCollisionDump\nOpenCollisionDump",
+        "new_state": "Idle"
+      },
+      {
+        "text": "If the local system receives a KEEPALIVE message (KeepAliveMsg (Event 26)), the local system: - restarts the HoldTimer and - changes its state to Established. ",
+        "cur_state": "OpenConfirm",
+        "event": "KeepAliveMsg",
+        "new_state": "Established"
+      },
+      {
+        "text": "In response to any other event (Events 9, 12-13, 20, 27-28), the local system: - sends a NOTIFICATION with a code of Finite State Machine Error, - sets the ConnectRetryTimer to zero, - releases all BGP resources, - drops the TCP connection, - increments the ConnectRetryCounter by 1, - (optionally) performs peer oscillation damping if the DampPeerOscillations attribute is set to TRUE, and - changes its state to Idle. ",
+        "cur_state": "OpenConfirm",
+        "event": "ConnectRetryTimer_Expires\nDelayOpenTimer_Expires\nIdleHoldTimer_Expires\nBGPOpen with DelayOpenTimer running\nUpdateMsg\nUpdateMsgErr",
+        "new_state": "Idle"
+      }
+    ]
+  },
+  {
+    "text": "   Established State:\n\n      In the Established state, the BGP FSM can exchange UPDATE,\n      NOTIFICATION, and KEEPALIVE messages with its peer.\n\n      Any Start event (Events 1, 3-7) is ignored in the Established\n      state.\n\n      In response to a ManualStop event (initiated by an operator)\n      (Event 2), the local system:\n        - sends the NOTIFICATION message with a Cease,\n        - sets the ConnectRetryTimer to zero,\n        - deletes all routes associated with this connection,\n        - releases BGP resources,\n        - drops the TCP connection,\n        - sets the ConnectRetryCounter to zero, and\n        - changes its state to Idle.\n\n      In response to an AutomaticStop event (Event 8), the local system:\n        - sends a NOTIFICATION with a Cease,\n        - sets the ConnectRetryTimer to zero\n        - deletes all routes associated with this connection,\n        - releases all BGP resources,\n        - drops the TCP connection,\n        - increments the ConnectRetryCounter by 1,\n        - (optionally) performs peer oscillation damping if the\n          DampPeerOscillations attribute is set to TRUE, and\n        - changes its state to Idle.\n\n      One reason for an AutomaticStop event is: A BGP receives an UPDATE\n      messages with a number of prefixes for a given peer such that the\n      total prefixes received exceeds the maximum number of prefixes\n      configured.  The local system automatically disconnects the peer.\n\n      If the HoldTimer_Expires event occurs (Event 10), the local\n      system:\n        - sends a NOTIFICATION message with the Error Code Hold Timer\n          Expired,\n        - sets the ConnectRetryTimer to zero,\n        - releases all BGP resources,\n        - drops the TCP connection,\n        - increments the ConnectRetryCounter by 1,\n        - (optionally) performs peer oscillation damping if the\n          DampPeerOscillations attribute is set to TRUE, and\n        - changes its state to Idle.\n\n      If the KeepaliveTimer_Expires event occurs (Event 11), the local\n      system:\n        - sends a KEEPALIVE message, and\n        - restarts its KeepaliveTimer, unless the negotiated HoldTime\n          value is zero.\n\n      Each time the local system sends a KEEPALIVE or UPDATE message, it\n      restarts its KeepaliveTimer, unless the negotiated HoldTime value\n      is zero.\n\n      A TcpConnection_Valid (Event 14), received for a valid port, will\n      cause the second connection to be tracked.\n\n      An invalid TCP connection (Tcp_CR_Invalid event (Event 15)) will\n      be ignored.\n\n      In response to an indication that the TCP connection is\n      successfully established (Event 16 or Event 17), the second\n      connection SHALL be tracked until it sends an OPEN message.\n\n      If a valid OPEN message (BGPOpen (Event 19)) is received, and if\n      the CollisionDetectEstablishedState optional attribute is TRUE,\n      the OPEN message will be checked to see if it collides (Section\n      6.8) with any other connection.  If the BGP implementation\n      determines that this connection needs to be terminated, it will\n      process an OpenCollisionDump event (Event 23).  If this connection\n      needs to be terminated, the local system:\n        - sends a NOTIFICATION with a Cease,\n        - sets the ConnectRetryTimer to zero,\n        - deletes all routes associated with this connection,\n        - releases all BGP resources,\n        - drops the TCP connection,\n        - increments the ConnectRetryCounter by 1,\n        - (optionally) performs peer oscillation damping if the\n          DampPeerOscillations is set to TRUE, and\n        - changes its state to Idle.\n\n      If the local system receives a NOTIFICATION message (Event 24 or\n      Event 25) or a TcpConnectionFails (Event 18) from the underlying\n      TCP, the local system:\n        - sets the ConnectRetryTimer to zero,\n        - deletes all routes associated with this connection,\n        - releases all the BGP resources,\n        - drops the TCP connection,\n        - increments the ConnectRetryCounter by 1,\n        - changes its state to Idle.\n\n      If the local system receives a KEEPALIVE message (Event 26), the\n      local system:\n        - restarts its HoldTimer, if the negotiated HoldTime value is\n          non-zero, and\n        - remains in the Established state.\n\n      If the local system receives an UPDATE message (Event 27), the\n      local system:\n        - processes the message,\n        - restarts its HoldTimer, if the negotiated HoldTime value is\n          non-zero, and\n        - remains in the Established state.\n\n      If the local system receives an UPDATE message, and the UPDATE\n      message error handling procedure (see Section 6.3) detects an\n      error (Event 28), the local system:\n        - sends a NOTIFICATION message with an Update error,\n        - sets the ConnectRetryTimer to zero,\n        - deletes all routes associated with this connection,\n        - releases all BGP resources,\n        - drops the TCP connection,\n        - increments the ConnectRetryCounter by 1,\n        - (optionally) performs peer oscillation damping if the\n          DampPeerOscillations attribute is set to TRUE, and\n        - changes its state to Idle.\n\n      In response to any other event (Events 9, 12-13, 20-22), the local\n      system:\n        - sends a NOTIFICATION message with the Error Code Finite State\n          Machine Error,\n        - deletes all routes associated with this connection,\n        - sets the ConnectRetryTimer to zero,\n        - releases all BGP resources,\n        - drops the TCP connection,\n        - increments the ConnectRetryCounter by 1,\n        - (optionally) performs peer oscillation damping if the\n          DampPeerOscillations attribute is set to TRUE, and\n        - changes its state to Idle.\n",
+    "cur_state": "Established",
+    "transition": [
+      {
+        "text": "In response to a ManualStop event (initiated by an operator) (Event 2), the local system: - sends the NOTIFICATION message with a Cease, - sets the ConnectRetryTimer to zero, - deletes all routes associated with this connection, - releases BGP resources, - drops the TCP connection, - sets the ConnectRetryCounter to zero, and - changes its state to Idle. ",
+        "cur_state": "Established",
+        "event": "ManualStop",
+        "new_state": "Idle"
+      },
+      {
+        "text": "In response to an AutomaticStop event (Event 8), the local system: - sends a NOTIFICATION with a Cease, - sets the ConnectRetryTimer to zero - deletes all routes associated with this connection, - releases all BGP resources, - drops the TCP connection, - increments the ConnectRetryCounter by 1, - (optionally) performs peer oscillation damping if the DampPeerOscillations attribute is set to TRUE, and - changes its state to Idle. ",
+        "cur_state": "Established",
+        "event": "AutomaticStop",
+        "new_state": "Idle"
+      },
+      {
+        "text": "If the HoldTimer_Expires event occurs (Event 10), the local system: - sends a NOTIFICATION message with the Error Code Hold Timer Expired, - sets the ConnectRetryTimer to zero, - releases all BGP resources, - drops the TCP connection, - increments the ConnectRetryCounter by 1, - (optionally) performs peer oscillation damping if the DampPeerOscillations attribute is set to TRUE, and - changes its state to Idle. ",
+        "cur_state": "Established",
+        "event": "HoldTimer_Expires",
+        "new_state": "Idle"
+      },
+      {
+        "text": "If a valid OPEN message (BGPOpen (Event 19)) is received, and if the CollisionDetectEstablishedState optional attribute is TRUE, the OPEN message will be checked to see if it collides (Section 6.8) with any other connection.  If the BGP implementation determines that this connection needs to be terminated, it will process an OpenCollisionDump event (Event 23).  If this connection needs to be terminated, the local system: - sends a NOTIFICATION with a Cease, - sets the ConnectRetryTimer to zero, - deletes all routes associated with this connection, - releases all BGP resources, - drops the TCP connection, - increments the ConnectRetryCounter by 1, - (optionally) performs peer oscillation damping if the DampPeerOscillations is set to TRUE, and - changes its state to Idle. ",
+        "cur_state": "Established",
+        "event": "BGPOpen\nOpenCollisionDump",
+        "new_state": "Idle"
+      },
+      {
+        "text": "If the local system receives a NOTIFICATION message (Event 24 or Event 25) or a TcpConnectionFails (Event 18) from the underlying TCP, the local system: - sets the ConnectRetryTimer to zero, - deletes all routes associated with this connection, - releases all the BGP resources, - drops the TCP connection, - increments the ConnectRetryCounter by 1, - changes its state to Idle. ",
+        "cur_state": "Established",
+        "event": "NotifMsgVerErr\nNotifMsg\nTcpConnectionFails",
+        "new_state": "Idle"
+      },
+      {
+        "text": "If the local system receives a KEEPALIVE message (Event 26), the local system: - restarts its HoldTimer, if the negotiated HoldTime value is non-zero, and - remains in the Established state. ",
+        "cur_state": "Established",
+        "event": "KeepAliveMsg",
+        "new_state": "Established"
+      },
+      {
+        "text": "If the local system receives an UPDATE message (Event 27), the local system: - processes the message, - restarts its HoldTimer, if the negotiated HoldTime value is non-zero, and - remains in the Established state. ",
+        "cur_state": "Established",
+        "event": "UpdateMsg",
+        "new_state": "Established"
+      },
+      {
+        "text": "If the local system receives an UPDATE message, and the UPDATE message error handling procedure (see Section 6.3) detects an error (Event 28), the local system: - sends a NOTIFICATION message with an Update error, - sets the ConnectRetryTimer to zero, - deletes all routes associated with this connection, - releases all BGP resources, - drops the TCP connection, - increments the ConnectRetryCounter by 1, - (optionally) performs peer oscillation damping if the DampPeerOscillations attribute is set to TRUE, and - changes its state to Idle. ",
+        "cur_state": "Established",
+        "event": "UpdateMsgErr",
+        "new_state": "Idle"
+      }
+    ]
+  }
+]

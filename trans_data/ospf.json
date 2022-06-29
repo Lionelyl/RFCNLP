@@ -1,0 +1,187 @@
+[
+  {
+    "text": "         State(s):  Down\n\n            Event:  InterfaceUp\n\n        New state:  Depends upon action routine\n\n           Action:  Start the interval Hello Timer, enabling the\n                    periodic sending of Hello packets out the interface.\n                    If the attached network is a physical point-to-point\n                    network, Point-to-MultiPoint network or virtual\n                    link, the interface state transitions to Point-to-\n                    Point.  Else, if the router is not eligible to\n                    become Designated Router the interface state\n                    transitions to DR Other.\n\n                    Otherwise, the attached network is a broadcast or\n                    NBMA network and the router is eligible to become\n                    Designated Router.  In this case, in an attempt to\n                    discover the attached network's Designated Router\n                    the interface state is set to Waiting and the single\n                    shot Wait Timer is started.  Additionally, if the\n                    network is an NBMA network examine the configured\n                    list of neighbors for this interface and generate\n                    the neighbor event Start for each neighbor that is\n                    also eligible to become Designated Router.\n\n\n",
+    "transition": [
+      {
+        "sentence": "Start the interval Hello Timer, enabling the periodic sending of Hello packets out the interface. If the attached network is a physical point-to-point network, Point-to-MultiPoint network or virtual link, the interface state transitions to Point-to- Point.  Else, if the router is not eligible to become Designated Router the interface state transitions to DR Other.  Otherwise, the attached network is a broadcast or NBMA network and the router is eligible to become Designated Router.  In this case, in an attempt to discover the attached network's Designated Router the interface state is set to Waiting and the single shot Wait Timer is started.  Additionally, if the network is an NBMA network examine the configured list of neighbors for this interface and generate the neighbor event Start for each neighbor that is also eligible to become Designated Router. ",
+        "cur_state": "Down",
+        "event": "InterfaceUp",
+        "new_state": "Waiting"
+      },
+      {
+        "sentence": "Start the interval Hello Timer, enabling the periodic sending of Hello packets out the interface. If the attached network is a physical point-to-point network, Point-to-MultiPoint network or virtual link, the interface state transitions to Point-to- Point.  Else, if the router is not eligible to become Designated Router the interface state transitions to DR Other.  Otherwise, the attached network is a broadcast or NBMA network and the router is eligible to become Designated Router.  In this case, in an attempt to discover the attached network's Designated Router the interface state is set to Waiting and the single shot Wait Timer is started.  Additionally, if the network is an NBMA network examine the configured list of neighbors for this interface and generate the neighbor event Start for each neighbor that is also eligible to become Designated Router. ",
+        "cur_state": "Down",
+        "event": "InterfaceUp",
+        "new_state": "DR Other"
+      },
+      {
+        "sentence": "Start the interval Hello Timer, enabling the periodic sending of Hello packets out the interface. If the attached network is a physical point-to-point network, Point-to-MultiPoint network or virtual link, the interface state transitions to Point-to- Point.  Else, if the router is not eligible to become Designated Router the interface state transitions to DR Other.  Otherwise, the attached network is a broadcast or NBMA network and the router is eligible to become Designated Router.  In this case, in an attempt to discover the attached network's Designated Router the interface state is set to Waiting and the single shot Wait Timer is started.  Additionally, if the network is an NBMA network examine the configured list of neighbors for this interface and generate the neighbor event Start for each neighbor that is also eligible to become Designated Router. ",
+        "cur_state": "Down",
+        "event": "InterfaceUp",
+        "new_state": "DR"
+      }
+    ]
+  },
+  {
+    "text": "         State(s):  Waiting\n\n            Event:  BackupSeen\n\n        New state:  Depends upon action routine.\n\n           Action:  Calculate the attached network's Backup Designated\n                    Router and Designated Router, as shown in Section\n                    9.4.  As a result of this calculation, the new state\n                    of the interface will be either DR Other, Backup or\n                    DR.\n\n\n",
+    "transition": [
+      {
+        "sentence": "Calculate the attached network's Backup Designated Router and Designated Router, as shown in Section 9.4.  As a result of this calculation, the new state of the interface will be either DR Other, Backup or DR. ",
+        "cur_state": "Waiting",
+        "event": "BackupSeen",
+        "new_state": "DR Other"
+      },
+      {
+        "sentence": "Calculate the attached network's Backup Designated Router and Designated Router, as shown in Section 9.4.  As a result of this calculation, the new state of the interface will be either DR Other, Backup or DR. ",
+        "cur_state": "Waiting",
+        "event": "BackupSeen",
+        "new_state": "Backup"
+      },
+      {
+        "sentence": "Calculate the attached network's Backup Designated Router and Designated Router, as shown in Section 9.4.  As a result of this calculation, the new state of the interface will be either DR Other, Backup or DR. ",
+        "cur_state": "Waiting",
+        "event": "BackupSeen",
+        "new_state": "DR"
+      }
+    ]
+  },
+  {
+    "text": "         State(s):  Waiting\n\n            Event:  WaitTimer\n\n        New state:  Depends upon action routine.\n\n           Action:  Calculate the attached network's Backup Designated\n                    Router and Designated Router, as shown in Section\n                    9.4.  As a result of this calculation, the new state\n                    of the interface will be either DR Other, Backup or\n                    DR.\n\n\n",
+    "transition": [
+      {
+        "sentence": "Calculate the attached network's Backup Designated Router and Designated Router, as shown in Section 9.4.  As a result of this calculation, the new state of the interface will be either DR Other, Backup or DR. ",
+        "cur_state": "Waiting",
+        "event": "WaitTimer",
+        "new_state": "DR Other"
+      },
+      {
+        "sentence": "Calculate the attached network's Backup Designated Router and Designated Router, as shown in Section 9.4.  As a result of this calculation, the new state of the interface will be either DR Other, Backup or DR. ",
+        "cur_state": "Waiting",
+        "event": "WaitTimer",
+        "new_state": "Backup"
+      },
+      {
+        "sentence": "Calculate the attached network's Backup Designated Router and Designated Router, as shown in Section 9.4.  As a result of this calculation, the new state of the interface will be either DR Other, Backup or DR. ",
+        "cur_state": "Waiting",
+        "event": "WaitTimer",
+        "new_state": "DR"
+      }
+    ]
+  },
+  {
+    "text": "         State(s):  DR Other, Backup or DR\n\n            Event:  NeighborChange\n\n\n        New state:  Depends upon action routine.\n\n           Action:  Recalculate the attached network's Backup Designated\n                    Router and Designated Router, as shown in Section\n                    9.4.  As a result of this calculation, the new state\n                    of the interface will be either DR Other, Backup or\n                    DR.\n\n\n",
+    "transition": [
+      {
+        "sentence": "Recalculate the attached network's Backup Designated Router and Designated Router, as shown in Section 9.4.  As a result of this calculation, the new state of the interface will be either DR Other, Backup or DR. ",
+        "cur_state": "DR Other, Backup or DR",
+        "event": "NeighborChange",
+        "new_state": "Unknown"
+      }
+    ]
+  },
+  {
+    "text": "         State(s):  Any State\n\n            Event:  InterfaceDown\n\n        New state:  Down\n\n           Action:  All interface variables are reset, and interface\n                    timers disabled.  Also, all neighbor connections\n                    associated with the interface are destroyed.  This\n                    is done by generating the event KillNbr on all\n                    associated neighbors (see Section 10.2).\n\n\n",
+    "transition": [
+      {
+        "sentence": "All interface variables are reset, and interface timers disabled.  Also, all neighbor connections associated with the interface are destroyed.  This is done by generating the event KillNbr on all associated neighbors (see Section 10.2). ",
+        "cur_state": "Down",
+        "event": "InterfaceDown",
+        "new_state": "Down"
+      },
+      {
+        "sentence": "All interface variables are reset, and interface timers disabled.  Also, all neighbor connections associated with the interface are destroyed.  This is done by generating the event KillNbr on all associated neighbors (see Section 10.2). ",
+        "cur_state": "Loopback",
+        "event": "InterfaceDown",
+        "new_state": "Down"
+      },
+      {
+        "sentence": "All interface variables are reset, and interface timers disabled.  Also, all neighbor connections associated with the interface are destroyed.  This is done by generating the event KillNbr on all associated neighbors (see Section 10.2). ",
+        "cur_state": "Waiting",
+        "event": "InterfaceDown",
+        "new_state": "Down"
+      },
+      {
+        "sentence": "All interface variables are reset, and interface timers disabled.  Also, all neighbor connections associated with the interface are destroyed.  This is done by generating the event KillNbr on all associated neighbors (see Section 10.2). ",
+        "cur_state": "Point-to-point",
+        "event": "InterfaceDown",
+        "new_state": "Down"
+      },
+      {
+        "sentence": "All interface variables are reset, and interface timers disabled.  Also, all neighbor connections associated with the interface are destroyed.  This is done by generating the event KillNbr on all associated neighbors (see Section 10.2). ",
+        "cur_state": "DR Other",
+        "event": "InterfaceDown",
+        "new_state": "Down"
+      },
+      {
+        "sentence": "All interface variables are reset, and interface timers disabled.  Also, all neighbor connections associated with the interface are destroyed.  This is done by generating the event KillNbr on all associated neighbors (see Section 10.2). ",
+        "cur_state": "Backup",
+        "event": "InterfaceDown",
+        "new_state": "Down"
+      },
+      {
+        "sentence": "All interface variables are reset, and interface timers disabled.  Also, all neighbor connections associated with the interface are destroyed.  This is done by generating the event KillNbr on all associated neighbors (see Section 10.2). ",
+        "cur_state": "DR",
+        "event": "InterfaceDown",
+        "new_state": "Down"
+      }
+    ]
+  },
+  {
+    "text": "         State(s):  Any State\n\n            Event:  LoopInd\n\n        New state:  Loopback\n\n           Action:  Since this interface is no longer connected to the\n                    attached network the actions associated with the\n                    above InterfaceDown event are executed.\n\n\n",
+    "transition": [
+      {
+        "sentence": "Since this interface is no longer connected to the attached network the actions associated with the above InterfaceDown event are executed. ",
+        "cur_state": "Down",
+        "event": "LoopInd",
+        "new_state": "Loopback"
+      },
+      {
+        "sentence": "Since this interface is no longer connected to the attached network the actions associated with the above InterfaceDown event are executed. ",
+        "cur_state": "Loopback",
+        "event": "LoopInd",
+        "new_state": "Loopback"
+      },
+      {
+        "sentence": "Since this interface is no longer connected to the attached network the actions associated with the above InterfaceDown event are executed. ",
+        "cur_state": "Waiting",
+        "event": "LoopInd",
+        "new_state": "Loopback"
+      },
+      {
+        "sentence": "Since this interface is no longer connected to the attached network the actions associated with the above InterfaceDown event are executed. ",
+        "cur_state": "Point-to-point",
+        "event": "LoopInd",
+        "new_state": "Loopback"
+      },
+      {
+        "sentence": "Since this interface is no longer connected to the attached network the actions associated with the above InterfaceDown event are executed. ",
+        "cur_state": "DR Other",
+        "event": "LoopInd",
+        "new_state": "Loopback"
+      },
+      {
+        "sentence": "Since this interface is no longer connected to the attached network the actions associated with the above InterfaceDown event are executed. ",
+        "cur_state": "Backup",
+        "event": "LoopInd",
+        "new_state": "Loopback"
+      },
+      {
+        "sentence": "Since this interface is no longer connected to the attached network the actions associated with the above InterfaceDown event are executed. ",
+        "cur_state": "DR",
+        "event": "LoopInd",
+        "new_state": "Loopback"
+      }
+    ]
+  },
+  {
+    "text": "         State(s):  Loopback\n\n            Event:  UnloopInd\n\n        New state:  Down\n\n           Action:  No actions are necessary.  For example, the\n                    interface variables have already been reset upon\n                    entering the Loopback state.  Note that reception of\n",
+    "transition": [
+      {
+        "sentence": "No actions are necessary.  For example, the interface variables have already been reset upon entering the Loopback state.  Note that reception of ",
+        "cur_state": "Loopback",
+        "event": "UnloopInd",
+        "new_state": "Down"
+      }
+    ]
+  }
+]

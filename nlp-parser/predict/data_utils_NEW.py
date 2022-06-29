@@ -142,7 +142,7 @@ def alternative_expand(X, y, level_h, level_d, id2word, debug=False):
             if y_chunk.startswith('B') and len(chunk[0]) > 1:
                 inside = re.sub('B-', 'I-', y_chunk)
                 y_new_seq.append([y_chunk] + [inside] * (len(chunk[0])-1))
-            elif len(chunk) > 1:
+            elif len(chunk) >= 1:
                 y_new_seq.append([y_chunk] * (len(chunk[0])))
             else:
                 y_new_seq.append([y_chunk])
@@ -282,10 +282,8 @@ def get_data(files, word2id={}, tag2id={}, pos2id={}, id2cap={}, stem2id={}, id2
 
 
                     y_control.append(tag2id[curr_tag])
-                    # level_h.append(int(elems[2].strip()))
-                    # level_d.append(int(elems[3].strip()))
-                    level_h.append(int(0))
-                    level_d.append(int(0))
+                    level_h.append(int(elems[2].strip()))
+                    level_d.append(int(elems[3].strip()))
                     x_control.append(x_chunk)
                     x_chunk = [[],[],[]]
 

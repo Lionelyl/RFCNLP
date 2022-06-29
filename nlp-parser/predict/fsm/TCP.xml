@@ -1,0 +1,1173 @@
+<p>
+    <def_state id="1">listen</def_state>
+    <def_state id="2">syn-sent</def_state>
+    <def_state id="3">syn-received</def_state>
+    <def_state id="4">established</def_state>
+    <def_state id="5">fin-wait-1</def_state>
+    <def_state id="6">fin-wait-2</def_state>
+    <def_state id="7">close-wait</def_state>
+    <def_state id="8">closing</def_state>
+    <def_state id="9">last-ack</def_state>
+    <def_state id="10">time-wait</def_state>
+    <def_state id="11">closed</def_state>
+    <def_event id="7">ack</def_event>
+    <def_event id="8">psh</def_event>
+    <def_event id="9">rst</def_event>
+    <def_event id="10">syn</def_event>
+    <def_event id="11">fin</def_event>
+    <def_event id="1">open</def_event>
+    <def_event id="2">send</def_event>
+    <def_event id="3">receive</def_event>
+    <def_event id="4">close</def_event>
+    <def_event id="5">abort</def_event>
+    <def_event id="6">status</def_event>
+    <def_event id="12">segment arrives</def_event>
+    <def_event id="13">user timeout</def_event>
+    <def_event id="14">retransmission timeout</def_event>
+    <def_event id="15">time-wait timeout</def_event>
+
+    <control relevant="true">
+        <trigger>in all states except <ref_state id="2">syn-sent</ref_state> ,
+        </trigger>
+        <trigger>all <ref_event id="9" type="receive">reset</ref_event> ( <ref_event id="9" type="receive">rst
+        </ref_event> ) segments are validated by checking their seq-fields .
+        </trigger>
+        <trigger>a <ref_event id="9" type="receive">reset</ref_event> is valid if its sequence number is in the window .
+        </trigger>
+        <trigger>in the <ref_state id="2">syn-sent</ref_state> state ( a <ref_event id="9" type="receive">rst
+        </ref_event> received in response to an initial <ref_event id="10" type="receive">syn</ref_event> ) ,
+        </trigger>
+        <trigger>the
+            <ref_event id="7" type="receive">rst is acceptable if the ack field acknowledges the syn .</ref_event>
+        </trigger>
+    </control>
+
+    <control relevant="true">
+        <trigger>the receiver of a <ref_event id="9" type="receive">rst</ref_event> first validates it ,
+        </trigger>
+        <transition>then changes state .</transition>
+        <trigger>if the receiver was in the <ref_state id="1">listen</ref_state> state ,
+        </trigger>
+        <action type="receive">it ignores it .</action>
+        <trigger>if the receiver was in <ref_state id="3">syn-received</ref_state> state and had previously been in the <ref_state
+                id="1">listen
+        </ref_state> state ,
+        </trigger>
+        <transition>then the receiver returns to the <ref_state id="1">listen</ref_state> state ,
+        </transition>
+        <transition>otherwise the receiver aborts the connection and goes to the <ref_state id="11">closed</ref_state> state
+            .
+        </transition>
+        <trigger>if the receiver was in any other state ,</trigger>
+        <transition>it aborts the connection and advises the user and goes to the <ref_state id="11">closed</ref_state> state
+            .
+        </transition>
+    </control>
+
+    <control relevant="true">
+        <trigger>
+            <ref_event id="4" type="send">close</ref_event>
+            is an operation meaning `` i have no more data to send .
+        </trigger>
+        <action type="receive">'' the notion of closing a full-duplex connection is subject to ambiguous interpretation
+            ,
+        </action>
+        <trigger>of course ,</trigger>since it may not be obvious how to treat the receiving side of the connection . we
+        have chosen to treat <ref_event id="4" type="None">close</ref_event> in a simplex fashion .
+        <trigger>the user who closes may continue to receive until he is told that the other side has <ref_state
+                id="11">closed
+        </ref_state> also .
+        </trigger>
+        thus ,
+        <trigger>a program could initiate several sends followed by a <ref_event id="4" type="receive">close</ref_event> ,
+        </trigger>
+        <trigger>and then continue to receive until signaled that a receive failed because the other side has <ref_state
+                id="11">closed
+        </ref_state> .
+        </trigger>
+        we assume that the tcp will signal a user ,
+        <trigger>even if no receives are outstanding ,</trigger>
+        <trigger>that the other side has <ref_state id="11">closed</ref_state> ,
+        </trigger>
+        so the user can terminate his side gracefully .
+        <trigger>a tcp will reliably deliver all buffers sent before the connection was <ref_state id="11">closed
+        </ref_state> so a user who expects no data in return need only wait to hear the connection was <ref_state
+                id="11">closed
+        </ref_state> successfully to know that all his data was received at the destination tcp .
+        </trigger>
+        <trigger>users must keep reading connections they <ref_event id="4" type="send">close</ref_event> for sending
+            until the tcp says no more data .
+        </trigger>
+    </control>
+
+    <control relevant="true">
+        <trigger>if the active/passive flag is set to passive ,</trigger>
+        <action type="receive">then this is a call to listen for an incoming connection .</action>
+        <trigger>a passive <ref_event id="1" type="receive">open</ref_event> may have either a fully specified foreign
+            socket to wait for a particular connection or an unspecified foreign socket to wait for any call .
+        </trigger>
+        <trigger>a fully specified passive call can be made active by the subsequent execution of a send .</trigger>
+    </control>
+
+    <control relevant="true">
+        <action type="receive">closed state ( i.e. ,</action>
+        <action type="receive">tcb does not exist ) create a new transmission control block ( tcb ) to hold connection
+            state information .
+        </action>
+        <action type="receive">fill in local socket identifier ,</action>
+        <action type="receive">foreign socket ,</action>precedence ,
+        <trigger>security/compartment ,</trigger>
+        <trigger>and user timeout information .</trigger>
+        <trigger>note that some parts of the foreign socket may be unspecified in a passive <ref_event id="1"
+                                                                                                       type="receive">
+            open
+        </ref_event> and are to be filled in by the parameters of the incoming <ref_event id="10" type="receive">syn
+        </ref_event> segment .
+        </trigger>
+        <action type="receive">verify the security and precedence requested are allowed for this user ,</action>
+        <trigger>if not return `` error : precedence not allowed '' or `` error : security/compartment not allowed .
+        </trigger>
+        <trigger>'' if passive enter the <ref_state id="1">listen</ref_state> state and return .
+        </trigger>
+        <trigger>if active and the foreign socket is unspecified ,</trigger>
+        <action type="receive">return `` error : foreign socket unspecified '' ;</action>
+        <trigger>if active and the foreign socket is specified ,</trigger>
+        <action type="issue">issue
+            <arg>a <ref_event id="10" type="send">syn</ref_event> segment
+            </arg>
+            .
+        </action>
+        <action type="receive">an initial send sequence number ( iss ) is selected .</action>
+        <action type="send">
+            <arg>a <ref_event id="10" type="send">syn</ref_event> segment of the form &lt; seq=iss &gt; &lt; ctl=syn
+                &gt;
+            </arg>
+            is sent .
+        </action>
+        <variable>set snd.una to iss ,</variable>
+        <transition>snd.nxt to iss+1 ,</transition>
+        <transition>enter <ref_state id="2">syn-sent</ref_state> state ,
+        </transition>
+        <action type="receive">and return .</action>
+    </control>
+
+    <control relevant="true">
+        <trigger>if the caller does not have access to the local socket specified ,</trigger>
+        <action type="receive">return `` error : connection illegal for this process '' .</action>
+        <trigger>if there is no room to create a new connection ,</trigger>
+        <action type="receive">return `` error : insufficient resources '' .</action>
+    </control>
+
+    <control relevant="true">
+        <trigger>
+            <ref_state id="1">listen</ref_state>
+            state if active and the foreign socket is specified ,
+        </trigger>
+        <action type="receive">then change the connection from passive to active ,</action>
+        <action type="receive">select an iss .</action>
+        <action type="send">send
+            <arg>a <ref_event id="10" type="send">syn</ref_event> segment
+            </arg>
+            ,
+        </action>
+        <variable>set snd.una to iss ,</variable>
+        <transition>snd.nxt to iss+1 .</transition>
+        <transition>enter <ref_state id="2">syn-sent</ref_state> state .
+        </transition>
+        <trigger>data associated with send may be sent with <ref_event id="10" type="send">syn</ref_event> segment or
+            queued for transmission after entering <ref_state id="4">established</ref_state> state .
+        </trigger>
+        <action type="send">
+            <arg>the urgent bit if requested in the command</arg>
+            must be sent with the data segments sent as a result of this command .
+        </action>
+        <trigger>if there is no room to queue the request ,</trigger>
+        <action type="receive">respond with `` error : insufficient resources '' .</action>
+        <trigger>if foreign socket was not specified ,</trigger>
+        <action type="receive">then return `` error : foreign socket unspecified '' .</action>
+    </control>
+
+    <control relevant="true">
+        <action type="receive">closed state ( i.e. ,</action>
+        <trigger>tcb does not exist ) if the user does not have access to such a connection ,</trigger>
+        <action type="receive">then return `` error : connection illegal for this process '' .</action>
+        <trigger>otherwise ,</trigger>
+        <action type="receive">return `` error : connection does not exist '' .</action>
+    </control>
+
+    <control relevant="true">
+        <trigger>
+            <ref_state id="1">listen</ref_state>
+            state if the foreign socket is specified ,
+        </trigger>
+        <action type="receive">then change the connection from passive to active ,</action>
+        <action type="receive">select an iss .</action>
+        <action type="send">send
+            <arg>a <ref_event id="10" type="send">syn</ref_event> segment
+            </arg>
+            ,
+        </action>
+        <variable>set snd.una to iss ,</variable>
+        <transition>snd.nxt to iss+1 .</transition>
+        <transition>enter <ref_state id="2">syn-sent</ref_state> state .
+        </transition>
+        <trigger>data associated with send may be sent with <ref_event id="10" type="send">syn</ref_event> segment or
+            queued for transmission after entering <ref_state id="4">established</ref_state> state .
+        </trigger>
+        <action type="send">
+            <arg>the urgent bit if requested in the command</arg>
+            must be sent with the data segments sent as a result of this command .
+        </action>
+        <trigger>if there is no room to queue the request ,</trigger>
+        <action type="receive">respond with `` error : insufficient resources '' .</action>
+        <trigger>if foreign socket was not specified ,</trigger>
+        <action type="receive">then return `` error : foreign socket unspecified '' .</action>
+    </control>
+
+    <control relevant="true">
+        <action type="receive">syn-sent state syn-received state queue the data for transmission after entering
+            established state .
+        </action>
+        <trigger>if no space to queue ,</trigger>
+        <action type="receive">respond with `` error : insufficient resources '' .</action>
+    </control>
+
+    <control relevant="true">
+        <action type="send">established state close-wait state segmentize the buffer and send it with a piggybacked <ref_event
+                id="7" type="send">acknowledgment
+        </ref_event> ( <ref_event id="7" type="send">acknowledgment</ref_event> value = rcv.nxt ) .
+        </action>
+        <trigger>if there is insufficient space to remember this buffer ,</trigger>
+        <action type="receive">simply return `` error : insufficient resources '' .</action>
+        <trigger>if the urgent flag is set ,</trigger>
+        <variable>then snd.up &lt; - snd.nxt-1 and set the urgent pointer in the outgoing segments .</variable>
+    </control>
+
+    <control relevant="true">
+        <action>fin-wait-1 state fin-wait-2 state closing state last-ack state time-wait state return `` error :
+            connection closing '' and do not service request .
+        </action>
+    </control>
+
+    <control relevant="true">
+        <action type="receive">receive <arg>call closed state ( i.e.</arg> ,
+        </action>
+        <trigger>tcb does not exist ) if the user does not have access to such a connection ,</trigger>
+        <action type="receive">return `` error : connection illegal for this process '' .</action>
+        <action type="receive">otherwise return `` error : connection does not exist '' .</action>
+    </control>
+
+    <control relevant="true">
+        <action type="receive">listen state syn-sent state syn-received state queue for processing after entering
+            established state .
+        </action>
+        <trigger>if there is no room to queue this request ,</trigger>
+        <action type="receive">respond with `` error : insufficient resources '' .</action>
+    </control>
+
+    <control relevant="true">
+        <trigger>
+            <ref_state id="4">established</ref_state>
+            state <ref_state id="5">fin-wait-1</ref_state> state <ref_state id="6">fin-wait-2</ref_state> state if
+            insufficient incoming segments are queued to satisfy the request ,
+        </trigger>
+        <action type="receive">queue the request .</action>
+        <trigger>if there is no queue space to remember the receive ,</trigger>
+        <action type="receive">respond with `` error : insufficient resources '' .</action>
+        <action type="receive">reassemble queued incoming segments into receive buffer and return to user .</action>
+        <trigger>mark `` push seen '' ( push ) if this is the case .</trigger>
+        <trigger>if rcv.up is in advance of the data currently being passed to the user notify the user of the presence
+            of urgent data .
+        </trigger>
+        <action type="receive">when the tcp takes responsibility for delivering data to the user that fact must be
+            communicated to the sender via an <ref_event id="7" type="receive">acknowledgment</ref_event> .
+        </action>
+        <trigger>the formation of such an <ref_event id="7" type="receive">acknowledgment</ref_event> is described below
+            in the discussion of processing an incoming segment .
+        </trigger>
+    </control>
+
+    <control relevant="true">
+        <trigger>
+            <ref_state id="7">close-wait</ref_state>
+            state since the remote side has already sent <ref_event id="11" type="send">fin</ref_event> ,
+        </trigger>
+        <action type="receive">receives must be satisfied by text already on hand ,</action>
+        <action type="receive">but not yet delivered to the user .</action>
+        <trigger>if no text is awaiting delivery ,</trigger>
+        <action type="receive">the receive will get a `` error : connection closing '' response .</action>
+        <trigger>otherwise ,</trigger>
+        <action type="receive">any remaining text can be used to satisfy the receive .</action>
+    </control>
+
+    <control relevant="true">
+        <trigger>
+            <ref_state id="8">closing</ref_state>
+            state <ref_state id="9">last-ack</ref_state> state <ref_state id="10">time-wait</ref_state> state return ``
+            error : connection <ref_state id="8">closing</ref_state> '' .
+        </trigger>
+    </control>
+
+    <control relevant="true">
+        <action type="receive">
+            <ref_event id="4" type="receive">close</ref_event>
+            call closed state ( i.e. ,
+        </action>
+        <trigger>tcb does not exist ) if the user does not have access to such a connection ,</trigger>
+        <action type="receive">return `` error : connection illegal for this process '' .</action>
+        <trigger>otherwise ,</trigger>
+        <action type="receive">return `` error : connection does not exist '' .</action>
+    </control>
+
+    <control relevant="true">
+        <trigger>
+            <ref_state id="1">listen</ref_state>
+            state any outstanding receives are returned with `` error : <ref_state id="8">closing</ref_state> ''
+            responses .
+        </trigger>
+        <trigger>delete tcb ,</trigger>
+        <transition>enter <ref_state id="11">closed</ref_state> state ,
+        </transition>
+        <action type="receive">and return .</action>
+    </control>
+
+    <control relevant="true">
+        <action type="receive">syn-sent state delete the tcb and return `` error : closing '' responses to any queued
+            sends ,
+        </action>
+        <trigger>or receives .</trigger>
+    </control>
+
+    <control relevant="true">
+        <trigger>
+            <ref_state id="3">syn-received</ref_state>
+            state if no sends have been issued and there is no pending data to send ,
+        </trigger>
+        <action type="send">then form
+            <arg>a <ref_event id="11" type="send">fin</ref_event> segment
+            </arg>
+            and send it ,
+        </action>
+        <transition>and enter <ref_state id="5">fin-wait-1</ref_state> state ;
+        </transition>
+        <transition>otherwise queue for processing after entering <ref_state id="4">established</ref_state> state .
+        </transition>
+    </control>
+
+    <control relevant="true">
+        <trigger>
+            <ref_state id="4">established</ref_state>
+            state queue this until all preceding sends have been segmentized ,
+        </trigger>
+        <action type="send">then form
+            <arg>a <ref_event id="11" type="send">fin</ref_event> segment
+            </arg>
+            and send it .
+        </action>
+        <trigger>in any case ,</trigger>
+        <transition>enter <ref_state id="5">fin-wait-1</ref_state> state .
+        </transition>
+    </control>
+
+    <control relevant="true">
+        <action type="receive">fin-wait-1 state fin-wait-2 state strictly speaking ,</action>
+        <action type="receive">this is an error and should receive <arg>a `` error : connection closing '' response
+        </arg> .
+        </action>
+        <action type="receive">an `` ok '' response would be acceptable ,</action>too ,
+        <trigger>as long as a second <ref_event id="11" type="receive">fin</ref_event> is not emitted ( the first <ref_event
+                id="11" type="receive">fin
+        </ref_event> may be retransmitted though ) .
+        </trigger>
+    </control>
+
+    <control relevant="true">
+        <trigger>
+            <ref_state id="7">close-wait</ref_state>
+            state queue this request until all preceding sends have been segmentized ;
+        </trigger>
+        <action type="send">then send
+            <arg>a <ref_event id="11" type="send">fin</ref_event> segment
+            </arg>
+            ,
+        </action>
+        <transition>enter <ref_state id="8">closing</ref_state> state .
+        </transition>
+    </control>
+
+    <control relevant="true">
+        <action type="receive">closing state last-ack state time-wait state respond with `` error : connection closing
+            '' .
+        </action>
+    </control>
+
+    <control relevant="true">
+        <action type="receive">
+            <ref_event id="5" type="receive">abort</ref_event>
+            call closed state ( i.e. ,
+        </action>
+        <trigger>tcb does not exist ) if the user should not have access to such a connection ,</trigger>
+        <action type="receive">return `` error : connection illegal for this process '' .</action>
+        <action type="receive">otherwise return `` error : connection does not exist '' .</action>
+    </control>
+
+    <control relevant="true">
+        <action type="receive">listen state any outstanding receives should be returned with `` error : connection <ref_event
+                id="9" type="receive">reset
+        </ref_event> '' responses .
+        </action>
+        <action type="receive">delete tcb ,</action>
+        <action type="receive">enter closed state ,</action>
+        <action type="receive">and return .</action>
+    </control>
+
+    <control relevant="true">
+        <action type="receive">syn-sent state all queued sends and receives should be given `` connection <ref_event
+                id="9" type="receive">reset
+        </ref_event> '' notification ,
+        </action>
+        <action type="receive">delete the tcb ,</action>
+        <action type="receive">enter closed state ,</action>
+        <action type="receive">and return .</action>
+    </control>
+
+    <control relevant="true">
+        <action type="receive">syn-received state established state fin-wait-1 state fin-wait-2 state close-wait state
+            send a <ref_event id="9" type="receive">reset</ref_event> segment : &lt; seq=snd.nxt &gt; &lt; ctl=rst &gt;
+            all queued sends and receives should be given `` connection <ref_event id="9" type="receive">reset
+            </ref_event> '' notification ;
+        </action>
+        <action type="issue">all segments queued for transmission ( except for
+            <arg>the
+                <ref_event id="9" type="send">rst</ref_event>
+            </arg>
+            formed above ) or retransmission should be flushed ,
+        </action>
+        <action type="receive">delete the tcb ,</action>
+        <action type="receive">enter closed state ,</action>
+        <action type="receive">and return .</action>
+    </control>
+
+    <control relevant="true">
+        <action type="receive">closing state last-ack state time-wait state respond with `` ok '' and delete the tcb ,
+        </action>
+        <action type="receive">enter closed state ,</action>
+        <action type="receive">and return .</action>
+    </control>
+
+    <control relevant="true">
+        <action type="receive">
+            <ref_event id="6" type="receive">status</ref_event>
+            call closed state ( i.e. ,
+        </action>
+        <trigger>tcb does not exist ) if the user should not have access to such a connection ,</trigger>
+        <action type="receive">return `` error : connection illegal for this process '' .</action>
+        <action type="receive">otherwise return `` error : connection does not exist '' .</action>
+        <action type="receive">listen state return `` state = listen '' ,</action>
+        <timer>and the tcb pointer .</timer>
+        <trigger>
+            <ref_state id="2">syn-sent</ref_state>
+            state return `` state = <ref_state id="2">syn-sent</ref_state> '' ,
+        </trigger>
+        <trigger>and the tcb pointer .</trigger>
+        <trigger>
+            <ref_state id="3">syn-received</ref_state>
+            state return `` state = <ref_state id="3">syn-received</ref_state> '' ,
+        </trigger>
+        <trigger>and the tcb pointer .</trigger>
+        <trigger>
+            <ref_state id="4">established</ref_state>
+            state return `` state = <ref_state id="4">established</ref_state> '' ,
+        </trigger>
+        <trigger>and the tcb pointer .</trigger>
+        <trigger>
+            <ref_state id="5">fin-wait-1</ref_state>
+            state return `` state = <ref_state id="5">fin-wait-1</ref_state> '' ,
+        </trigger>
+        <trigger>and the tcb pointer .</trigger>
+        <trigger>
+            <ref_state id="6">fin-wait-2</ref_state>
+            state return `` state = <ref_state id="6">fin-wait-2</ref_state> '' ,
+        </trigger>
+        <trigger>and the tcb pointer .</trigger>
+        <trigger>
+            <ref_state id="7">close-wait</ref_state>
+            state return `` state = <ref_state id="7">close-wait</ref_state> '' ,
+        </trigger>
+        <trigger>and the tcb pointer .</trigger>
+        <trigger>
+            <ref_state id="8">closing</ref_state>
+            state return `` state = <ref_state id="8">closing</ref_state> '' ,
+        </trigger>
+        <trigger>and the tcb pointer .</trigger>
+        <trigger>
+            <ref_state id="9">last-ack</ref_state>
+            state return `` state = <ref_state id="9">last-ack</ref_state> '' ,
+        </trigger>
+        <trigger>and the tcb pointer .</trigger>
+        <trigger>
+            <ref_state id="10">time-wait</ref_state>
+            state return `` state = <ref_state id="10">time-wait</ref_state> '' ,
+        </trigger>
+        <trigger>and the tcb pointer .</trigger>
+    </control>
+
+    <control relevant="true">
+        <trigger>segment arrives if the state is <ref_state id="11">closed</ref_state> ( i.e. ,
+        </trigger>
+        <action type="receive">tcb does not exist ) then all data in the incoming segment is discarded .</action>
+        <action type="receive">an incoming segment containing a <ref_event id="9" type="receive">rst</ref_event> is
+            discarded .
+        </action>
+        <trigger>an incoming segment not containing a <ref_event id="9" type="send">rst</ref_event> causes a <ref_event
+                id="9" type="send">rst
+        </ref_event> to be sent in response .
+        </trigger>
+        <trigger>the <ref_event id="7" type="send">acknowledgment</ref_event> and sequence field values are selected to
+            make the <ref_event id="9" type="send">reset</ref_event> sequence acceptable to the tcp that sent the
+            offending segment .
+        </trigger>
+        <trigger>if the <ref_event id="7" type="receive">ack</ref_event> bit is off ,
+        </trigger>
+        sequence number zero is used ,
+        <trigger>&lt; seq=0 &gt; &lt; ack=seg.seq+seg.len &gt; &lt; ctl=rst ,</trigger>
+        <trigger>
+            <ref_event id="7" type="receive">ack</ref_event> &gt; if the <ref_event id="7" type="receive">ack
+        </ref_event> bit is on ,
+        </trigger>
+        <action type="receive">&lt; seq=seg.ack &gt; &lt; ctl=rst &gt; return .</action>
+        <action type="receive">if the state is listen then first check for an <ref_event id="9" type="receive">rst
+        </ref_event> an incoming <ref_event id="9" type="receive">rst</ref_event> should be ignored .
+        </action>
+        <action type="receive">return .</action>
+        <trigger>second check for an <ref_event id="7" type="receive">ack</ref_event> any <ref_event id="7"
+                                                                                                     type="receive">
+            acknowledgment
+        </ref_event> is bad if it arrives on a connection still in the <ref_state id="1">listen</ref_state> state .
+        </trigger>
+        <action type="issue">
+            <arg>an acceptable <ref_event id="9" type="send">reset</ref_event> segment
+            </arg>
+            should be formed for any arriving ack-bearing segment .
+        </action>
+        <action type="issue">
+            <arg>the
+                <ref_event id="9" type="send">rst</ref_event>
+            </arg>
+            should be formatted as follows : &lt; seq=seg.ack &gt; &lt; ctl=rst &gt; return .
+        </action>
+        <trigger>third check for a <ref_event id="10" type="receive">syn</ref_event> if the <ref_event id="10"
+                                                                                                       type="receive">
+            syn
+        </ref_event> bit is set ,
+        </trigger>
+        <action type="receive">check the security .</action>
+        <trigger>if the security/compartment on the incoming segment does not exactly match the security/compartment in
+            the tcb then send a <ref_event id="9" type="send">reset</ref_event> and return .
+        </trigger>
+        <trigger>&lt; seq=seg.ack &gt; &lt; ctl=rst &gt; if the seg.prc is greater than the tcb.prc then if allowed by
+            the user and the system set tcb.prc &lt; -seg.prc ,
+        </trigger>
+        <action type="send">if not allowed send
+            <arg>a <ref_event id="9" type="send">reset</ref_event> and return
+            </arg>
+            .
+        </action>
+        <trigger>&lt; seq=seg.ack &gt; &lt; ctl=rst &gt; if the seg.prc is less than the tcb.prc then continue .
+        </trigger>
+        <trigger>set rcv.nxt to seg.seq+1 ,</trigger>
+        <action type="receive">irs is set to seg.seq and any other control or text should be queued for processing later
+            .
+        </action>
+        <action type="send">iss should be selected and
+            <arg>a <ref_event id="10" type="send">syn</ref_event> segment
+            </arg>
+            sent of the form : &lt; seq=iss &gt; &lt; ack=rcv.nxt &gt; &lt; ctl=syn ,
+        </action>
+        <variable>
+            <ref_event id="7" type="None">ack</ref_event> &gt; snd.nxt is set to iss+1 and snd.una to iss .
+        </variable>
+        <transition>the connection state should be changed to
+            <arg_target>
+                <ref_state id="3">syn-received</ref_state>
+            </arg_target>
+            .
+        </transition>
+        note that any other incoming control or data ( combined with <ref_event id="10" type="None">syn</ref_event> )
+        will be processed in the syn-received state ,
+        <action type="receive">but processing of <ref_event id="10" type="receive">syn</ref_event> and <ref_event id="7"
+                                                                                                                  type="receive">
+            ack
+        </ref_event> should not be repeated .
+        </action>
+        <trigger>if the <ref_state id="1">listen</ref_state> was not fully specified ( i.e. ,
+        </trigger>
+        <trigger>the foreign socket was not fully specified ) ,</trigger>
+        <action type="receive">then the unspecified fields should be filled in now .</action>
+        <action type="receive">fourth other text or control any other control or text-bearing segment ( not containing <ref_event
+                id="10" type="receive">syn
+        </ref_event> ) must have an <ref_event id="7" type="receive">ack</ref_event> and thus would be discarded by the <ref_event
+                id="7" type="receive">ack
+        </ref_event> processing .
+        </action>
+        <trigger>an incoming <ref_event id="9" type="receive">rst</ref_event> segment could not be valid ,
+        </trigger>
+        <action type="send">since <arg>it</arg> could not have been sent in response to anything sent by this
+            incarnation of the connection .
+        </action>
+        so you are unlikely to get here ,
+        <trigger>but if you do ,</trigger>
+        <action type="receive">drop the segment ,</action>
+        <action type="receive">and return .</action>
+    </control>
+
+    <control relevant="true">
+        <trigger>if the state is <ref_state id="2">syn-sent</ref_state> then first check the <ref_event id="7"
+                                                                                                        type="receive">
+            ack
+        </ref_event> bit if the <ref_event id="7" type="receive">ack</ref_event> bit is set if seg.ack = &lt; iss ,
+        </trigger>
+        <trigger>or seg.ack &gt; snd.nxt ,</trigger>
+        <action type="send">send
+            <arg>a
+                <ref_event id="9" type="send">reset</ref_event>
+            </arg>
+            ( unless the <ref_event id="9" type="send">rst</ref_event> bit is set ,
+        </action>
+        <action type="receive">if so drop the segment and return ) &lt; seq=seg.ack &gt; &lt; ctl=rst &gt; and discard
+            the segment .
+        </action>
+        <action type="receive">return .</action>
+        <trigger>if snd.una = &lt; seg.ack = &lt; snd.nxt then the <ref_event id="7" type="receive">ack</ref_event> is
+            acceptable .
+        </trigger>
+        <trigger>second check the <ref_event id="9" type="receive">rst</ref_event> bit if the <ref_event id="9"
+                                                                                                         type="receive">
+            rst
+        </ref_event> bit is set if the <ref_event id="7" type="receive">ack</ref_event> was acceptable then signal the
+            user `` error : connection <ref_event id="9" type="receive">reset</ref_event> '' ,
+        </trigger>
+        <action type="receive">drop the segment ,</action>
+        <transition>enter <ref_state id="11">closed</ref_state> state ,
+        </transition>
+        <trigger>delete tcb ,</trigger>
+        <action type="receive">and return .</action>
+        <trigger>otherwise ( no <ref_event id="7" type="receive">ack</ref_event> ) drop the segment and return .
+        </trigger>
+        <trigger>third check the security and precedence if the security/compartment in the segment does not exactly
+            match the security/compartment in the tcb ,
+        </trigger>
+        <trigger>send a <ref_event id="9" type="send">reset</ref_event> if there is an <ref_event id="7" type="send">
+            ack
+        </ref_event> &lt; seq=seg.ack &gt; &lt; ctl=rst &gt; otherwise &lt; seq=0 &gt; &lt; ack=seg.seq+seg.len &gt;
+            &lt; ctl=rst ,
+        </trigger>
+        <trigger>
+            <ref_event id="7" type="receive">ack</ref_event> &gt; if there is an <ref_event id="7" type="receive">ack
+        </ref_event> the precedence in the segment must match the precedence in the tcb ,
+        </trigger>
+        <trigger>if not ,</trigger>
+        <action type="send">send
+            <arg>a <ref_event id="9" type="send">reset</ref_event> &lt; seq=seg.ack &gt; &lt; ctl=rst &gt;
+            </arg>
+            if there is no <ref_event id="7" type="send">ack</ref_event> if the <arg>precedence in the segment is higher
+                than the precedence in the tcb
+            </arg> then if allowed by the user and the system raise the precedence in the tcb to that in the segment ,
+        </action>
+        <action type="send">if not allowed to raise the prec then send
+            <arg>a
+                <ref_event id="9" type="send">reset</ref_event>
+            </arg>
+            .
+        </action>
+        <action type="receive">&lt; seq=0 &gt; &lt; ack=seg.seq+seg.len &gt; &lt; ctl=rst ,</action>
+        <trigger>
+            <ref_event id="7" type="receive">ack</ref_event> &gt; if the precedence in the segment is lower than the
+            precedence in the tcb continue .
+        </trigger>
+        <trigger>if a <ref_event id="9" type="send">reset</ref_event> was sent ,
+        </trigger>
+        <action type="receive">discard the segment and return .</action>
+        <trigger>fourth check the <ref_event id="10" type="receive">syn</ref_event> bit this step should be reached only
+            if the <ref_event id="7" type="receive">ack</ref_event> is ok ,
+        </trigger>
+        <trigger>or there is no <ref_event id="7" type="receive">ack</ref_event> ,
+        </trigger>
+        <action type="receive">and it the segment did not contain a <ref_event id="9" type="receive">rst</ref_event> .
+        </action>
+        <trigger>if the <ref_event id="10" type="receive">syn</ref_event> bit is on and the security/compartment and
+            precedence are acceptable then ,
+        </trigger>
+        <trigger>rcv.nxt is set to seg.seq+1 ,</trigger>
+        <trigger>irs is set to seg.seq .</trigger>
+        <trigger>snd.una should be advanced to equal seg.ack ( if there is an <ref_event id="7" type="receive">ack
+        </ref_event> ) ,
+        </trigger>
+        <action type="receive">and any segments on the retransmission queue which are thereby acknowledged should be
+            removed .
+        </action>
+        <trigger>if snd.una &gt; iss ( our <ref_event id="7" type="receive">syn has been acked</ref_event>) ,
+        </trigger>
+        <transition>change the connection state to
+            <arg_target>
+                <ref_state id="4">established</ref_state>
+            </arg_target>
+            ,
+        </transition>
+        <action type="send">form
+            <arg>an <ref_event id="7" type="send">ack</ref_event> segment &lt; seq=snd.nxt &gt; &lt; ack=rcv.nxt &gt;
+                &lt; ctl=ack &gt;
+            </arg>
+            and send it .
+        </action>
+        <trigger>data or controls which were queued for transmission may be included .</trigger>
+        <trigger>if there are other controls or text in the segment then continue processing at the sixth step below
+            where the urg bit is checked ,
+        </trigger>
+        <action type="receive">otherwise return .</action>
+        <trigger>otherwise enter <ref_state id="3">syn-received</ref_state> ,
+        </trigger>
+        <action type="issue">form
+            <arg>a
+                <ref_event id="10" type="send">syn</ref_event>
+            </arg>
+            ,
+        </action>
+        <trigger>
+            <ref_event id="7" type="receive">ack</ref_event>
+            segment &lt; seq=iss &gt; &lt; ack=rcv.nxt &gt; &lt; ctl=syn ,
+        </trigger>
+        <action type="send">
+            <ref_event id="7" type="send">ack</ref_event> &gt; and send <arg>it</arg> .
+        </action>
+        <trigger>if there are other controls or text in the segment ,</trigger>
+        <transition>queue them for processing after the <ref_state id="4">established</ref_state> state has been reached
+            ,
+        </transition>
+        <action type="receive">return .</action>
+        <trigger>fifth ,</trigger>
+        <action type="receive">if neither of the <ref_event id="10" type="receive">syn</ref_event> or <ref_event id="9"
+                                                                                                                 type="receive">
+            rst
+        </ref_event> bits is set then drop the segment and return .
+        </action>
+    </control>
+
+    <control relevant="true">
+        <trigger>otherwise ,</trigger>
+        <action type="receive">first check sequence number syn-received state established state fin-wait-1 state
+            fin-wait-2 state close-wait state closing state last-ack state time-wait state segments are processed in
+            sequence .
+        </action>
+        <action type="receive">initial tests on arrival are used to discard old duplicates ,</action>
+        <trigger>but further processing is done in seg.seq order .</trigger>
+        <trigger>if a segment 's contents straddle the boundary between old and new ,</trigger>
+        <action type="receive">only the new parts should be processed .</action>
+        <action type="receive">there are four cases for the acceptability test for an incoming segment : segment receive <arg>
+            test length window
+        </arg> -- -- -- - -- -- -- - -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- - 0 0 seg.seq =
+            rcv.nxt 0 &gt; 0 rcv.nxt = &lt; seg.seq &lt; rcv.nxt+rcv.wnd &gt; 0 0 not acceptable &gt; 0 &gt; 0 rcv.nxt =
+            &lt; seg.seq &lt; rcv.nxt+rcv.wnd or rcv.nxt = &lt; seg.seq+seg.len-1 &lt; rcv.nxt+rcv.wnd if the rcv.wnd is
+            zero ,
+        </action>
+        <action type="receive">no segments will be acceptable ,</action>
+        <action type="receive">but special allowance should be made to accept valid acks ,</action>
+        <action type="receive">urgs and rsts .</action>
+        <trigger>if an incoming segment is not acceptable ,</trigger>
+        <action type="send">
+            <arg>an
+                <ref_event id="7" type="send">acknowledgment</ref_event>
+            </arg>
+            should be sent in reply ( unless the <ref_event id="9" type="send">rst</ref_event> bit is set ,
+        </action>
+        <action type="send">if so drop the segment and return ) : &lt; seq=snd.nxt &gt; &lt; ack=rcv.nxt &gt; &lt;
+            ctl=ack &gt; after sending
+            <arg>the
+                <ref_event id="7" type="send">acknowledgment</ref_event>
+            </arg>
+            ,
+        </action>
+        <action type="receive">drop the unacceptable segment and return .</action>in the following it is assumed that
+        the segment is the idealized segment that begins at rcv.nxt and does not exceed the window . one could tailor
+        actual segments to fit this assumption by trimming off any portions that lie outside the window ( including <ref_event
+            id="10" type="receive">syn
+    </ref_event> and <ref_event id="11" type="receive">fin</ref_event> ) ,
+        <trigger>and only processing further if the segment then begins at rcv.nxt .</trigger>
+        <trigger>segments with higher begining sequence numbers may be held for later processing .</trigger>
+    </control>
+
+    <control relevant="true">
+        <trigger>second check the <ref_event id="9" type="receive">rst</ref_event> bit ,
+        </trigger>
+        <trigger>
+            <ref_state id="3">syn-received</ref_state>
+            state if the <ref_event id="9" type="receive">rst</ref_event> bit is set if this connection was initiated
+            with a passive <ref_event id="1" type="receive">open</ref_event> ( i.e. ,
+        </trigger>
+        <transition>came from the <ref_state id="1">listen</ref_state> state ) ,
+        </transition>
+        <transition>then return this connection to <ref_state id="1">listen</ref_state> state and return .
+        </transition>
+        <trigger>the user need not be informed .</trigger>
+        <trigger>if this connection was initiated with an active <ref_event id="1" type="receive">open</ref_event> (
+            i.e. ,
+        </trigger>
+        <transition>came from <ref_state id="2">syn-sent</ref_state> state ) then the connection was refused ,
+        </transition>
+        <action type="receive">signal the user `` connection refused '' .</action>in either case ,
+        <action type="receive">all segments on the retransmission queue should be removed .</action>
+        <trigger>and in the active <ref_event id="1" type="receive">open</ref_event> case ,
+        </trigger>
+        <transition>enter the <ref_state id="11">closed</ref_state> state and delete the tcb ,
+        </transition>
+        <action type="receive">and return .</action>
+        <trigger>
+            <ref_state id="4">established</ref_state>
+            <ref_state id="5">fin-wait-1</ref_state>
+            <ref_state id="6">fin-wait-2</ref_state>
+            <ref_state id="7">close-wait</ref_state>
+            if the <ref_event id="9" type="receive">rst</ref_event> bit is set
+            then ,
+        </trigger>
+        <action type="send">
+            <arg>any</arg>
+            outstanding receives and send should receive `` <ref_event id="9" type="send">reset</ref_event> '' responses
+            .
+        </action>
+        <action type="receive">all segment queues should be flushed .</action>
+        <trigger>users should also receive an unsolicited general `` connection <ref_event id="9" type="receive">reset
+        </ref_event> '' signal .
+        </trigger>
+        <transition>enter the <ref_state id="11">closed</ref_state> state ,
+        </transition>
+        <action type="receive">delete the tcb ,</action>
+        <action type="receive">and return .</action>
+        <trigger>
+            <ref_state id="8">closing</ref_state>
+            state <ref_state id="9">last-ack</ref_state> state <ref_state id="10">time-wait</ref_state> if the <ref_event
+                id="9" type="receive">rst
+        </ref_event> bit is set then ,
+        </trigger>
+        <transition>enter the <ref_state id="11">closed</ref_state> state ,
+        </transition>
+        <action type="receive">delete the tcb ,</action>
+        <action type="receive">and return .</action>
+    </control>
+
+    <control relevant="true">
+        <trigger>third check security and precedence <ref_state id="3">syn-received</ref_state> if the
+            security/compartment and precedence in the segment do not exactly match the security/compartment and
+            precedence in the tcb then send a <ref_event id="9" type="receive">reset</ref_event> ,
+        </trigger>
+        <action type="receive">and return .</action>
+        <trigger>
+            <ref_state id="4">established</ref_state>
+            state if the security/compartment and precedence in the segment do not exactly match the
+            security/compartment and precedence in the tcb then send a <ref_event id="9" type="send">reset</ref_event> ,
+        </trigger>
+        <action type="send">
+            <arg>any</arg>
+            outstanding receives and send should receive `` <ref_event id="9" type="send">reset</ref_event> '' responses
+            .
+        </action>
+        <action type="receive">all segment queues should be flushed .</action>
+        <trigger>users should also receive an unsolicited general `` connection <ref_event id="9" type="receive">reset
+        </ref_event> '' signal .
+        </trigger>
+        <transition>enter the <ref_state id="11">closed</ref_state> state ,
+        </transition>
+        <action type="receive">delete the tcb ,</action>
+        <action type="receive">and return .</action>
+        <trigger>note this check is placed following the sequence check to prevent a segment from an old connection
+            between these ports with a different security or precedence from causing an <ref_event id="5"
+                                                                                                   type="receive">abort
+            </ref_event> of the current connection .
+        </trigger>
+    </control>
+
+    <control relevant="true">
+        <trigger>fourth ,</trigger>
+        <trigger>check the <ref_event id="10" type="receive">syn</ref_event> bit ,
+        </trigger>
+        <action type="receive">syn-received established state fin-wait state-1 fin-wait state-2 close-wait state closing
+            state last-ack state time-wait state if the <ref_event id="10" type="receive">syn</ref_event> is in the
+            window it is an error ,
+        </action>
+        <action type="send">send
+            <arg>a
+                <ref_event id="9" type="send">reset</ref_event>
+            </arg>
+            ,
+        </action>
+        <action type="send">
+            <arg>any</arg>
+            outstanding receives and send should receive `` <ref_event id="9" type="send">reset</ref_event> '' responses
+            ,
+        </action>
+        <action type="receive">all segment queues should be flushed ,</action>
+        <action type="receive">the user should also receive
+            <arg>an unsolicited general `` connection <ref_event id="9" type="receive">reset</ref_event> '' signal
+            </arg>
+            ,
+        </action>
+        <action type="receive">enter the closed state ,</action>
+        <action type="receive">delete the tcb ,</action>
+        <action type="receive">and return .</action>
+        <trigger>if the <ref_event id="10" type="send">syn</ref_event> is not in the window this step would not be
+            reached and an <ref_event id="7" type="send">ack</ref_event> would have been sent in the first step (
+            sequence number check ) .
+        </trigger>
+    </control>
+
+    <control relevant="true">
+        <trigger>fifth check the <ref_event id="7" type="receive">ack</ref_event> field ,
+        </trigger>
+        <trigger>if the <ref_event id="7" type="receive">ack</ref_event> bit is off drop the segment and return if the <ref_event
+                id="7" type="receive">ack
+        </ref_event> bit is on <ref_state id="3">syn-received</ref_state> state if snd.una = &lt; seg.ack = &lt; snd.nxt
+            then enter <ref_state id="4">established</ref_state> state and continue processing .
+        </trigger>
+        <trigger>if the segment <ref_event id="7" type="receive">acknowledgment</ref_event> is not acceptable ,
+        </trigger>
+        <action type="issue">form
+            <arg>a <ref_event id="9" type="send">reset</ref_event> segment
+            </arg>
+            ,
+        </action>
+        <action type="send">&lt; seq=seg.ack &gt; &lt; ctl=rst &gt; and send <arg>it</arg> .
+        </action>
+        <trigger>
+            <ref_state id="4">established</ref_state>
+            state if snd.una &lt; seg.ack = &lt; snd.nxt then ,
+        </trigger>
+        <action type="receive">set snd.una &lt; - seg.ack .</action>
+        <action type="receive">any segments on the retransmission queue which are thereby entirely acknowledged are
+            removed .
+        </action>
+        <trigger>users should receive positive acknowledgments for buffers which have been sent and fully acknowledged (
+            i.e. ,
+        </trigger>
+        <trigger>send buffer should be returned with `` ok '' response ) .</trigger>
+        <trigger>if the <ref_event id="7" type="receive">ack</ref_event> is a duplicate ( seg.ack &lt; snd.una ) ,
+        </trigger>
+        <action type="receive">it can be ignored .</action>
+        <trigger>if the <ref_event id="7" type="send">ack</ref_event> acks something not yet sent ( seg.ack &gt; snd.nxt
+            ) then send an <ref_event id="7" type="send">ack</ref_event> ,
+        </trigger>
+        <action type="receive">drop the segment ,</action>
+        <action type="receive">and return .</action>
+        <trigger>if snd.una &lt; seg.ack = &lt; snd.nxt ,</trigger>
+        <action type="send">the send window should be updated .</action>
+        <trigger>if ( snd.wl1 &lt; seg.seq or ( snd.wl1 = seg.seq and snd.wl2 = &lt; seg.ack ) ) ,</trigger>
+        <trigger>set snd.wnd &lt; - seg.wnd ,</trigger>
+        <variable>set snd.wl1 &lt; - seg.seq ,</variable>
+        <variable>and set snd.wl2 &lt; - seg.ack .</variable>
+        <trigger>note that snd.wnd is an offset from snd.una ,</trigger>
+        <action type="receive">that snd.wl1 records the sequence number of the last segment used to update snd.wnd ,
+        </action>
+        <action type="receive">and that snd.wl2 records the <ref_event id="7" type="receive">acknowledgment</ref_event> number
+            of the last segment used to update snd.wnd .
+        </action>
+        the check here prevents using old segments to update the window .
+        <trigger>
+            <ref_state id="5">fin-wait-1</ref_state>
+            state in addition to the processing for the <ref_state id="4">established</ref_state> state ,
+        </trigger>
+        <trigger>if our <ref_event id="7" type="receive">fin is now acknowledged</ref_event>then enter <ref_state
+                id="6">fin-wait-2
+        </ref_state> and continue processing in that state .
+        </trigger>
+        <trigger>
+            <ref_state id="6">fin-wait-2</ref_state>
+            state in addition to the processing for the <ref_state id="4">established</ref_state> state ,
+        </trigger>
+        <trigger>if the retransmission queue is empty ,</trigger>
+        <action>the user 's <ref_event id="7" type="None">close can be acknowledged</ref_event>( `` ok '' ) but do not
+            delete the tcb .
+        </action>
+        <action type="receive">close-wait state do the same processing as for the established state .</action>
+        <trigger>
+            <ref_state id="8">closing</ref_state>
+            state in addition to the processing for the <ref_state id="4">established</ref_state> state ,
+        </trigger>
+        <trigger>if the
+            <ref_event id="7" type="receive">ack acknowledges our fin then enter the <ref_state id="10">time-wait
+            </ref_state> state ,
+            </ref_event>
+        </trigger>
+        <action type="receive">otherwise ignore the segment .</action>
+        <trigger>
+            <ref_state id="9">last-ack</ref_state>
+            state the only thing that can arrive in this state is an
+            <ref_event id="7" type="receive">acknowledgment of our fin .</ref_event>
+        </trigger>
+        <trigger>if our <ref_event id="7" type="receive">fin is now acknowledged</ref_event>,
+        </trigger>
+        <action type="receive">delete the tcb ,</action>
+        <action type="receive">enter the closed state ,</action>
+        <action type="receive">and return .</action>
+        <action type="receive">time-wait state the only thing that can arrive in this state is a retransmission of the
+            remote <ref_event id="11" type="receive">fin</ref_event> .
+        </action>
+        <action type="receive">acknowledge it ,</action>
+        <timer>and restart the 2 msl timeout .</timer>
+    </control>
+
+    <control relevant="true">
+        <trigger>sixth ,</trigger>
+        <trigger>check the urg bit ,</trigger>
+        <trigger>
+            <ref_state id="4">established</ref_state>
+            state <ref_state id="5">fin-wait-1</ref_state> state <ref_state id="6">fin-wait-2</ref_state> state if the
+            urg bit is set ,
+        </trigger>
+        <trigger>rcv.up &lt; - max ( rcv.up ,</trigger>
+        <trigger>seg.up ) ,</trigger>
+        <trigger>and signal the user that the remote side has urgent data if the urgent pointer ( rcv.up ) is in advance
+            of the data consumed .
+        </trigger>
+        <trigger>if the user has already been signaled ( or is still in the `` urgent mode '' ) for this continuous
+            sequence of urgent data ,
+        </trigger>
+        <action>do not signal the user again .</action>
+        <action type="receive">close-wait state closing state last-ack state time-wait this should not occur ,</action>
+        <trigger>since a <ref_event id="11" type="receive">fin</ref_event> has been received from the remote side .
+        </trigger>
+        <action type="receive">ignore the urg .</action>
+    </control>
+
+    <control relevant="true">
+        <trigger>seventh ,</trigger>
+        <action type="receive">process the segment text ,</action>
+        <action type="receive">established state fin-wait-1 state fin-wait-2 state once in the established state ,
+        </action>
+        <action type="receive">it is possible to deliver segment text to user receive buffers .</action>
+        <trigger>text from segments can be moved into buffers until either the buffer is full or the segment is empty
+            .
+        </trigger>
+        <trigger>if the segment empties and carries an push flag ,</trigger>
+        <action type="receive">then the user is informed ,</action>
+        <trigger>when the buffer is returned ,</trigger>
+        <trigger>that a push has been received .</trigger>
+        <trigger>when the tcp takes responsibility for delivering the data to the user it must also acknowledge the
+            receipt of the data .
+        </trigger>
+        <action type="receive">once the tcp takes responsibility for the data it advances rcv.nxt over the data accepted
+            ,
+        </action>
+        <action type="receive">and adjusts rcv.wnd as apporopriate to the current buffer availability .</action>
+        <action type="receive">the total of rcv.nxt and rcv.wnd should not be reduced .</action>please note the window
+        management suggestions in section 3.7 .
+        <action type="send">send
+            <arg>an<ref_event id="7" type="send">acknowledgment</ref_event> of the form : &lt; seq=snd.nxt &gt; &lt;
+                ack=rcv.nxt
+                &gt; &lt; ctl=ack &gt;
+            </arg>
+            this acknowledgment should be piggybacked on a segment being transmitted if possible without incurring undue
+            delay .
+        </action>
+        <action type="receive">close-wait state closing state last-ack state time-wait state this should not occur ,
+        </action>
+        <trigger>since a <ref_event id="11" type="receive">fin</ref_event> has been received from the remote side .
+        </trigger>
+        ignore the segment text .
+    </control>
+
+    <control relevant="true">
+        <trigger>eighth ,</trigger>
+        <trigger>check the <ref_event id="11" type="receive">fin</ref_event> bit ,
+        </trigger>
+        <trigger>do not process the <ref_event id="11" type="receive">fin</ref_event> if the state is <ref_state
+                id="11">
+            closed
+        </ref_state> ,
+        </trigger>
+        <trigger>
+            <ref_state id="1">listen</ref_state>
+            or <ref_state id="2">syn-sent</ref_state> since the seg.seq can not be validated ;
+        </trigger>
+        <action type="receive">drop the segment and return .</action>
+        <trigger>if the <ref_event id="11" type="receive">fin</ref_event> bit is set ,
+        </trigger>
+        <action type="receive">signal the user `` connection closing '' and return any pending receives with same
+            message ,
+        </action>
+        <action type="receive">advance rcv.nxt over the <ref_event id="11" type="receive">fin</ref_event> ,
+        </action>
+        <action type="send">and send
+            <arg>an
+                <ref_event id="7" type="send">acknowledgment</ref_event>
+            </arg>
+            for the <ref_event id="11" type="send">fin</ref_event> .
+        </action>
+        <trigger>note that <ref_event id="11" type="receive">fin</ref_event> implies push for any segment text not yet
+            delivered
+            to the user .
+        </trigger>
+        <action type="receive">syn-received state established state enter the close-wait state .</action>
+        <trigger>
+            <ref_state id="5">fin-wait-1</ref_state>
+            state if our <ref_event id="7" type="receive">fin has been acked</ref_event>( perhaps in this segment ) ,
+        </trigger>
+        <transition>then enter <ref_state id="10">time-wait</ref_state> ,
+        </transition>
+        <timer>start the time-wait timer ,</timer>
+        <timer>turn off the other timers ;</timer>
+        <transition>otherwise enter the <ref_state id="8">closing</ref_state> state .
+        </transition>
+        <transition>fn-wait-2 state enter the <ref_state id="10">time-wait</ref_state> state .
+        </transition>
+        <timer>start the time-wait timer ,</timer>
+        <timer>turn off the other timers .</timer>
+        <transition>
+            <ref_state id="7">close-wait</ref_state>
+            state remain in the <ref_state id="7">close-wait</ref_state> state .
+        </transition>
+        <trigger>
+            <ref_state id="8">closing</ref_state>
+            state remain in the <ref_state id="8">closing</ref_state> state .
+        </trigger>
+        <trigger>
+            <ref_state id="9">last-ack</ref_state>
+            state remain in the <ref_state id="9">last-ack</ref_state> state .
+        </trigger>
+        <trigger>
+            <ref_state id="10">time-wait</ref_state>
+            state remain in the <ref_state id="10">time-wait</ref_state> state .
+        </trigger>
+        <action type="receive">restart the 2 msl time-wait timeout .</action>
+        <action type="receive">and return .</action>
+    </control>
+
+    <control relevant="true">
+        <trigger>user timeout for any state if the user timeout expires ,</trigger>
+        <action type="receive">flush all queues ,</action>
+        <action type="receive">signal the user `` error : connection aborted due to user timeout '' in general and for
+            any
+            outstanding calls ,
+        </action>
+        <action type="receive">delete the tcb ,</action>
+        <transition>enter the <ref_state id="11">closed</ref_state> state and return .
+        </transition>
+    </control>
+
+    <control relevant="true">
+        <trigger>retransmission timeout for any state if the retransmission timeout expires on a segment in the
+            retransmission
+            queue ,
+        </trigger>
+        <action type="send">send <arg>the segment at the front of the retransmission queue</arg> again ,
+        </action>
+        <action type="receive">reinitialize the retransmission timer ,</action>
+        <action type="receive">and return .</action>
+    </control>
+
+    <control relevant="true">
+        <trigger>
+            <ref_state id="10">time-wait</ref_state>
+            timeout if the <ref_state id="10">time-wait</ref_state> timeout expires on a connection delete the tcb ,
+        </trigger>
+        <transition>enter the <ref_state id="11">closed</ref_state> state and return .
+        </transition>
+    </control>
+</p>

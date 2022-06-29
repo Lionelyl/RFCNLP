@@ -1,0 +1,549 @@
+<p><def_state id="1">idle</def_state>
+<def_state id="2">connect</def_state>
+<def_state id="3">active</def_state>
+<def_state id="4">opensent</def_state>
+<def_state id="5">openconfirm</def_state>
+<def_state id="6">established</def_state>
+<def_event id="1">manualstart</def_event>
+<def_event id="2">manualstop</def_event>
+<def_event id="3">automaticstart</def_event>
+<def_event id="4">manualstart_with_passivetcpestablishment</def_event>
+<def_event id="5">automaticstart_with_passivetcpestablishment</def_event>
+<def_event id="6">automaticstart_with_damppeeroscillations</def_event>
+<def_event id="7">automaticstart_with_damppeeroscillations_and_passivetcpestablishment</def_event>
+<def_event id="8">automaticstop</def_event>
+<def_event id="9">connectretrytimer_expires</def_event>
+<def_event id="10">holdtimer_expires</def_event>
+<def_event id="11">keepalivetimer_expires</def_event>
+<def_event id="12">delayopentimer_expires</def_event>
+<def_event id="13">idleholdtimer_expires</def_event>
+<def_event id="14">tcpconnection_valid</def_event>
+<def_event id="15">tcp_cr_invalid</def_event>
+<def_event id="16">tcp_cr_acked</def_event>
+<def_event id="17">tcpconnectionconfirmed</def_event>
+<def_event id="18">tcpconnectionfails</def_event>
+<def_event id="19">bgpopen</def_event>
+<def_event id="20">bgpopen with delayopentimer running</def_event>
+<def_event id="21">bgpheadererr</def_event>
+<def_event id="22">bgpopenmsgerr</def_event>
+<def_event id="23">opencollisiondump</def_event>
+<def_event id="24">notifmsgvererr</def_event>
+<def_event id="25">notifmsg</def_event>
+<def_event id="26">keepalivemsg</def_event>
+<def_event id="27">updatemsg</def_event>
+<def_event id="28">updatemsgerr</def_event>
+<control relevant="true">
+<trigger><ref_state id="1">idle</ref_state> state : initially , </trigger>
+<trigger>the bgp peer fsm is in the <ref_state id="1">idle</ref_state> state . </trigger>hereafter , the bgp peer fsm will be shortened to bgp fsm .
+<trigger>in this state , </trigger>
+<action type="receive">bgp fsm refuses all incoming bgp connections for this peer . </action>
+<action type="receive">no resources are allocated to the peer . </action>
+<trigger>in response to a <ref_event id="1" type="receive">manualstart</ref_event> event ( event 1 ) or an <ref_event id="3" type="receive">automaticstart</ref_event> event ( event 3 ) , </trigger>
+<action type="receive">the local system : - initializes all bgp resources for the peer connection , </action>
+<variable>- sets connectretrycounter to zero , </variable>
+<timer>- starts the connectretrytimer with the initial value , </timer>
+<action type="receive">- initiates a tcp connection to the other bgp peer , </action>
+<action type="receive">- listens for a connection that may be initiated by the remote bgp peer , </action>
+<transition>and - changes its state to <ref_state id="2">connect</ref_state> . </transition>
+<trigger>the <ref_event id="2" type="receive">manualstop</ref_event> event ( event 2 ) and <ref_event id="8" type="receive">automaticstop</ref_event> ( event 8 ) event are ignored in the <ref_state id="1">idle</ref_state> state . </trigger>
+<trigger>in response to a <ref_event id="4" type="receive">manualstart_with_passivetcpestablishment</ref_event> event ( event 4 ) or <ref_event id="5" type="receive">automaticstart_with_passivetcpestablishment</ref_event> event ( event 5 ) , </trigger>
+<action type="receive">the local system : - initializes all bgp resources , </action>
+<variable>- sets the connectretrycounter to zero , </variable>
+<timer>- starts the connectretrytimer with the initial value , </timer>
+<action type="receive">- listens for a connection that may be initiated by the remote peer , </action>
+<transition>and - changes its state to <arg_target><ref_state id="3">active</ref_state></arg_target> . </transition>
+<timer>the exact value of the connectretrytimer is a local matter , </timer>but it should be sufficiently large to allow tcp initialization .
+<trigger>if the damppeeroscillations attribute is set to true , </trigger>
+<trigger>the following three additional events may occur within the <ref_state id="1">idle</ref_state> state : - <ref_event id="6" type="receive">automaticstart_with_damppeeroscillations</ref_event> ( event 6 ) , </trigger>
+<action type="receive">- automaticstart_with_damppeeroscillations_and_ passivetcpestablishment ( event 7 ) , </action>
+<action type="receive">- <ref_event id="13" type="receive">idleholdtimer_expires</ref_event> ( event 13 ) . </action>
+<trigger>upon receiving these 3 events , </trigger>the local system will use these events to prevent peer oscillations .
+<trigger>the method of preventing persistent peer oscillation is outside the scope of this document . </trigger>
+<trigger>any other event ( events 9-12 , </trigger>
+<transition>15-28 ) received in the <ref_state id="1">idle</ref_state> state does not cause change in the state of the local system . </transition>
+</control>
+<control relevant="true">
+<trigger><ref_state id="2">connect</ref_state> state : in this state , </trigger>bgp fsm is waiting for the tcp connection to be completed .
+<transition>the start events ( events 1 , </transition>
+<trigger>3-7 ) are ignored in the <ref_state id="2">connect</ref_state> state . </trigger>
+<trigger>in response to a <ref_event id="2" type="receive">manualstop</ref_event> event ( event 2 ) , </trigger>
+<action type="receive">the local system : - drops the tcp connection , </action>
+<action type="receive">- releases all bgp resources , </action>
+<variable>- sets connectretrycounter to zero , </variable>
+<timer>- stops the connectretrytimer and sets connectretrytimer to zero , </timer>
+<transition>and - changes its state to <arg_target><ref_state id="1">idle</ref_state></arg_target> . </transition>
+<trigger>in response to the <ref_event id="9" type="receive">connectretrytimer_expires</ref_event> event ( event 9 ) , </trigger>
+<action type="receive">the local system : - drops the tcp connection , </action>
+<timer>- restarts the connectretrytimer , </timer>
+<timer>- stops the delayopentimer and resets the timer to zero , </timer>
+<action type="receive">- initiates a tcp connection to the other bgp peer , </action>
+<action type="receive">- continues to listen for a connection that may be initiated by the remote bgp peer , </action>
+<transition>and - stays in the <ref_state id="2">connect</ref_state> state . </transition>
+<trigger>if the <ref_event id="12" type="receive">delayopentimer_expires</ref_event> event ( event 12 ) occurs in the <ref_state id="2">connect</ref_state> state , </trigger>
+<action type="send">the local system : - sends <arg> an open message </arg> to its peer , </action>
+<timer>- sets the holdtimer to a large value , </timer>
+<transition>and - changes its state to <arg_target><ref_state id="4">opensent</ref_state></arg_target> . </transition>
+<trigger>if the bgp fsm receives a <ref_event id="14" type="receive">tcpconnection_valid</ref_event> event ( event 14 ) , </trigger>
+<action type="receive">the tcp connection is processed , </action>
+<transition>and the connection remains in the <ref_state id="2">connect</ref_state> state . </transition>
+<trigger>if the bgp fsm receives a <ref_event id="15" type="receive">tcp_cr_invalid</ref_event> event ( event 15 ) , </trigger>
+<action type="receive">the local system rejects the tcp connection , </action>
+<transition>and the connection remains in the <ref_state id="2">connect</ref_state> state . </transition>
+<trigger>if the tcp connection succeeds ( event 16 or event 17 ) , </trigger>
+<action type="receive">the local system checks the delayopen attribute prior to processing . </action>
+<trigger>if the delayopen attribute is set to true , </trigger>
+<timer>the local system : - stops the connectretrytimer ( if running ) and sets the connectretrytimer to zero , </timer>
+<timer>- sets the delayopentimer to the initial value , </timer>
+<transition>and - stays in the <ref_state id="2">connect</ref_state> state . </transition>
+<trigger>if the delayopen attribute is set to false , </trigger>
+<timer>the local system : - stops the connectretrytimer ( if running ) and sets the connectretrytimer to zero , </timer>
+<action type="send">- completes bgp initialization - sends <arg> an open message </arg> to its peer , </action>
+<timer>- sets the holdtimer to a large value , </timer>
+<transition>and - changes its state to <arg_target><ref_state id="4">opensent</ref_state></arg_target> . </transition>
+<variable>a holdtimer value of 4 minutes is suggested . </variable>
+<trigger>if the tcp connection fails ( event 18 ) , </trigger>
+<action type="receive">the local system checks the delayopentimer . </action>
+<trigger>if the delayopentimer is running , </trigger>
+<timer>the local system : - restarts the connectretrytimer with the initial value , </timer>
+<timer>- stops the delayopentimer and resets its value to zero , </timer>
+<action type="receive">- continues to listen for a connection that may be initiated by the remote bgp peer , </action>
+<transition>and - changes its state to <arg_target><ref_state id="3">active</ref_state></arg_target> . </transition>
+<trigger>if the delayopentimer is not running , </trigger>
+<action type="receive">the local system : - stops the connectretrytimer to zero , </action>
+<action type="receive">- drops the tcp connection , </action>
+<action type="receive">- releases all bgp resources , </action>
+<transition>and - changes its state to <arg_target><ref_state id="1">idle</ref_state></arg_target> . </transition>
+<trigger>if an open message is received while the delayopentimer is running ( event 20 ) , </trigger>
+<action type="receive">the local system : - stops the connectretrytimer ( if running ) and sets the connectretrytimer to zero , </action>
+<action type="receive">- completes the bgp initialization , </action>
+<action type="receive">- stops and clears the delayopentimer ( sets the value to zero ) , </action>
+<action type="send">- sends <arg> an open message </arg> , </action>
+<action type="send">- sends <arg> a keepalive message </arg> , </action>
+<trigger>- if the holdtimer initial value is non-zero , </trigger>
+<timer>- starts the keepalivetimer with the initial value and - resets the holdtimer to the negotiated value , </timer>else ,
+<trigger>if the holdtimer initial value is zero , </trigger>
+<timer>- resets the keepalivetimer and - resets the holdtimer value to zero , </timer>
+<transition>- and changes its state to <arg_target><ref_state id="5">openconfirm</ref_state></arg_target> . </transition>
+<trigger>if the value of the autonomous system field is the same as the local autonomous system number , </trigger>
+<action type="receive">set the connection status to an internal connection ; </action>otherwise it will be `` external '' .
+<trigger>if bgp message header checking ( event 21 ) or open message checking detects an error ( event 22 ) ( see section 6.2 ) , </trigger>
+<trigger>the local system : - ( optionally ) if the sendnotificationwithoutopen attribute is set to true , </trigger>
+<action type="send">then the local system first sends <arg> a notification message with the appropriate error code </arg> , </action>
+<timer>and then - stops the connectretrytimer ( if running ) and sets the connectretrytimer to zero , </timer>
+<action type="receive">- releases all bgp resources , </action>
+<action type="receive">- drops the tcp connection , </action>
+<action type="receive">- increments the connectretrycounter by 1 , </action>
+<action type="receive">- ( optionally ) performs peer oscillation damping if the damppeeroscillations attribute is set to true , </action>
+<transition>and - changes its state to <arg_target><ref_state id="1">idle</ref_state></arg_target> . </transition>
+<trigger>if a notification message is received with a version error ( event 24 ) , </trigger>
+<action type="receive">the local system checks the delayopentimer . </action>
+<trigger>if the delayopentimer is running , </trigger>
+<timer>the local system : - stops the connectretrytimer ( if running ) and sets the connectretrytimer to zero , </timer>
+<timer>- stops and resets the delayopentimer ( sets to zero ) , </timer>
+<action type="receive">- releases all bgp resources , </action>
+<action type="receive">- drops the tcp connection , </action>
+<transition>and - changes its state to <arg_target><ref_state id="1">idle</ref_state></arg_target> . </transition>
+<trigger>if the delayopentimer is not running , </trigger>
+<action type="receive">the local system : - stops the connectretrytimer and sets the connectretrytimer to zero , </action>
+<action type="receive">- releases all bgp resources , </action>
+<action type="receive">- drops the tcp connection , </action>
+<action type="receive">- increments the connectretrycounter by 1 , </action>
+<action type="receive">- performs peer oscillation damping if the damppeeroscillations attribute is set to true , </action>
+<transition>and - changes its state to <arg_target><ref_state id="1">idle</ref_state></arg_target> . </transition>
+<trigger>in response to any other events ( events 8 , </trigger>
+<trigger>10-11 , </trigger>
+<trigger>13 , </trigger>
+<trigger>19 , </trigger>
+<trigger>23 , </trigger>
+<trigger>25-28 ) , </trigger>
+<trigger>the local system : - if the connectretrytimer is running , </trigger>
+<timer>stops and resets the connectretrytimer ( sets to zero ) , </timer>
+<trigger>- if the delayopentimer is running , </trigger>
+<action type="receive">stops and resets the delayopentimer ( sets to zero ) , </action>
+<action type="receive">- releases all bgp resources , </action>
+<action type="receive">- drops the tcp connection , </action>
+<action type="receive">- increments the connectretrycounter by 1 , </action>
+<action type="receive">- performs peer oscillation damping if the damppeeroscillations attribute is set to true , </action>
+<transition>and - changes its state to <arg_target><ref_state id="1">idle</ref_state></arg_target> . </transition>
+</control>
+<control relevant="true">
+<trigger><ref_state id="3">active</ref_state> state : in this state , </trigger>bgp fsm is trying to acquire a peer by listening for ,
+<action type="receive">and accepting , </action>
+<action type="receive">a tcp connection . </action>
+<action type="receive">the start events ( events 1 , </action>
+<trigger>3-7 ) are ignored in the <ref_state id="3">active</ref_state> state . </trigger>
+<trigger>in response to a <ref_event id="2" type="receive">manualstop</ref_event> event ( event 2 ) , </trigger>
+<trigger>the local system : - if the delayopentimer is running and the sendnotificationwithoutopen session attribute is set , </trigger>
+<action type="send">the local system sends <arg> a notification with a cease </arg> , </action>
+<timer>- releases all bgp resources including stopping the delayopentimer - drops the tcp connection , </timer>
+<variable>- sets connectretrycounter to zero , </variable>
+<timer>- stops the connectretrytimer and sets the connectretrytimer to zero , </timer>
+<transition>and - changes its state to <arg_target><ref_state id="1">idle</ref_state></arg_target> . </transition>
+<trigger>in response to a <ref_event id="9" type="receive">connectretrytimer_expires</ref_event> event ( event 9 ) , </trigger>
+<action type="receive">the local system : - restarts the connectretrytimer ( with initial value ) , </action>
+<action type="receive">- initiates a tcp connection to the other bgp peer , </action>
+<action type="receive">- continues to listen for a tcp connection that may be initiated by a remote bgp peer , </action>
+<transition>and - changes its state to <ref_state id="2">connect</ref_state> . </transition>
+<trigger>if the local system receives a <ref_event id="12" type="receive">delayopentimer_expires</ref_event> event ( event 12 ) , </trigger>
+<timer>the local system : - sets the connectretrytimer to zero , </timer>
+<timer>- stops and clears the delayopentimer ( set to zero ) , </timer>
+<action type="receive">- completes the bgp initialization , </action>
+<action type="send">- sends <arg> the open message </arg> to its remote peer , </action>
+<timer>- sets its hold timer to a large value , </timer>
+<transition>and - changes its state to <arg_target><ref_state id="4">opensent</ref_state></arg_target> . </transition>
+<variable>a holdtimer value of 4 minutes is also suggested for this state transition . </variable>
+<trigger>if the local system receives a <ref_event id="14" type="receive">tcpconnection_valid</ref_event> event ( event 14 ) , </trigger>
+<transition>the local system processes the tcp connection flags and stays in the <ref_state id="3">active</ref_state> state . </transition>
+<trigger>if the local system receives a <ref_event id="15" type="receive">tcp_cr_invalid</ref_event> event ( event 15 ) , </trigger>
+<transition>the local system rejects the tcp connection and stays in the <ref_state id="3">active</ref_state> state . </transition>
+<trigger>in response to the success of a tcp connection ( event 16 or event 17 ) , </trigger>
+<action type="receive">the local system checks the delayopen optional attribute prior to processing . </action>
+<trigger>if the delayopen attribute is set to true , </trigger>
+<timer>the local system : - stops the connectretrytimer and sets the connectretrytimer to zero , </timer>
+<timer>- sets the delayopentimer to the initial value ( delayopentime ) , </timer>
+<transition>and - stays in the <ref_state id="3">active</ref_state> state . </transition>
+<trigger>if the delayopen attribute is set to false , </trigger>
+<action type="receive">the local system : - sets the connectretrytimer to zero , </action>
+<action type="receive">- completes the bgp initialization , </action>
+<action type="send">- sends <arg> the open message </arg> to its peer , </action>
+<timer>- sets its holdtimer to a large value , </timer>
+<transition>and - changes its state to <arg_target><ref_state id="4">opensent</ref_state></arg_target> . </transition>
+<variable>a holdtimer value of 4 minutes is suggested as a `` large value '' for the holdtimer . </variable>
+<trigger>if the local system receives a <ref_event id="18" type="receive">tcpconnectionfails</ref_event> event ( event 18 ) , </trigger>
+<timer>the local system : - restarts the connectretrytimer ( with the initial value ) , </timer>
+<timer>- stops and clears the delayopentimer ( sets the value to zero ) , </timer>
+<action type="receive">- releases all bgp resource , </action>
+<action type="receive">- increments the connectretrycounter by 1 , </action>
+<action type="receive">- optionally performs peer oscillation damping if the damppeeroscillations attribute is set to true , </action>
+<transition>and - changes its state to <arg_target><ref_state id="1">idle</ref_state></arg_target> . </transition>
+<trigger>if an open message is received and the delayopentimer is running ( event 20 ) , </trigger>
+<timer>the local system : - stops the connectretrytimer ( if running ) and sets the connectretrytimer to zero , </timer>
+<timer>- stops and clears the delayopentimer ( sets to zero ) , </timer>
+<action type="receive">- completes the bgp initialization , </action>
+<action type="send">- sends <arg> an open message </arg> , </action>
+<action type="send">- sends <arg> a keepalive message </arg> , </action>
+<trigger>- if the holdtimer value is non-zero , </trigger>
+<timer>- starts the keepalivetimer to initial value , </timer>
+<timer>- resets the holdtimer to the negotiated value , </timer>
+<trigger>else if the holdtimer is zero - resets the keepalivetimer ( set to zero ) , </trigger>
+<timer>- resets the holdtimer to zero , </timer>
+<transition>and - changes its state to <arg_target><ref_state id="5">openconfirm</ref_state></arg_target> . </transition>
+<trigger>if the value of the autonomous system field is the same as the local autonomous system number , </trigger>
+<action type="receive">set the connection status to an internal connection ; </action>
+<action type="receive">otherwise it will be external . </action>
+<trigger>if bgp message header checking ( event 21 ) or open message checking detects an error ( event 22 ) ( see section 6.2 ) , </trigger>
+<action type="send">the local system : - ( optionally ) sends <arg> a notification message with the appropriate error code </arg> if the sendnotificationwithoutopen attribute is set to true , </action>
+<action type="receive">- sets the connectretrytimer to zero , </action>
+<action type="receive">- releases all bgp resources , </action>
+<action type="receive">- drops the tcp connection , </action>
+<action type="receive">- increments the connectretrycounter by 1 , </action>
+<action type="receive">- ( optionally ) performs peer oscillation damping if the damppeeroscillations attribute is set to true , </action>
+<transition>and - changes its state to <arg_target><ref_state id="1">idle</ref_state></arg_target> . </transition>
+<trigger>if a notification message is received with a version error ( event 24 ) , </trigger>
+<action type="receive">the local system checks the delayopentimer . </action>
+<trigger>if the delayopentimer is running , </trigger>
+<timer>the local system : - stops the connectretrytimer ( if running ) and sets the connectretrytimer to zero , </timer>
+<timer>- stops and resets the delayopentimer ( sets to zero ) , </timer>
+<action type="receive">- releases all bgp resources , </action>
+<action type="receive">- drops the tcp connection , </action>
+<transition>and - changes its state to <arg_target><ref_state id="1">idle</ref_state></arg_target> . </transition>
+<trigger>if the delayopentimer is not running , </trigger>
+<action type="receive">the local system : - sets the connectretrytimer to zero , </action>
+<action type="receive">- releases all bgp resources , </action>
+<action type="receive">- drops the tcp connection , </action>
+<action type="receive">- increments the connectretrycounter by 1 , </action>
+<action type="receive">- ( optionally ) performs peer oscillation damping if the damppeeroscillations attribute is set to true , </action>
+<transition>and - changes its state to <arg_target><ref_state id="1">idle</ref_state></arg_target> . </transition>
+<trigger>in response to any other event ( events 8 , </trigger>
+<trigger>10-11 , </trigger>
+<trigger>13 , </trigger>
+<trigger>19 , </trigger>
+<trigger>23 , </trigger>
+<trigger>25-28 ) , </trigger>
+<action type="receive">the local system : - sets the connectretrytimer to zero , </action>
+<action type="receive">- releases all bgp resources , </action>
+<action type="receive">- drops the tcp connection , </action>
+<action type="receive">- increments the connectretrycounter by one , </action>
+<action type="receive">- ( optionally ) performs peer oscillation damping if the damppeeroscillations attribute is set to true , </action>
+<transition>and - changes its state to <arg_target><ref_state id="1">idle</ref_state></arg_target> . </transition>
+</control>
+<control relevant="true">
+<trigger><ref_state id="4">opensent</ref_state> : in this state , </trigger>
+<trigger>bgp fsm waits for an open message from its peer . </trigger>
+<trigger>the start events ( events 1 , </trigger>
+<trigger>3-7 ) are ignored in the <ref_state id="4">opensent</ref_state> state . </trigger>
+<trigger>if a <ref_event id="2" type="send">manualstop</ref_event> event ( event 2 ) is issued in the <ref_state id="4">opensent</ref_state> state , </trigger>
+<action type="send">the local system : - sends <arg> the notification </arg> with a cease , </action>
+<action type="receive">- sets the connectretrytimer to zero , </action>
+<action type="receive">- releases all bgp resources , </action>
+<action type="receive">- drops the tcp connection , </action>
+<variable>- sets the connectretrycounter to zero , </variable>
+<transition>and - changes its state to <arg_target><ref_state id="1">idle</ref_state></arg_target> . </transition>
+<trigger>if an <ref_event id="8" type="send">automaticstop</ref_event> event ( event 8 ) is issued in the <ref_state id="4">opensent</ref_state> state , </trigger>
+<action type="send">the local system : - sends <arg> the notification </arg> with a cease , </action>
+<action type="receive">- sets the connectretrytimer to zero , </action>
+<action type="receive">- releases all the bgp resources , </action>
+<action type="receive">- drops the tcp connection , </action>
+<action type="receive">- increments the connectretrycounter by 1 , </action>
+<action type="receive">- ( optionally ) performs peer oscillation damping if the damppeeroscillations attribute is set to true , </action>
+<transition>and - changes its state to <arg_target><ref_state id="1">idle</ref_state></arg_target> . </transition>
+<trigger>if the <ref_event id="10" type="receive">holdtimer_expires</ref_event> ( event 10 ) , </trigger>
+<action type="send">the local system : - sends <arg> a notification message with the error code hold timer expired </arg> , </action>
+<timer>- sets the connectretrytimer to zero , </timer>
+<action type="receive">- releases all bgp resources , </action>
+<action type="receive">- drops the tcp connection , </action>
+<action type="receive">- increments the connectretrycounter , </action>
+<action type="receive">- ( optionally ) performs peer oscillation damping if the damppeeroscillations attribute is set to true , </action>
+<transition>and - changes its state to <arg_target><ref_state id="1">idle</ref_state></arg_target> . </transition>
+<trigger>if a <ref_event id="14" type="receive">tcpconnection_valid</ref_event> ( event 14 ) , </trigger>
+<action type="receive"><ref_event id="16" type="receive">tcp_cr_acked</ref_event> ( event 16 ) , </action>
+<action type="receive">or <arg> a <ref_event id="17" type="receive">tcpconnectionconfirmed</ref_event> event ( event 17 ) </arg> is received , </action>
+<action type="receive">a second tcp connection may be in progress . </action>
+<trigger>this second tcp connection is tracked per connection collision processing ( section 6.8 ) until an open message is received . </trigger>
+<trigger>a tcp connection request for an invalid port ( <ref_event id="15" type="receive">tcp_cr_invalid</ref_event> ( event 15 ) ) is ignored . </trigger>
+<trigger>if a <ref_event id="18" type="receive">tcpconnectionfails</ref_event> event ( event 18 ) is received , </trigger>
+<action type="receive">the local system : - closes the bgp connection , </action>
+<action type="receive">- restarts the connectretrytimer , </action>
+<action type="receive">- continues to listen for a connection that may be initiated by the remote bgp peer , </action>
+<transition>and - changes its state to <arg_target><ref_state id="3">active</ref_state></arg_target> . </transition>
+<trigger>when an open message is received , </trigger>
+<trigger>all fields are checked for correctness . </trigger>
+<trigger>if there are no errors in the open message ( event 19 ) , </trigger>
+<timer>the local system : - resets the delayopentimer to zero , </timer>
+<timer>- sets the bgp connectretrytimer to zero , </timer>
+<action type="send">- sends <arg> a keepalive message </arg> , </action>
+<timer>and - sets a keepalivetimer ( via the text below ) - sets the holdtimer according to the negotiated value ( see section 4.2 ) , </timer>
+<transition>- changes its state to <ref_state id="5">openconfirm</ref_state> . </transition>
+<trigger>if the negotiated hold time value is zero , </trigger>
+<timer>then the holdtimer and keepalivetimer are not started . </timer>
+<trigger>if the value of the autonomous system field is the same as the local autonomous system number , </trigger>then the connection is an `` internal '' connection ;
+<trigger>otherwise , </trigger>it is an `` external '' connection . ( this will impact update processing as described below .
+<trigger>) if the bgp message header checking ( event 21 ) or open message checking detects an error ( event 22 ) ( see section 6.2 ) , </trigger>
+<action type="send">the local system : - sends <arg> a notification message with the appropriate error code </arg> , </action>
+<action type="receive">- sets the connectretrytimer to zero , </action>
+<action type="receive">- releases all bgp resources , </action>
+<action type="receive">- drops the tcp connection , </action>
+<action type="receive">- increments the connectretrycounter by 1 , </action>
+<action type="receive">- ( optionally ) performs peer oscillation damping if the damppeeroscillations attribute is true , </action>
+<transition>and - changes its state to <arg_target><ref_state id="1">idle</ref_state></arg_target> . </transition>
+<trigger>collision detection mechanisms ( section 6.8 ) need to be applied when a valid bgp open message is received ( event 19 or event 20 ) . </trigger>please refer to section 6.8 for the details of the comparison .
+<trigger>a collisiondetectdump event occurs when the bgp implementation determines , </trigger>
+<trigger>by means outside the scope of this document , </trigger>
+<trigger>that a connection collision has occurred . </trigger>
+<trigger>if a connection in the <ref_state id="4">opensent</ref_state> state is determined to be the connection that must be closed , </trigger>
+<action type="receive">an <ref_event id="23" type="receive">opencollisiondump</ref_event> ( event 23 ) is signaled to the state machine . </action>
+<trigger>if such an event is received in the <ref_state id="4">opensent</ref_state> state , </trigger>
+<action type="send">the local system : - sends <arg> a notification with a cease </arg> , </action>
+<action type="receive">- sets the connectretrytimer to zero , </action>
+<action type="receive">- releases all bgp resources , </action>
+<action type="receive">- drops the tcp connection , </action>
+<action type="receive">- increments the connectretrycounter by 1 , </action>
+<action type="receive">- ( optionally ) performs peer oscillation damping if the damppeeroscillations attribute is set to true , </action>
+<transition>and - changes its state to <arg_target><ref_state id="1">idle</ref_state></arg_target> . </transition>
+<trigger>if a notification message is received with a version error ( event 24 ) , </trigger>
+<action type="receive">the local system : - sets the connectretrytimer to zero , </action>
+<action type="receive">- releases all bgp resources , </action>
+<action type="receive">- drops the tcp connection , </action>
+<transition>and - changes its state to <arg_target><ref_state id="1">idle</ref_state></arg_target> . </transition>
+<trigger>in response to any other event ( events 9 , </trigger>
+<trigger>11-13 , </trigger>
+<trigger>20 , </trigger>
+<trigger>25-28 ) , </trigger>
+<action type="send">the local system : - sends <arg> the notification with the error code finite state machine error </arg> , </action>
+<action type="receive">- sets the connectretrytimer to zero , </action>
+<action type="receive">- releases all bgp resources , </action>
+<action type="receive">- drops the tcp connection , </action>
+<action type="receive">- increments the connectretrycounter by 1 , </action>
+<action type="receive">- ( optionally ) performs peer oscillation damping if the damppeeroscillations attribute is set to true , </action>
+<transition>and - changes its state to <arg_target><ref_state id="1">idle</ref_state></arg_target> . </transition>
+</control>
+<control relevant="true">
+<trigger><ref_state id="5">openconfirm</ref_state> state : in this state , </trigger>
+<trigger>bgp waits for a keepalive or notification message . </trigger>
+<trigger>any start event ( events 1 , </trigger>
+<trigger>3-7 ) is ignored in the <ref_state id="5">openconfirm</ref_state> state . </trigger>
+<trigger>in response to a <ref_event id="2" type="receive">manualstop</ref_event> event ( event 2 ) initiated by the operator , </trigger>
+<action type="send">the local system : - sends <arg> the notification message </arg> with a cease , </action>
+<action type="receive">- releases all bgp resources , </action>
+<action type="receive">- drops the tcp connection , </action>
+<variable>- sets the connectretrycounter to zero , </variable>
+<timer>- sets the connectretrytimer to zero , </timer>
+<transition>and - changes its state to <arg_target><ref_state id="1">idle</ref_state></arg_target> . </transition>
+<trigger>in response to the <ref_event id="8" type="receive">automaticstop</ref_event> event initiated by the system ( event 8 ) , </trigger>
+<action type="send">the local system : - sends <arg> the notification message </arg> with a cease , </action>
+<action type="receive">- sets the connectretrytimer to zero , </action>
+<action type="receive">- releases all bgp resources , </action>
+<action type="receive">- drops the tcp connection , </action>
+<action type="receive">- increments the connectretrycounter by 1 , </action>
+<action type="receive">- ( optionally ) performs peer oscillation damping if the damppeeroscillations attribute is set to true , </action>
+<transition>and - changes its state to <arg_target><ref_state id="1">idle</ref_state></arg_target> . </transition>
+<trigger>if the <ref_event id="10" type="receive">holdtimer_expires</ref_event> event ( event 10 ) occurs before a keepalive message is received , </trigger>
+<action type="send">the local system : - sends <arg> the notification message with the error code hold timer expired </arg> , </action>
+<action type="receive">- sets the connectretrytimer to zero , </action>
+<action type="receive">- releases all bgp resources , </action>
+<action type="receive">- drops the tcp connection , </action>
+<action type="receive">- increments the connectretrycounter by 1 , </action>
+<action type="receive">- ( optionally ) performs peer oscillation damping if the damppeeroscillations attribute is set to true , </action>
+<transition>and - changes its state to <arg_target><ref_state id="1">idle</ref_state></arg_target> . </transition>
+<trigger>if the local system receives a <ref_event id="11" type="receive">keepalivetimer_expires</ref_event> event ( event 11 ) , </trigger>
+<action type="send">the local system : - sends <arg> a keepalive message </arg> , </action>
+<timer>- restarts the keepalivetimer , </timer>
+<transition>and - remains in the openconfirmed state . </transition>
+<trigger>in the event of a <ref_event id="14" type="receive">tcpconnection_valid</ref_event> event ( event 14 ) , </trigger>
+<trigger>or the success of a tcp connection ( event 16 or event 17 ) while in <ref_state id="5">openconfirm</ref_state> , </trigger>
+<action type="receive">the local system needs to track the second connection . </action>
+<trigger>if a tcp connection is attempted with an invalid port ( event 15 ) , </trigger>
+<action type="receive">the local system will ignore the second connection attempt . </action>
+<trigger>if the local system receives a <ref_event id="18" type="receive">tcpconnectionfails</ref_event> event ( event 18 ) from the underlying tcp or a notification message ( event 25 ) , </trigger>
+<action type="receive">the local system : - sets the connectretrytimer to zero , </action>
+<action type="receive">- releases all bgp resources , </action>
+<action type="receive">- drops the tcp connection , </action>
+<action type="receive">- increments the connectretrycounter by 1 , </action>
+<action type="receive">- ( optionally ) performs peer oscillation damping if the damppeeroscillations attribute is set to true , </action>
+<transition>and - changes its state to <arg_target><ref_state id="1">idle</ref_state></arg_target> . </transition>
+<trigger>if the local system receives a notification message with a version error ( <ref_event id="24" type="receive">notifmsgvererr</ref_event> ( event 24 ) ) , </trigger>
+<action type="receive">the local system : - sets the connectretrytimer to zero , </action>
+<action type="receive">- releases all bgp resources , </action>
+<action type="receive">- drops the tcp connection , </action>
+<transition>and - changes its state to <arg_target><ref_state id="1">idle</ref_state></arg_target> . </transition>
+<trigger>if the local system receives a valid open message ( <ref_event id="19" type="receive">bgpopen</ref_event> ( event 19 ) ) , </trigger>
+<trigger>the collision detect function is processed per section 6.8 . </trigger>
+<trigger>if this connection is to be dropped due to connection collision , </trigger>
+<action type="send">the local system : - sends <arg> a notification with a cease </arg> , </action>
+<action type="receive">- sets the connectretrytimer to zero , </action>
+<action type="receive">- releases all bgp resources , </action>
+<action type="send">- drops the tcp connection ( send <arg> tcp fin </arg> ) , </action>
+<action type="receive">- increments the connectretrycounter by 1 , </action>
+<action type="receive">- ( optionally ) performs peer oscillation damping if the damppeeroscillations attribute is set to true , </action>
+<transition>and - changes its state to <arg_target><ref_state id="1">idle</ref_state></arg_target> . </transition>
+<trigger>if an open message is received , </trigger>
+<trigger>all fields are checked for correctness . </trigger>
+<trigger>if the bgp message header checking ( <ref_event id="21" type="receive">bgpheadererr</ref_event> ( event 21 ) ) or open message checking detects an error ( see section 6.2 ) ( <ref_event id="22" type="receive">bgpopenmsgerr</ref_event> ( event 22 ) ) , </trigger>
+<action type="send">the local system : - sends <arg> a notification message with the appropriate error code </arg> , </action>
+<action type="receive">- sets the connectretrytimer to zero , </action>
+<action type="receive">- releases all bgp resources , </action>
+<action type="receive">- drops the tcp connection , </action>
+<action type="receive">- increments the connectretrycounter by 1 , </action>
+<action type="receive">- ( optionally ) performs peer oscillation damping if the damppeeroscillations attribute is set to true , </action>
+<transition>and - changes its state to <arg_target><ref_state id="1">idle</ref_state></arg_target> . </transition>
+<trigger>if , </trigger>
+<trigger>during the processing of another open message , </trigger>
+<trigger>the bgp implementation determines , </trigger>
+<trigger>by a means outside the scope of this document , </trigger>
+<trigger>that a connection collision has occurred and this connection is to be closed , </trigger>
+<action type="issue">the local system will issue <arg> an <ref_event id="23" type="send">opencollisiondump</ref_event> event ( event 23 ) </arg> . </action>
+<action type="receive">when the local system receives <arg> an <ref_event id="23" type="receive">opencollisiondump</ref_event> event ( event 23 ) </arg> , </action>
+<action type="send">the local system : - sends <arg> a notification with a cease </arg> , </action>
+<action type="receive">- sets the connectretrytimer to zero , </action>
+<action type="receive">- releases all bgp resources - drops the tcp connection , </action>
+<action type="receive">- increments the connectretrycounter by 1 , </action>
+<action type="receive">- ( optionally ) performs peer oscillation damping if the damppeeroscillations attribute is set to true , </action>
+<transition>and - changes its state to <arg_target><ref_state id="1">idle</ref_state></arg_target> . </transition>
+<trigger>if the local system receives a keepalive message ( <ref_event id="26" type="receive">keepalivemsg</ref_event> ( event 26 ) ) , </trigger>
+<transition>the local system : - restarts the holdtimer and - changes its state to <arg_target><ref_state id="6">established</ref_state></arg_target> . </transition>
+<trigger>in response to any other event ( events 9 , </trigger>
+<trigger>12-13 , </trigger>
+<trigger>20 , </trigger>
+<trigger>27-28 ) , </trigger>
+<action type="send">the local system : - sends <arg> a notification with a code of finite state machine error </arg> , </action>
+<timer>- sets the connectretrytimer to zero , </timer>
+<action type="receive">- releases all bgp resources , </action>
+<action type="receive">- drops the tcp connection , </action>
+<action type="receive">- increments the connectretrycounter by 1 , </action>
+<action type="receive">- ( optionally ) performs peer oscillation damping if the damppeeroscillations attribute is set to true , </action>
+<transition>and - changes its state to <arg_target><ref_state id="1">idle</ref_state></arg_target> . </transition>
+</control>
+<control relevant="true">
+<trigger><ref_state id="6">established</ref_state> state : in the <ref_state id="6">established</ref_state> state , </trigger>the bgp fsm can exchange update , notification ,
+<action type="receive">and keepalive messages with its peer . </action>
+<action type="receive">any start event ( events 1 , </action>
+<trigger>3-7 ) is ignored in the <ref_state id="6">established</ref_state> state . </trigger>
+<trigger>in response to a <ref_event id="2" type="receive">manualstop</ref_event> event ( initiated by an operator ) ( event 2 ) , </trigger>
+<action type="send">the local system : - sends <arg> the notification message </arg> with a cease , </action>
+<action type="receive">- sets the connectretrytimer to zero , </action>
+<action type="receive">- deletes all routes associated with this connection , </action>
+<action type="receive">- releases bgp resources , </action>
+<action type="receive">- drops the tcp connection , </action>
+<variable>- sets the connectretrycounter to zero , </variable>
+<transition>and - changes its state to <arg_target><ref_state id="1">idle</ref_state></arg_target> . </transition>
+<trigger>in response to an <ref_event id="8" type="receive">automaticstop</ref_event> event ( event 8 ) , </trigger>
+<action type="send">the local system : - sends <arg> a notification with a cease </arg> , </action>
+<action type="receive">- sets the connectretrytimer to zero - deletes all routes associated with this connection , </action>
+<action type="receive">- releases all bgp resources , </action>
+<action type="receive">- drops the tcp connection , </action>
+<action type="receive">- increments the connectretrycounter by 1 , </action>
+<action type="receive">- ( optionally ) performs peer oscillation damping if the damppeeroscillations attribute is set to true , </action>
+<transition>and - changes its state to <arg_target><ref_state id="1">idle</ref_state></arg_target> . </transition>
+<action type="receive">one reason for an <ref_event id="8" type="receive">automaticstop</ref_event> event is : a bgp receives <arg> an update messages with a number of prefixes for a given peer </arg> such that the total prefixes received exceeds the maximum number of prefixes configured . </action>the local system automatically disconnects the peer .
+<trigger>if the <ref_event id="10" type="receive">holdtimer_expires</ref_event> event occurs ( event 10 ) , </trigger>
+<action type="send">the local system : - sends <arg> a notification message with the error code hold timer expired </arg> , </action>
+<timer>- sets the connectretrytimer to zero , </timer>
+<action type="receive">- releases all bgp resources , </action>
+<action type="receive">- drops the tcp connection , </action>
+<action type="receive">- increments the connectretrycounter by 1 , </action>
+<action type="receive">- ( optionally ) performs peer oscillation damping if the damppeeroscillations attribute is set to true , </action>
+<transition>and - changes its state to <arg_target><ref_state id="1">idle</ref_state></arg_target> . </transition>
+<trigger>if the <ref_event id="11" type="receive">keepalivetimer_expires</ref_event> event occurs ( event 11 ) , </trigger>
+<action type="send">the local system : - sends <arg> a keepalive message </arg> , </action>
+<timer>and - restarts its keepalivetimer , </timer>
+<trigger>unless the negotiated holdtime value is zero . </trigger>
+<trigger>each time the local system sends a keepalive or update message , </trigger>
+<timer>it restarts its keepalivetimer , </timer>
+<trigger>unless the negotiated holdtime value is zero . </trigger>
+<trigger>a <ref_event id="14" type="receive">tcpconnection_valid</ref_event> ( event 14 ) , </trigger>
+<trigger>received for a valid port , </trigger>will cause the second connection to be tracked .
+<action type="receive">an invalid tcp connection ( <ref_event id="15" type="receive">tcp_cr_invalid</ref_event> event ( event 15 ) ) will be ignored . </action>
+<transition>in response to an indication that the tcp connection is successfully <ref_state id="6">established</ref_state> ( event 16 or event 17 ) , </transition>
+<trigger>the second connection shall be tracked until it sends an open message . </trigger>
+<trigger>if a valid open message ( <ref_event id="19" type="receive">bgpopen</ref_event> ( event 19 ) ) is received , </trigger>
+<trigger>and if the collisiondetectestablishedstate optional attribute is true , </trigger>
+<action type="receive">the open message will be checked to see if it collides ( section 6.8 ) with any other connection . </action>
+<trigger>if the bgp implementation determines that this connection needs to be terminated , </trigger>
+<action type="receive">it will process an <ref_event id="23" type="receive">opencollisiondump</ref_event> event ( event 23 ) . </action>
+<trigger>if this connection needs to be terminated , </trigger>
+<action type="send">the local system : - sends <arg> a notification with a cease </arg> , </action>
+<action type="receive">- sets the connectretrytimer to zero , </action>
+<action type="receive">- deletes all routes associated with this connection , </action>
+<action type="receive">- releases all bgp resources , </action>
+<action type="receive">- drops the tcp connection , </action>
+<action type="receive">- increments the connectretrycounter by 1 , </action>
+<action type="receive">- ( optionally ) performs peer oscillation damping if the damppeeroscillations is set to true , </action>
+<transition>and - changes its state to <arg_target><ref_state id="1">idle</ref_state></arg_target> . </transition>
+<trigger>if the local system receives a notification message ( event 24 or event 25 ) or a <ref_event id="18" type="receive">tcpconnectionfails</ref_event> ( event 18 ) from the underlying tcp , </trigger>
+<action type="receive">the local system : - sets the connectretrytimer to zero , </action>
+<action type="receive">- deletes all routes associated with this connection , </action>
+<action type="receive">- releases all the bgp resources , </action>
+<action type="receive">- drops the tcp connection , </action>
+<variable>- increments the connectretrycounter by 1 , </variable>
+<transition>- changes its state to <arg_target><ref_state id="1">idle</ref_state></arg_target> . </transition>
+<trigger>if the local system receives a keepalive message ( event 26 ) , </trigger>
+<timer>the local system : - restarts its holdtimer , </timer>
+<trigger>if the negotiated holdtime value is non-zero , </trigger>
+<transition>and - remains in the <ref_state id="6">established</ref_state> state . </transition>
+<trigger>if the local system receives an update message ( event 27 ) , </trigger>
+<action type="receive">the local system : - processes the message , </action>
+<timer>- restarts its holdtimer , </timer>
+<trigger>if the negotiated holdtime value is non-zero , </trigger>
+<transition>and - remains in the <ref_state id="6">established</ref_state> state . </transition>
+<trigger>if the local system receives an update message , </trigger>
+<trigger>and the update message error handling procedure ( see section 6.3 ) detects an error ( event 28 ) , </trigger>
+<action type="send">the local system : - sends <arg> a notification message with an update error </arg> , </action>
+<action type="receive">- sets the connectretrytimer to zero , </action>
+<action type="receive">- deletes all routes associated with this connection , </action>
+<action type="receive">- releases all bgp resources , </action>
+<action type="receive">- drops the tcp connection , </action>
+<action type="receive">- increments the connectretrycounter by 1 , </action>
+<action type="receive">- ( optionally ) performs peer oscillation damping if the damppeeroscillations attribute is set to true , </action>
+<transition>and - changes its state to <arg_target><ref_state id="1">idle</ref_state></arg_target> . </transition>
+<trigger>in response to any other event ( events 9 , </trigger>
+<trigger>12-13 , </trigger>
+<trigger>20-22 ) , </trigger>
+<action type="send">the local system : - sends <arg> a notification message with the error code finite state machine error </arg> , </action>
+<action type="receive">- deletes all routes associated with this connection , </action>
+<action type="receive">- sets the connectretrytimer to zero , </action>
+<action type="receive">- releases all bgp resources , </action>
+<action type="receive">- drops the tcp connection , </action>
+<action type="receive">- increments the connectretrycounter by 1 , </action>
+<action type="receive">- ( optionally ) performs peer oscillation damping if the damppeeroscillations attribute is set to true , </action>
+</control>
+</p>

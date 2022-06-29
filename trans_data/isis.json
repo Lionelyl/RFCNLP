@@ -1,0 +1,107 @@
+[
+  {
+    "text": "8.2.1 Receipt of ESH PDUs \u2014 database of end systems\n\nAn IS shall enter an End system into the adjacency database when an ESH PDU is received on a circuit. If an ESH PDU is received on the same circuit, but with a different NSAP address, the new address shall be added to the adjacency, with a separate timer. A single ESH PDU may contain more than one NSAP address. When a new data link address or NSAP address is added to the adjacency database, the IS shall generate an adjacencyStateChange (Up) event on that adjacency.\nThe IS shall set a timer for the value of Holding Time in the received ESH PDU. If another ESH PDU is not received from the ES before that timer expires, the ES shall be purged from the database, provided that the Subnetwork Independent Functions associated with initialising the adjacency have been completed. Otherwise the IS shall clear the adjacency as soon as those functions are completed.\nTable 3 \u2013 Example of reachable address information\nAddress Prefix\nMapping Type\nSNPA Address\n39 123\nExplicit\nX\n37 aaaa\nExplicit\nB\n37 D\nExplicit\nY\n37\nextractIDI\nExtract X.121 SNPA addrss from NSAP IDI\n47 00055 C0\nextractDSP\nsNPAPrefix=Z sNPAMask=000000000FFFFFFFFFFFF\n*\nExplicit\nR,S,T\nWhen the adjacency is cleared, the Subnetwork Independent Functions shall be informed of an adjacencyStateChange (Down) event, and the adjacency can be reused after the Sub network Independent Functions associated with bringing down the adjacency have been completed.\n",
+    "transition": [
+      {
+        "sentence": "When a new data link address or NSAP address is added to the adjacency database, the IS shall generate an adjacencyStateChange (Up) event on that adjacency.",
+        "cur_state": "Unknown",
+        "event": "When a new data link address or NSAP address is added to the adjacency database",
+        "new_state": "adjacencyStateChange (Up)"
+      }
+    ]
+  },
+  {
+    "text": "8.2.2 Receiving ISH PDUs by an intermediate system\n\nOn receipt of an ISH PDU by an Intermediate System, the IS shall create an adjacency (with adjacencyState \u201cInitialising\u201d and neighbourSystemType \u201cUnknown\u201d), if one does not already exist, and then perform the following actions:\na) If the adjacencyState is \u201cUp\u201d and the ID portion of the NET field in the ISH PDU does not match the neigh-bourID of the adjacency then the IS shall\n1) generate an adjacencyStateChange (Down) event;\n2) delete the adjacency; and\n3) create a new adjacency with:\ni. adjacencyState set to \u201cInitialising\u201d, and\nii. neighbourSystemType set to \u201cUnknown\u201d.\n4) perform the following actions.\nb) If the adjacencyState is \u201cInitialising\u201d, and the neighbourSystemType status is \u201cIntermediate System\u201d, the ISH PDU shall be ignored.\nc) If the adjacencyState is \u201cInitialising\u201d and the neighbourSystemType status is not \u201cIntermediate System\u201d, a point-to- point IIH PDU shall be transmitted as described in 8.2.4.\nd) The neighbourSystemType shall be set to \u201cIntermediate System\u201d indicating that the neighbour is an Intermediate system, but the type (L1 or L2) is, as yet, Unknown.\ne) The circuitType field shall be set according to Table 4.\n",
+    "transition": [
+      {
+        "sentence": "if one does not already exist, and then perform the following actions: a) If the adjacencyState is \u201cUp\u201d and the ID portion of the NET field in the ISH PDU does not match the neigh-bourID of the adjacency then the IS shall 1) generate an adjacencyStateChange (Down) event; 2) delete the adjacency; and 3) create a new adjacency with: i) adjacencyState set to \u201cInitialising\u201d, and ii) neighbourSystemType set to \u201cUnknown\u201d.",
+        "cur_state": "Unknown",
+        "event": "If the adjacencyState is \u201cUp\u201d and the ID portion of the NET field in the ISH PDU does not match the neigh-bourID of the adjacency",
+        "new_state": "Initialising"
+      }
+    ]
+  },
+  {
+    "text": "8.2.5.2 IIH PDU Processing\n\nWhen a Point-to-point IIH PDU is received by an Intermediate system, the area addresses of the two Intermediate Systems shall be compared to ascertain the validity of the adjacency. If the two Intermediate systems have an area address in common and matching values for maximumAreaAddresses, the adjacency is valid for all combinations of Intermediate system types (except where a Level 1 Intermediate system is con-nected to a Level 2 Intermediate system with manualL2OnlyMode set \u201cTrue\u201d). However, if they have no area address in common, the adjacency is only valid if both Intermediate systems are    Level 2, and the IS shall mark the adjacency as Level 2 Only. This is described in more detail below.\nOn receipt of a Point-to-point IIH PDU, each of the Area Addresses from the PDU shall be compared with the set of area addresses in the manualAreaAddresses attribute.\na) If a match is detected between any pair the following actions are taken.\n1) If the Maximum Area Addresses field of the PDU is not equal to the value of the IS\u2019s maximumAreaAddresses then the PDU shall be discarded and a maximumAreaAddresses-Mismatch event generated, unless the IS only implements a value of three for maximumArea-Addresses, in which case this check may be omitted.\n2) If the local system is of iSType \u201cL1IntermediateSystem\u201d the IS shall perform the action indicated by table 5.\n3) If the local system is of iSType \u201cL2Intermediate-System\u201d and the Circuit manualL2OnlyMode has the value \u201cFalse\u201d, the IS shall perform the action indicated by table 6.\nTable 5 \u2013 Level 1 state table for matching areas\nCircuit Type (1)\nAdjacency Usage\nnone (2)\nLevel 1 (3)\nLevel 1 only\nUp (4) L1 (5)\nAccept\nLevel 2 only\nReject (7) (Wrong system)\nDown (6) (Wrong system)\nLevel 1 and 2\nUp (4) L1 (5)\nAccept\n(1) The value of the Circuit Type field in the received PDU.\n(2) The adjacency is not in adjacencyState \u201cUp\u201d.\n(3) adjacencyUsage is \u201cLevel 1\u201d\n(4) The adjacency is accepted and an adjacencyStateChange (Up)\u201d event is generated. If the Adjacency neighbourSystemType was \u201cUnknown\u201d (i.e. no ISH PDU has yet been received), a point-to-point IIH PDU is also transmitted.\n(5) The adjacencyUsage status is set to \u201cLevel 1\u201d\n(6) An adjacencyStateChange (Down)\u201d event is generated, with the specified reason, and the adjacency deleted.\n(7) A wrongSystemType event is generated.\n4) If the local system is of iSType \u201cL2Intermediate-System\u201d and the Circuit manualL2OnlyMode has the value \u201cTrue\u201d, the IS shall perform the action indicated by table 7.\nb) If a no match is detected between any pair, the following actions shall be performed.\n1) If the local system is of iSType \u201cL1Intermediate-System\u201dand the adjacency is not in state \u201cUp\u201d, the IS shall delete the adjacency (if any) and generate an areaMismatch event.\n2) If the local system is of iSType \u201cL1IntermediateSystem\u201d and the adjacency is in state \u201cUp\u201d, the IS shall delete the adjacency and generate an adjacencyStateChange (Down \u2013 Area Mismatch)\u201d event .\n3) If the local system is of iSType \u201cL2IntermediateSystem\u201d the IS shall perform the action indicated by table 8 (irrespective of the value of manualL2OnlyMode for this circuit).\nc) If the action taken is \u201cUp\u201d, as detailed in the tables referenced above, the IS shall compare the Source ID field of the  PDU with the local systemID.\n1) If the local Intermediate system has the higher Source ID, the IS shall set the Circuit CircuitID status to the concatenation of the local systemID and the Local Circuit ID (as sent in the Local Circuit ID field of point-to-point IIH PDUs from this Intermediate System) of this circuit.\n2) If the remote Intermediate system has the higher Source ID, the IS shall set the Circuit CircuitID status to the concatenation of the remote system\u2019s Source ID (from the Source ID field of the PDU), and the remote system\u2019s Local Circuit ID (from the Local Circuit ID field of the PDU).\n3) If the two source IDs are the same (i.e. the system is initialising to itself), the local systemID is used.\nNOTE 47 The circuitID status is not used to generate the Local Circuit ID to be sent in the Local Circuit ID field of IIH PDUs transmitted by this Intermediate system. The Local Circuit ID value is assigned once, when the circuit is created and is not subsequently changed.\nd) If the action taken is \u201cAccept\u201d and the neighbor System ID in the adjacency does not match the source ID field from the PDU, or the new value computed for the circuit ID is different from that in the existing adjacency, the IS shall\n1) generate an adjacencyStateChange (Down) event, and\n2) delete the adjacency.\ne) If the action taken is \u201cUp\u201d or \u201cAccept\u201d the IS shall\n1) copy the adjacency areaAddressesOfNeighbour entries from the Area Addresses field of the PDU,\n2) set the holdingTimer to the value of the Holding Time field from the PDU, and\n3) set the neighbourSystemID to the value of the Source ID field from the PDU.\nTable 6 \u2013 Level 2 state table for matching areas\nCircuit Type (1)\nAdjacency Usage\nnone (2)\nLevel 1 (3)\nLevel 1 and 2 (4)\nLevel 2\nLevel 1 only\nUp (6) L1 (7)\nAccept\nDown (8) (Wrong system)\nDown (8) (Wrong system)\nLevel 2 only\nUp (6) L2O (9)\nDown (8) (Wrong system)\nDown (6) (Wrong system)\nAccept\nLevel 1 and 2\nUp (6) L2 (10)\nDown (8) (Wrong system)\nAccept\nDown (8) (Wrong system)\n(1) The value of the Circuit Type field in the received PDU.\n(2) The adjacency is not in adjacencyState \u201cUp\u201d.\n(3) The adjacency is in state \u201cUp\u201d and the Adjacency adjacencyUsage is \u201cLevel 1\u201d.\n(4) The adjacency is in state \u201cUp\u201d and the Adjacency adjacencyUsage is \u201cLevel 1 and 2\u201d.\n(5) The adjacency is in state \u201cUp\u201d and the Adjacency adjacencyUsage is \u201cLevel 2\u201d.\n(6) The adjacency is accepted and an adjacencyStateChange (Up)\u201d event is generated. If the Adjacency neighbourSystemType was \u201cUnknown\u201d (i.e. no ISH PDU has yet been received), a point-to-point IIH PDU is also transmitted.\n(7) The adjacencyUsage status is set to \u201cLevel 1\u201d\n(8) An adjacencyStateChange (Down)\u201d event is generated, with the specified reason, and the adjacency deleted.\n(9) The adjacencyUsage is set to \u201cLevel 2\u201d\n(10) The adjacencyUsage is set to \u201cLevel 1 and 2\u201d.\nTable 7 \u2013 Level 2 only state table for matching areas\nCircuit Type (1)\nAdjacency Usage\nnone (2)\nLevel 1 and 2 (3)\nLevel 2 (4)\nLevel 1 only\nReject (5) (Wrong system)\nDown (6) (Wrong system)\nDown (6) (Wrong system)\nLevel 2 only\nUp (7) L2O (8)\nDown (6) (Wrong system)\nAccept\nLevel 1 and 2\nUp (7) L2O (8)\nDown (6) (Wrong system)\nAccept\n(1) The value of the Circuit Type field in the received PDU.\n(2) The adjacency is not in adjacencyState \u201cUp\u201d.\n(3) The adjacency is in state \u201cUp\u201d and the adjacencyUsage is \u201cLevel 1 and 2\u201d.\n(4) The adjacency is in adjacencyState \u201cUp\u201d and the adjacencyUsage is \u201cLevel 2.\n(5) A wrongSystemType event is generated.\n(6) An adjacencyStateChange (Down)\u201d event is generated, with the specified reason, and the adjacency deleted.\n(7) The adjacency is accepted and an adjacencyStateChange (Up)\u201d event is generated. If the Adjacency neighbourSystemType was \u201cUnknown\u201d (i.e. no ISH PDU has yet been received), a point-to-point IIH PDU is also transmitted.\n(8) The adjacencyUsage status is set to \u201cLevel 2\u201d\n",
+    "transition": [
+      {
+        "sentence": "If the local system is of iSType \u201cL1IntermediateSystem\u201d and the adjacency is in state \u201cUp\u201d, the IS shall delete the adjacency and generate an adjacencyStateChange (Down \u2013 Area Mismatch)\u201d event .",
+        "cur_state": "Unknown",
+        "event": "If the local system is of iSType \u201cL1IntermediateSystem\u201d and the adjacency is in state \u201cUp\u201d",
+        "new_state": "adjacencyStateChange (Down \u2013 Area Mismatch)"
+      },
+      {
+        "sentence": "If the action taken is \u201cAccept\u201d and the neighbor System ID in the adjacency does not match the source ID field from the PDU, or the new value computed for the circuit ID is different from that in the existing adjacency, the IS shall 1) generate an adjacencyStateChange (Down) event, and 2) delete the adjacency.",
+        "cur_state": "Unknown",
+        "event": "If the action taken is \u201cAccept\u201d and the neighbor System ID in the adjacency does not match the source ID field from the PDU, or the new value computed for the circuit ID is different from that in the existing adjacency",
+        "new_state": "adjacencyStateChange (Down)"
+      }
+    ]
+  },
+  {
+    "text": "8.2.6 Monitoring point-to-point adjacencies\n\nThe IS shall keep a holding time (adjacency holdingTimer) for the point-to-point adjacency. The value of the holdingTimer shall be set to the holding time as reported in the Holding Time field of the Pt-Pt IIH PDU. If a neighbour is not heard from in that time, the IS shall\na) purge it from the database; and\nb) generate an adjacencyStateChange (Down) event.\n",
+    "transition": [
+      {
+        "sentence": "If a neighbour is not heard from in that time, the IS shall a) purge it from the database; and b) generate an adjacencyStateChange (Down) event.",
+        "cur_state": "Unknown",
+        "event": "If a neighbour is not heard from in that time",
+        "new_state": "adjacencyStateChange (Down)"
+      }
+    ]
+  },
+  {
+    "text": "8.4.2.5.1\n When a) Level n LAN IIH PDU (Level 1 or Level 2) is received (from Intermediate system R), and\nb) there is no adjacency for which the adjacency neighbourSNPAAddress is equal to the MAC Source address of the PDU; and\nthe IS shall create a new adjacency. However, if there is insufficient space in the adjacency database, to permit the creation of a new adjacency the IS shall instead perform the actions described in 8.4.3.\nThe IS shall\na) set neighbourSystemType to \u201cLn Intermediate System\u201d (where n is the level of the IIH PDU),\nb) set the holdingTimer, priorityOfNeighbour, neighbour-SystemID and areaAddressesOfNeighbour according to the values in the PDU., and\nc) set the neighbourSNPAAddress according to the MAC source address of the PDU.\nThe IS shall set the adjacencyState of the adjacency to \u201cinitialising\u201d, until it is known that the communication between this system and the source of the PDU (R) is two-way. However R shall be included in future Level n LAN IIH PDUs transmitted by this system.\nWhen R reports the local system\u2019s SNPA address in its Level n LAN IIH PDUs, the IS shall\nd) set the adjacency\u2019s adjacencyState to \u201cUp\u201d, and\ne) generate an adjacencyStateChange (Up)\u201d event.\n",
+    "transition": [
+      {
+        "sentence": "When R reports the local system\u2019s SNPA address in its Level n LAN IIH PDUs, the IS shall d) set the adjacency\u2019s adjacencyState to \u201cUp\u201d, and e) generate an adjacencyStateChange (Up)\u201d event.",
+        "cur_state": "Unknown",
+        "event": "When R reports the local system\u2019s SNPA address in its Level n LAN IIH PDUs",
+        "new_state": "Up"
+      }
+    ]
+  },
+  {
+    "text": "8.4.2.5.2\n The IS shall keep a separate holding time (adjacency holdingTimer) for each \u201cLn Intermediate System\u201d adjacency. The value of holdingTimer shall be set to the holding time as reported in the Holding Time field of the Level n LAN IIH PDUs. If a neighbour is not heard from in that time, the IS shall a) purge it from the database; and\nb) generate an adjacencyStateChange (Down) event.\n",
+    "transition": [
+      {
+        "sentence": "If a neighbour is not heard from in that time, the IS shall a) purge it from the database; and b) generate an adjacencyStateChange (Down) event.",
+        "cur_state": "Unknown",
+        "event": "If a neighbour is not heard from in that time",
+        "new_state": "adjacencyStateChange (Down)"
+      }
+    ]
+  },
+  {
+    "text": "8.4.2.5.3\n If a Level n LAN IIH PDU is received from neighbour N, and this system\u2019s lANAddress is no longer in N\u2019s IIH PDU, the IS shall a) set the adjacency\u2019s adjacencyState to \u201cinitialising\u201d, and\nb) generate an adjacencyStateChange (Down) event.\n",
+    "transition": [
+      {
+        "sentence": "If a Level n LAN IIH PDU is received from neighbour N, and this system\u2019s lANAddress is no longer in N\u2019s IIH PDU, the IS shall a) set the adjacency\u2019s adjacencyState to \u201cinitialising\u201d, and b) generate an adjacencyStateChange (Down) event.",
+        "cur_state": "Unknown",
+        "event": "If a Level n LAN IIH PDU is received from neighbour N, and this system\u2019s lANAddress is no longer in N\u2019s IIH PDU",
+        "new_state": "Initialising"
+      }
+    ]
+  },
+  {
+    "text": "8.4.3 Insufficient space in adjacency database\n\nIf an IS needs to create a new Intermediate system adjacency, but there is insufficient space in the adjacency database, the adjacency of neighbourSystemType \u201cLn Intermediate System\u201d with lowest l x intermediateSystemPriority (or if more than one adjacency has the lowest priority, the adjacency with the lowest SNPAAddress, from among those with the lowest priority) shall be purged from the database. If the new adjacency would have the lowest priority, it shall be ignored, and a rejectedAdjacency event generated.\nIf an old adjacency must be purged, the IS shall generate an adjacencyStateChange (Down) event for that adjacency. After the Subnetwork Independent Functions issue an \u201cadjacency down complete\u201d, the IS may create a new adjacency.\n",
+    "transition": [
+      {
+        "sentence": "If an old adjacency must be purged, the IS shall generate an adjacencyStateChange (Down) event for that adjacency.",
+        "cur_state": "Unknown",
+        "event": "If an old adjacency must be purged",
+        "new_state": "adjacencyStateChange (Down)"
+      }
+    ]
+  },
+  {
+    "text": "8.4.7 Receipt of ESH PDUs \u2014 database of end systems\n\nAn IS shall enter an End system into the adjacency database when an ESH PDU is received from a new data link address. If an ESH PDU is received with the same data link address as a current adjacency, but with a different NSAP address, the new address shall be added to the adjacency, with a separate timer. A single ESH PDU may contain more than one NSAP address. When a new data link address or NSAP address is added to the adjacency database, the IS shall generate an adjacencyStateChange (Up) event on that adjacency.\nThe IS shall set a timer for the value of the Holding Time field in the received ESH PDU. If another ESH PDU is not received from the ES before that timer expires, the ES shall be purged from the database, provided that the Subnetwork Independent Functions associated with initialising the adjacency have been completed. Otherwise the IS shall clear the adjacency as soon as those functions are completed.\nWhen the adjacency is cleared, the Subnetwork Independent Functions shall be informed of an adjacencyStateChange (Down) event, and the adjacency can be re-used after the Subnetwork Independent Functions associated with bringing down the adjacency have been completed.\n",
+    "transition": [
+      {
+        "sentence": "When a new data link address or NSAP address is added to the adjacency database, the IS shall generate an adjacencyStateChange (Up) event on that adjacency.",
+        "cur_state": "Unknown",
+        "event": "When a new data link address or NSAP address is added to the adjacency database",
+        "new_state": "adjacencyStateChange (Up)"
+      }
+    ]
+  }
+]

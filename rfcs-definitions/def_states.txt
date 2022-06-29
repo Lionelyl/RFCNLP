@@ -59,3 +59,18 @@ TCP	CLOSING	8
 TCP	LAST-ACK	9
 TCP	TIME-WAIT	10
 TCP	CLOSED	11
+OSPF	Down	1
+OSPF	Loopback	2
+OSPF	Waiting	3
+OSPF	Point-to-point	4
+OSPF	DR Other	5
+OSPF	Backup	6
+OSPF	DR	7
+ISIS	Initialising	1
+ISIS	Up	2
+ISIS	adjacencyStateChange (Down)	3
+ISIS	adjacencyStateChange (Down – Area Mismatch)	4
+ISIS	adjacencyStateChange (Up)	5
+ISIS	Down	6
+ISIS	Unknown	7
+ISIS	Failed	8

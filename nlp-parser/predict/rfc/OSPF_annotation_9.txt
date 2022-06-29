@@ -1,0 +1,102 @@
+======
+         State(s):  Down
+
+            Event:  InterfaceUp
+
+        New state:  Depends upon action routine
+
+           Action:  Start the interval Hello Timer, enabling the
+                    periodic sending of Hello packets out the interface.
+                    If the attached network is a physical point-to-point
+                    network, Point-to-MultiPoint network or virtual
+                    link, the interface state transitions to Point-to-
+                    Point.  Else, if the router is not eligible to
+                    become Designated Router the interface state
+                    transitions to DR Other.
+
+                    Otherwise, the attached network is a broadcast or
+                    NBMA network and the router is eligible to become
+                    Designated Router.  In this case, in an attempt to
+                    discover the attached network's Designated Router
+                    the interface state is set to Waiting and the single
+                    shot Wait Timer is started.  Additionally, if the
+                    network is an NBMA network examine the configured
+                    list of neighbors for this interface and generate
+                    the neighbor event Start for each neighbor that is
+                    also eligible to become Designated Router.
+
+======
+         State(s):  Waiting
+
+            Event:  BackupSeen
+
+        New state:  Depends upon action routine.
+
+           Action:  Calculate the attached network's Backup Designated
+                    Router and Designated Router, as shown in Section
+                    9.4.  As a result of this calculation, the new state
+                    of the interface will be either DR Other, Backup or
+                    DR.
+
+======
+         State(s):  Waiting
+
+            Event:  WaitTimer
+
+        New state:  Depends upon action routine.
+
+           Action:  Calculate the attached network's Backup Designated
+                    Router and Designated Router, as shown in Section
+                    9.4.  As a result of this calculation, the new state
+                    of the interface will be either DR Other, Backup or
+                    DR.
+
+======
+         State(s):  DR Other, Backup or DR
+
+            Event:  NeighborChange
+
+
+        New state:  Depends upon action routine.
+
+           Action:  Recalculate the attached network's Backup Designated
+                    Router and Designated Router, as shown in Section
+                    9.4.  As a result of this calculation, the new state
+                    of the interface will be either DR Other, Backup or
+                    DR.
+
+======
+         State(s):  Any State
+
+            Event:  InterfaceDown
+
+        New state:  Down
+
+           Action:  All interface variables are reset, and interface
+                    timers disabled.  Also, all neighbor connections
+                    associated with the interface are destroyed.  This
+                    is done by generating the event KillNbr on all
+                    associated neighbors (see Section 10.2).
+
+======
+         State(s):  Any State
+
+            Event:  LoopInd
+
+        New state:  Loopback
+
+           Action:  Since this interface is no longer connected to the
+                    attached network the actions associated with the
+                    above InterfaceDown event are executed.
+
+======
+         State(s):  Loopback
+
+            Event:  UnloopInd
+
+        New state:  Down
+
+           Action:  No actions are necessary.  For example, the
+                    interface variables have already been reset upon
+                    entering the Loopback state.  Note that reception of
+

@@ -2,6 +2,8 @@
 
 
 
+
+
 Network Working Group                                    Y. Rekhter, Ed.
 Request for Comments: 4271                                    T. Li, Ed.
 Obsoletes: 1771                                            S. Hares, Ed.
@@ -2034,13 +2036,13 @@ RFC 4271                         BGP-4                      January 2006
    Session attributes required (mandatory) for each connection are:
 
       1) State
-      2) <def_var>ConnectRetryCounter</def_var>
-      3) <def_var>ConnectRetryTimer</def_var>
-      4) <def_var>ConnectRetryTime</def_var>
-      5) <def_var>HoldTimer</def_var>
-      6) <def_var>HoldTime</def_var>
-      7) <def_var>KeepaliveTimer</def_var>
-      8) <def_var>KeepaliveTime</def_var>
+      2) ConnectRetryCounter
+      3) ConnectRetryTimer
+      4) ConnectRetryTime
+      5) HoldTimer
+      6) HoldTime
+      7) KeepaliveTimer
+      8) KeepaliveTime
 
    The state session attribute indicates the current state of the BGP
    FSM.  The ConnectRetryCounter indicates the number of times a BGP
@@ -2053,19 +2055,19 @@ RFC 4271                         BGP-4                      January 2006
    attributes may be supported, either per connection or per local
    system:
 
-      1) <def_var>AcceptConnectionsUnconfiguredPeers</def_var>
-      2) <def_var>AllowAutomaticStart</def_var>
-      3) <def_var>AllowAutomaticStop</def_var>
-      4) <def_var>CollisionDetectEstablishedState</def_var>
-      5) <def_var>DampPeerOscillations</def_var>
-      6) <def_var>DelayOpen</def_var>
-      7) <def_var>DelayOpenTime</def_var>
-      8) <def_var>DelayOpenTimer</def_var>
-      9) <def_var>IdleHoldTime</def_var>
-     10) <def_var>IdleHoldTimer</def_var>
-     11) <def_var>PassiveTcpEstablishment</def_var>
-     12) <def_var>SendNOTIFICATIONwithoutOPEN</def_var>
-     13) <def_var>TrackTcpState</def_var>
+      1) AcceptConnectionsUnconfiguredPeers
+      2) AllowAutomaticStart
+      3) AllowAutomaticStop
+      4) CollisionDetectEstablishedState
+      5) DampPeerOscillations
+      6) DelayOpen
+      7) DelayOpenTime
+      8) DelayOpenTimer
+      9) IdleHoldTime
+     10) IdleHoldTimer
+     11) PassiveTcpEstablishment
+     12) SendNOTIFICATIONwithoutOPEN
+     13) TrackTcpState
 
 
 
@@ -2088,7 +2090,7 @@ RFC 4271                         BGP-4                      January 2006
    (DelayOpenTime, IdleHoldTime).  The "Timer" specifies the actual
    timer.
 
-   Please refer to Section ƒ.1 for an explanation of the interaction
+   Please refer to Section 8.1.1 for an explanation of the interaction
    between these optional attributes and the events signaled to the
    state machine.  Section 8.2.1.3 also provides a short overview of the
    different types of optional attributes (flags or timers).
@@ -2370,7 +2372,7 @@ RFC 4271                         BGP-4                      January 2006
    states described below may also be implicit in some implementations
    and not directly configurable by an external operator.
 
-      Event 1: <def_event id="1">ManualStart</def_event>
+      Event 1: ManualStart
 
          Definition: Local system administrator manually starts the peer
                      connection.
@@ -2382,7 +2384,7 @@ RFC 4271                         BGP-4                      January 2006
          Status:     The PassiveTcpEstablishment attribute SHOULD be set
                      to FALSE.
 
-      Event 2: <def_event id="2">ManualStop</def_event>
+      Event 2: ManualStop
 
          Definition: Local system administrator manually stops the peer
                      connection.
@@ -2393,7 +2395,7 @@ RFC 4271                         BGP-4                      January 2006
          Attribute
          Status:     No interaction with any optional attributes.
 
-      Event 3: <def_event id="3">AutomaticStart</def_event>
+      Event 3: AutomaticStart
 
          Definition: Local system automatically starts the BGP
                      connection.
@@ -2420,7 +2422,7 @@ RFC 4271                         BGP-4                      January 2006
                      3) If the DampPeerOscillations is supported, it
                         SHOULD be set to FALSE when this event occurs.
 
-      Event 4: <def_event id="4">ManualStart_with_PassiveTcpEstablishment</def_event>
+      Event 4: ManualStart_with_PassiveTcpEstablishment
 
          Definition: Local system administrator manually starts the peer
                      connection, but has PassiveTcpEstablishment
@@ -2437,7 +2439,7 @@ RFC 4271                         BGP-4                      January 2006
                      2) The DampPeerOscillations attribute SHOULD be set
                         to FALSE when this event occurs.
 
-      Event 5: <def_event id="5">AutomaticStart_with_PassiveTcpEstablishment</def_event>
+      Event 5: AutomaticStart_with_PassiveTcpEstablishment
 
          Definition: Local system automatically starts the BGP
                      connection with the PassiveTcpEstablishment
@@ -2466,7 +2468,7 @@ Rekhter, et al.             Standards Track                    [Page 44]
 RFC 4271                         BGP-4                      January 2006
 
 
-      Event 6: <def_event id="6">AutomaticStart_with_DampPeerOscillations</def_event>
+      Event 6: AutomaticStart_with_DampPeerOscillations
 
          Definition: Local system automatically starts the BGP peer
                      connection with peer oscillation damping enabled.
@@ -2485,8 +2487,8 @@ RFC 4271                         BGP-4                      January 2006
                      3) The PassiveTcpEstablishment attribute SHOULD be
                         set to FALSE.
 
-      Event 7: <def_event id="7">AutomaticStart_with_DampPeerOscillations_and_
-      PassiveTcpEstablishment</def_event>
+      Event 7: AutomaticStart_with_DampPeerOscillations_and_
+      PassiveTcpEstablishment
 
          Definition: Local system automatically starts the BGP peer
                      connection with peer oscillation damping enabled
@@ -2506,7 +2508,7 @@ RFC 4271                         BGP-4                      January 2006
                      3) The PassiveTcpEstablishment attribute SHOULD be
                         set to TRUE.
 
-      Event 8: <def_event id="8">AutomaticStop</def_event>
+      Event 8: AutomaticStop
 
          Definition: Local system automatically stops the BGP
                      connection.
@@ -2530,26 +2532,26 @@ RFC 4271                         BGP-4                      January 2006
 
 8.1.3.  Timer Events
 
-      Event 9: <def_event id="9">ConnectRetryTimer_Expires</def_event>
+      Event 9: ConnectRetryTimer_Expires
 
          Definition: An event generated when the ConnectRetryTimer
                      expires.
 
          Status:     Mandatory
 
-      Event 10: <def_event id="10">HoldTimer_Expires</def_event>
+      Event 10: HoldTimer_Expires
 
          Definition: An event generated when the HoldTimer expires.
 
          Status:     Mandatory
 
-      Event 11: <def_event id="11">KeepaliveTimer_Expires</def_event>
+      Event 11: KeepaliveTimer_Expires
 
          Definition: An event generated when the KeepaliveTimer expires.
 
          Status:     Mandatory
 
-      Event 12: <def_event id="12">DelayOpenTimer_Expires</def_event>
+      Event 12: DelayOpenTimer_Expires
 
          Definition: An event generated when the DelayOpenTimer expires.
 
@@ -2562,7 +2564,7 @@ RFC 4271                         BGP-4                      January 2006
                      2) DelayOpenTime attribute SHOULD be supported,
                      3) DelayOpenTimer SHOULD be supported.
 
-      Event 13: <def_event id="13">IdleHoldTimer_Expires</def_event>
+      Event 13: IdleHoldTimer_Expires
 
          Definition: An event generated when the IdleHoldTimer expires,
                      indicating that the BGP connection has completed
@@ -2598,7 +2600,7 @@ RFC 4271                         BGP-4                      January 2006
 
 8.1.4.  TCP Connection-Based Events
 
-      Event 14: <def_event id="14">TcpConnection_Valid</def_event>
+      Event 14: TcpConnection_Valid
 
          Definition: Event indicating the local system reception of a
                      TCP connection request with a valid source IP
@@ -2620,7 +2622,7 @@ RFC 4271                         BGP-4                      January 2006
          Status:     1) The TrackTcpState attribute SHOULD be set to
                         TRUE if this event occurs.
 
-      Event 15: <def_event id="15">Tcp_CR_Invalid</def_event>
+      Event 15: Tcp_CR_Invalid
 
          Definition: Event indicating the local system reception of a
                      TCP connection request with either an invalid
@@ -2647,7 +2649,7 @@ RFC 4271                         BGP-4                      January 2006
          Status:     1) The TrackTcpState attribute should be set to
                         TRUE if this event occurs.
 
-      Event 16: <def_event id="16">Tcp_CR_Acked</def_event>
+      Event 16: Tcp_CR_Acked
 
          Definition: Event indicating the local system's request to
                      establish a TCP connection to the remote peer.
@@ -2657,7 +2659,7 @@ RFC 4271                         BGP-4                      January 2006
 
          Status:     Mandatory
 
-      Event 17: <def_event id="17">TcpConnectionConfirmed</def_event>
+      Event 17: TcpConnectionConfirmed
 
          Definition: Event indicating that the local system has received
                      a confirmation that the TCP connection has been
@@ -2669,7 +2671,7 @@ RFC 4271                         BGP-4                      January 2006
 
          Status:     Mandatory
 
-      Event 18: <def_event id="18">TcpConnectionFails</def_event>
+      Event 18: TcpConnectionFails
 
          Definition: Event indicating that the local system has received
                      a TCP connection failure notice.
@@ -2692,7 +2694,7 @@ RFC 4271                         BGP-4                      January 2006
 
 8.1.5.  BGP Message-Based Events
 
-      Event 19: <def_event id="19">BGPOpen</def_event>
+      Event 19: BGPOpen
 
          Definition: An event is generated when a valid OPEN message has
                      been received.
@@ -2705,7 +2707,7 @@ RFC 4271                         BGP-4                      January 2006
                         to FALSE.
                      2) The DelayOpenTimer SHOULD not be running.
 
-      Event 20: <def_event id="20">BGPOpen with DelayOpenTimer running</def_event>
+      Event 20: BGPOpen with DelayOpenTimer running
 
          Definition: An event is generated when a valid OPEN message has
                      been received for a peer that has a successfully
@@ -2719,21 +2721,21 @@ RFC 4271                         BGP-4                      January 2006
          Status:     1) The DelayOpen attribute SHOULD be set to TRUE.
                      2) The DelayOpenTimer SHOULD be running.
 
-      Event 21: <def_event id="21">BGPHeaderErr</def_event>
+      Event 21: BGPHeaderErr
 
          Definition: An event is generated when a received BGP message
                      header is not valid.
 
          Status:     Mandatory
 
-      Event 22: <def_event id="22">BGPOpenMsgErr</def_event>
+      Event 22: BGPOpenMsgErr
 
          Definition: An event is generated when an OPEN message has been
                      received with errors.
 
          Status:     Mandatory
 
-      Event 23: <def_event id="23">OpenCollisionDump</def_event>
+      Event 23: OpenCollisionDump
 
          Definition: An event generated administratively when a
                      connection collision has been detected while
@@ -2769,14 +2771,14 @@ RFC 4271                         BGP-4                      January 2006
                      in Idle, Connect, Active, OpenSent, and OpenConfirm
                      without any optional attributes being set.
 
-      Event 24: <def_event id="24">NotifMsgVerErr</def_event>
+      Event 24: NotifMsgVerErr
 
          Definition: An event is generated when a NOTIFICATION message
                      with "version error" is received.
 
          Status:     Mandatory
 
-      Event 25: <def_event id="25">NotifMsg</def_event>
+      Event 25: NotifMsg
 
          Definition: An event is generated when a NOTIFICATION message
                      is received and the error code is anything but
@@ -2784,7 +2786,7 @@ RFC 4271                         BGP-4                      January 2006
 
          Status:     Mandatory
 
-      Event 26: <def_event id="26">KeepAliveMsg</def_event>
+      Event 26: KeepAliveMsg
 
          Definition: An event is generated when a KEEPALIVE message is
                      received.
@@ -2802,14 +2804,14 @@ Rekhter, et al.             Standards Track                    [Page 50]
 RFC 4271                         BGP-4                      January 2006
 
 
-      Event 27: <def_event id="27">UpdateMsg</def_event>
+      Event 27: UpdateMsg
 
          Definition: An event is generated when a valid UPDATE message
                      is received.
 
          Status:     Mandatory
 
-      Event 28: <def_event id="28">UpdateMsgErr</def_event>
+      Event 28: UpdateMsgErr
 
          Definition: An event is generated when an invalid UPDATE
                      message is received.
@@ -2936,28 +2938,28 @@ RFC 4271                         BGP-4                      January 2006
 
 8.2.2.  Finite State Machine
 
-   <control relevant="true"><trigger><ref_state id="1"><def_state id="1">Idle</def_state></ref_state> state:</trigger>
+   Idle state:
 
-      <control relevant="true"><trigger>Initially,</trigger> <transition>the BGP peer FSM is in the <ref_state id="1">Idle</ref_state> state.</transition>  Hereafter, the
+      Initially, the BGP peer FSM is in the Idle state.  Hereafter, the
       BGP peer FSM will be shortened to BGP FSM.
 
       In this state, BGP FSM refuses all incoming BGP connections for
-      this peer.  No resources are allocated to the peer.  <control relevant="true"><trigger>In response
-      to a <ref_event type="receive" id="1">ManualStart</ref_event> event (Event 1) or an <ref_event type="receive" id="3">AutomaticStart</ref_event> event (Event
-      3), the local system:</trigger>
+      this peer.  No resources are allocated to the peer.  In response
+      to a ManualStart event (Event 1) or an AutomaticStart event (Event
+      3), the local system:
 
-        - <action>initializes all BGP resources for the peer connection,</action>
+        - initializes all BGP resources for the peer connection,
 
-        - <variable>sets ConnectRetryCounter to zero,</variable>
+        - sets ConnectRetryCounter to zero,
 
-        - <timer>starts the ConnectRetryTimer with the initial value,</timer>
+        - starts the ConnectRetryTimer with the initial value,
 
-        - <action>initiates a TCP connection to the other BGP peer,</action>
+        - initiates a TCP connection to the other BGP peer,
 
-        - <action>listens for a connection that may be initiated by the remote
-          BGP peer,</action> and
+        - listens for a connection that may be initiated by the remote
+          BGP peer, and
 
-        - <transition>changes its state to <ref_state id="2">Connect</ref_state>.</transition></control></control>
+        - changes its state to Connect.
 
       The ManualStop event (Event 2) and AutomaticStop (Event 8) event
       are ignored in the Idle state.
@@ -2970,53 +2972,53 @@ Rekhter, et al.             Standards Track                    [Page 53]
 RFC 4271                         BGP-4                      January 2006
 
 
-      <control relevant="true"><trigger>In response to a <ref_event type="receive" id="4">ManualStart_with_PassiveTcpEstablishment</ref_event> event
-      (Event 4) or <ref_event type="receive" id="5">AutomaticStart_with_PassiveTcpEstablishment</ref_event> event
-      (Event 5), the local system:</trigger>
+      In response to a ManualStart_with_PassiveTcpEstablishment event
+      (Event 4) or AutomaticStart_with_PassiveTcpEstablishment event
+      (Event 5), the local system:
 
-        - <action>initializes all BGP resources,</action>
+        - initializes all BGP resources,
 
-        - <variable>sets the ConnectRetryCounter to zero,</variable>
+        - sets the ConnectRetryCounter to zero,
 
-        - <timer>starts the ConnectRetryTimer with the initial value,</timer>
+        - starts the ConnectRetryTimer with the initial value,
 
-        - <action>listens for a connection that may be initiated by the remote
-          peer,</action> and
+        - listens for a connection that may be initiated by the remote
+          peer, and
 
-        - <transition>changes its state to <ref_state id="3">Active</ref_state>.</transition></control>
+        - changes its state to Active.
 
       The exact value of the ConnectRetryTimer is a local matter, but it
       SHOULD be sufficiently large to allow TCP initialization.
 
-      <control relevant="unsure"><trigger>If the DampPeerOscillations attribute is set to TRUE, the
-      following three additional events may occur within the <ref_state id="1">Idle</ref_state> state:</trigger>
+      If the DampPeerOscillations attribute is set to TRUE, the
+      following three additional events may occur within the Idle state:
 
-        - <action><ref_event type="send" id="6">AutomaticStart_with_DampPeerOscillations</ref_event> (Event 6),</action>
+        - AutomaticStart_with_DampPeerOscillations (Event 6),
 
-        - <action><ref_event type="send" id="7">AutomaticStart_with_DampPeerOscillations_and_
-          PassiveTcpEstablishment</ref_event> (Event 7),</action>
+        - AutomaticStart_with_DampPeerOscillations_and_
+          PassiveTcpEstablishment (Event 7),
 
-        - <action><ref_event type="send" id="13">IdleHoldTimer_Expires</ref_event> (Event 13).</action></control>
+        - IdleHoldTimer_Expires (Event 13).
 
       Upon receiving these 3 events, the local system will use these
       events to prevent peer oscillations.  The method of preventing
       persistent peer oscillation is outside the scope of this document.
 
       Any other event (Events 9-12, 15-28) received in the Idle state
-      does not cause change in the state of the local system.</control>
+      does not cause change in the state of the local system.
 
-   <control relevant="true"><trigger><ref_state id="2"><def_state id="2">Connect</def_state></ref_state> State:</trigger>
+   Connect State:
 
       In this state, BGP FSM is waiting for the TCP connection to be
       completed.
 
       The start events (Events 1, 3-7) are ignored in the Connect state.
 
-      <control relevant="true"><trigger>In response to a <ref_event type="receive" id="2">ManualStop</ref_event> event (Event 2), the local system:</trigger>
+      In response to a ManualStop event (Event 2), the local system:
 
-        - <action>drops the TCP connection,</action>
+        - drops the TCP connection,
 
-        - <action>releases all BGP resources,</action>
+        - releases all BGP resources,
 
 
 
@@ -3026,54 +3028,54 @@ Rekhter, et al.             Standards Track                    [Page 54]
 RFC 4271                         BGP-4                      January 2006
 
 
-        - <variable>sets ConnectRetryCounter to zero,</variable>
+        - sets ConnectRetryCounter to zero,
 
-        - <timer>stops the ConnectRetryTimer</timer> and <timer>sets ConnectRetryTimer to
-          zero,</timer> and
+        - stops the ConnectRetryTimer and sets ConnectRetryTimer to
+          zero, and
 
-        - <transition>changes its state to <ref_state id="1">Idle</ref_state>.</transition></control>
+        - changes its state to Idle.
 
-      <control relevant="true"><trigger>In response to the <ref_event type="receive" id="9">ConnectRetryTimer_Expires</ref_event> event (Event 9), the
-      local system:</trigger>
+      In response to the ConnectRetryTimer_Expires event (Event 9), the
+      local system:
 
-        - <action>drops the TCP connection,</action>
+        - drops the TCP connection,
 
-        - <timer>restarts the ConnectRetryTimer,</timer>
+        - restarts the ConnectRetryTimer,
 
-        - <timer>stops the DelayOpenTimer</timer> and <timer>resets the timer to zero,</timer>
+        - stops the DelayOpenTimer and resets the timer to zero,
 
-        - <action>initiates a TCP connection to the other BGP peer,</action>
+        - initiates a TCP connection to the other BGP peer,
 
-        - <action>continues to listen for a connection that may be initiated by
-          the remote BGP peer,</action> and
+        - continues to listen for a connection that may be initiated by
+          the remote BGP peer, and
 
-        - <transition>stays in the <ref_state id="2">Connect</ref_state> state.</transition></control>
+        - stays in the Connect state.
 
-      <control relevant="true"><trigger>If the <ref_event type="receive" id="12">DelayOpenTimer_Expires</ref_event> event (Event 12) occurs in the
-      <ref_state id="2">Connect</ref_state> state, the local system:</trigger>
+      If the DelayOpenTimer_Expires event (Event 12) occurs in the
+      Connect state, the local system:
 
-        - <action>sends an OPEN message to its peer,</action>
+        - sends an OPEN message to its peer,
 
-        - <timer>sets the HoldTimer to a large value,</timer> and
+        - sets the HoldTimer to a large value, and
 
-        - <transition>changes its state to <ref_state id="4">OpenSent</ref_state>.</transition></control>
+        - changes its state to OpenSent.
 
-      <control relevant="false"><trigger>If the BGP FSM receives a <ref_event type="receive" id="14">TcpConnection_Valid</ref_event> event (Event 14),</trigger>
-      <action>the TCP connection is processed,</action></control> and the connection <transition>remains in the
-      <ref_state id="2">Connect</ref_state> state.</transition>
+      If the BGP FSM receives a TcpConnection_Valid event (Event 14),
+      the TCP connection is processed, and the connection remains in the
+      Connect state.
 
-      <control relevant="false"><trigger>If the BGP FSM receives a <ref_event type="receive" id="15">Tcp_CR_Invalid</ref_event> event (Event 15),</trigger> <action>the
-      local system rejects the TCP connection,</action> and <transition>the connection
-      remains in the <ref_state id="2">Connect</ref_state> state.</transition></control>
+      If the BGP FSM receives a Tcp_CR_Invalid event (Event 15), the
+      local system rejects the TCP connection, and the connection
+      remains in the Connect state.
 
-      <control relevant="true"><trigger>If the <ref_event type="receive" id="16"><ref_event type="receive" id="17">TCP connection succeeds</ref_event></ref_event> (Event 16 or Event 17),</trigger> <action>the local
-      system checks the DelayOpen attribute prior to processing.</action>  <control relevant="true"><trigger>If the
-      DelayOpen attribute is set to TRUE, the local system:</trigger>
+      If the TCP connection succeeds (Event 16 or Event 17), the local
+      system checks the DelayOpen attribute prior to processing.  If the
+      DelayOpen attribute is set to TRUE, the local system:
 
-        - <timer>stops the ConnectRetryTimer (if running)</timer> and <timer>sets the
-          ConnectRetryTimer to zero,</timer>
+        - stops the ConnectRetryTimer (if running) and sets the
+          ConnectRetryTimer to zero,
 
-        - <timer>sets the DelayOpenTimer to the initial value,</timer> and
+        - sets the DelayOpenTimer to the initial value, and
 
 
 
@@ -3082,53 +3084,53 @@ Rekhter, et al.             Standards Track                    [Page 55]
 RFC 4271                         BGP-4                      January 2006
 
 
-        - <transition>stays in the <ref_state id="2">Connect</ref_state> state.</transition></control></control>
+        - stays in the Connect state.
 
-      <control relevant="true"><trigger>If the DelayOpen attribute is set to FALSE, the local system:</trigger>
+      If the DelayOpen attribute is set to FALSE, the local system:
 
-        - <timer>stops the ConnectRetryTimer (if running)</timer> and <timer>sets the
-          ConnectRetryTimer to zero,</timer>
+        - stops the ConnectRetryTimer (if running) and sets the
+          ConnectRetryTimer to zero,
 
-        - <action>completes BGP initialization,</action>
+        - completes BGP initialization
 
-        - <action>sends an OPEN message to its peer,</action>
+        - sends an OPEN message to its peer,
 
-        - <timer>sets the HoldTimer to a large value,</timer> and
+        - sets the HoldTimer to a large value, and
 
-        - <transition>changes its state to <ref_state id="4">OpenSent</ref_state>.</transition></control>
+        - changes its state to OpenSent.
 
       A HoldTimer value of 4 minutes is suggested.
 
-      <control relevant="true"><trigger>If the <ref_event type="receive" id="18">TCP connection fails</ref_event> (Event 18),</trigger> <action>the local system checks
-      the DelayOpenTimer.</action>  <control relevant="true"><trigger>If the DelayOpenTimer is running, the local
-      system:</trigger>
+      If the TCP connection fails (Event 18), the local system checks
+      the DelayOpenTimer.  If the DelayOpenTimer is running, the local
+      system:
 
-        - <timer>restarts the ConnectRetryTimer with the initial value,</timer>
+        - restarts the ConnectRetryTimer with the initial value,
 
-        - <timer>stops the DelayOpenTimer and resets its value to zero,</timer>
+        - stops the DelayOpenTimer and resets its value to zero,
 
-        - <action>continues to listen for a connection that may be initiated by
-          the remote BGP peer,</action> and
+        - continues to listen for a connection that may be initiated by
+          the remote BGP peer, and
 
-        - <transition>changes its state to <ref_state id="3">Active</ref_state>.</transition></control></control>
+        - changes its state to Active.
 
-      <control relevant="true"><trigger>If the DelayOpenTimer is not running, the local system:</trigger>
+      If the DelayOpenTimer is not running, the local system:
 
-        - <timer>stops the ConnectRetryTimer to zero,</timer>
+        - stops the ConnectRetryTimer to zero,
 
-        - <action>drops the TCP connection,</action>
+        - drops the TCP connection,
 
-        - <action>releases all BGP resources,</action> and
+        - releases all BGP resources, and
 
-        - <transition>changes its state to <ref_state id="1">Idle</ref_state>.</transition></control>
+        - changes its state to Idle.
 
-      <control relevant="true"><trigger>If an <ref_event type="receive" id="20">OPEN message is received while the DelayOpenTimer is running</ref_event>
-      (Event 20), the local system:</trigger>
+      If an OPEN message is received while the DelayOpenTimer is running
+      (Event 20), the local system:
 
-        - <timer>stops the ConnectRetryTimer (if running)</timer> and <timer>sets the
-          ConnectRetryTimer to zero,</timer>
+        - stops the ConnectRetryTimer (if running) and sets the
+          ConnectRetryTimer to zero,
 
-        - <action>completes the BGP initialization,</action>
+        - completes the BGP initialization,
 
 
 
@@ -3138,54 +3140,54 @@ Rekhter, et al.             Standards Track                    [Page 56]
 RFC 4271                         BGP-4                      January 2006
 
 
-        - <timer>stops and clears the DelayOpenTimer (sets the value to zero),</timer>
+        - stops and clears the DelayOpenTimer (sets the value to zero),
 
-        - <action>sends an OPEN message,</action>
+        - sends an OPEN message,
 
-        - <action>sends a KEEPALIVE message,</action>
+        - sends a KEEPALIVE message,
 
-        - <control relevant="true"><trigger>if the HoldTimer initial value is non-zero,</trigger>
+        - if the HoldTimer initial value is non-zero,
 
-            - <timer>starts the KeepaliveTimer with the initial value</timer> and
+            - starts the KeepaliveTimer with the initial value and
 
-            - <timer>resets the HoldTimer to the negotiated value,</timer></control>
+            - resets the HoldTimer to the negotiated value,
 
-          else, <control relevant="true"><trigger>if the HoldTimer initial value is zero,</trigger>
+          else, if the HoldTimer initial value is zero,
 
-            - <timer>resets the KeepaliveTimer</timer> and
+            - resets the KeepaliveTimer and
 
-            - <timer>resets the HoldTimer value to zero,</timer></control>
+            - resets the HoldTimer value to zero,
 
-        - and <transition>changes its state to <ref_state id="5">OpenConfirm</ref_state>.</transition></control>
+        - and changes its state to OpenConfirm.
 
-      <control relevant="true"><trigger>If the value of the autonomous system field is the same as the
-      local Autonomous System number,</trigger> <variable>set the connection status to an
-      internal connection;</variable> otherwise it will be "external".</control>
+      If the value of the autonomous system field is the same as the
+      local Autonomous System number, set the connection status to an
+      internal connection; otherwise it will be "external".
 
-      <control relevant="true"><trigger>If <ref_event type="receive" id="21">BGP message header checking</ref_event> (Event 21) or <ref_event type="receive" id="22">OPEN message checking</ref_event>
-      detects an error (Event 22) (see Section 6.2), the local system:</trigger>
+      If BGP message header checking (Event 21) or OPEN message checking
+      detects an error (Event 22) (see Section 6.2), the local system:
 
-        - <control relevant="true">(optionally) <trigger>If the SendNOTIFICATIONwithoutOPEN attribute is
-          set to TRUE,</trigger> then <error>the local system first sends a NOTIFICATION
-          message with the appropriate error code,</error></control> and then
+        - (optionally) If the SendNOTIFICATIONwithoutOPEN attribute is
+          set to TRUE, then the local system first sends a NOTIFICATION
+          message with the appropriate error code, and then
 
-        - <timer>stops the ConnectRetryTimer (if running)</timer> and <timer>sets the
-          ConnectRetryTimer to zero,</timer>
+        - stops the ConnectRetryTimer (if running) and sets the
+          ConnectRetryTimer to zero,
 
-        - <action>releases all BGP resources,</action>
+        - releases all BGP resources,
 
-        - <action>drops the TCP connection,</action>
+        - drops the TCP connection,
 
-        - <variable>increments the ConnectRetryCounter by 1,</variable>
+        - increments the ConnectRetryCounter by 1,
 
-        - <control relevant="false"><action>(optionally) performs peer oscillation damping</action> if the
-          DampPeerOscillations attribute is set to TRUE,</control> and
+        - (optionally) performs peer oscillation damping if the
+          DampPeerOscillations attribute is set to TRUE, and
 
-        - <transition>changes its state to <ref_state id="1">Idle</ref_state>.</transition></control>
+        - changes its state to Idle.
 
-      <control relevant="true"><trigger>If a <ref_event type="receive" id="24">NOTIFICATION message is received with a version error</ref_event> (Event
-      24),</trigger> <action>the local system checks the DelayOpenTimer.</action>  <control relevant="true"><trigger>If the
-      DelayOpenTimer is running, the local system:</trigger>
+      If a NOTIFICATION message is received with a version error (Event
+      24), the local system checks the DelayOpenTimer.  If the
+      DelayOpenTimer is running, the local system:
 
 
 
@@ -3194,52 +3196,52 @@ Rekhter, et al.             Standards Track                    [Page 57]
 RFC 4271                         BGP-4                      January 2006
 
 
-        - <timer>stops the ConnectRetryTimer (if running)</timer> and <timer>sets the
-          ConnectRetryTimer to zero,</timer>
+        - stops the ConnectRetryTimer (if running) and sets the
+          ConnectRetryTimer to zero,
 
-        - <timer>stops and resets the DelayOpenTimer (sets to zero),</timer>
+        - stops and resets the DelayOpenTimer (sets to zero),
 
-        - <action>releases all BGP resources,</action>
+        - releases all BGP resources,
 
-        - <action>drops the TCP connection,</action> and
+        - drops the TCP connection, and
 
-        - <transition>changes its state to <ref_state id="1">Idle</ref_state>.</transition></control></control>
+        - changes its state to Idle.
 
-      <control relevant="true"><trigger>If the DelayOpenTimer is not running, the local system:</trigger>
+      If the DelayOpenTimer is not running, the local system:
 
-        - <timer>stops the ConnectRetryTimer</timer> and <timer>sets the ConnectRetryTimer to
-          zero,</timer>
-
-        - <action>releases all BGP resources,</action>
-
-        - <action>drops the TCP connection,</action>
-
-        - <variable>increments the ConnectRetryCounter by 1,</variable>
-
-        - <control relevant="true"><action>performs peer oscillation damping</action> <trigger>if the DampPeerOscillations
-          attribute is set to True,</trigger></control> and
-
-        - <transition>changes its state to <ref_state id="1">Idle</ref_state>.</transition></control>
-
-      <control relevant="true"><trigger>In response to <ref_event type="receive" id="8"><ref_event type="receive" id="10"><ref_event type="receive" id="11"><ref_event type="receive" id="13"><ref_event type="receive" id="19"><ref_event type="receive" id="23"><ref_event type="receive" id="25"><ref_event type="receive" id="26"><ref_event type="receive" id="27"><ref_event type="receive" id="28">any other events</ref_event></ref_event></ref_event></ref_event></ref_event></ref_event></ref_event></ref_event></ref_event></ref_event> (Events 8, 10-11, 13, 19, 23,
-      25-28), the local system:</trigger>
-
-        - <control relevant="true"><trigger>if the ConnectRetryTimer is running,</trigger> <timer>stops and resets the
-          ConnectRetryTimer (sets to zero),</timer></control>
-
-        - <control relevant="true"><trigger>if the DelayOpenTimer is running,</trigger> <timer>stops and resets the
-          DelayOpenTimer (sets to zero),</timer></control>
+        - stops the ConnectRetryTimer and sets the ConnectRetryTimer to
+          zero,
 
         - releases all BGP resources,
 
         - drops the TCP connection,
 
-        - <variable>increments the ConnectRetryCounter by 1,</variable>
+        - increments the ConnectRetryCounter by 1,
 
         - performs peer oscillation damping if the DampPeerOscillations
           attribute is set to True, and
 
-        - <transition>changes its state to <ref_state id="1">Idle</ref_state>.</transition></control></control>
+        - changes its state to Idle.
+
+      In response to any other events (Events 8, 10-11, 13, 19, 23,
+      25-28), the local system:
+
+        - if the ConnectRetryTimer is running, stops and resets the
+          ConnectRetryTimer (sets to zero),
+
+        - if the DelayOpenTimer is running, stops and resets the
+          DelayOpenTimer (sets to zero),
+
+        - releases all BGP resources,
+
+        - drops the TCP connection,
+
+        - increments the ConnectRetryCounter by 1,
+
+        - performs peer oscillation damping if the DampPeerOscillations
+          attribute is set to True, and
+
+        - changes its state to Idle.
 
 
 
@@ -3250,53 +3252,53 @@ Rekhter, et al.             Standards Track                    [Page 58]
 RFC 4271                         BGP-4                      January 2006
 
 
-   <control><trigger><ref_state id="3"><def_state id="3">Active</def_state></ref_state> State:</trigger>
+   Active State:
 
       In this state, BGP FSM is trying to acquire a peer by listening
       for, and accepting, a TCP connection.
 
       The start events (Events 1, 3-7) are ignored in the Active state.
 
-      <control relevant="true"><trigger>In response to a <ref_event type="receive" id="2">ManualStop</ref_event> event (Event 2), the local system:</trigger>
+      In response to a ManualStop event (Event 2), the local system:
 
-        - <control relevant="false"><trigger>If the DelayOpenTimer is running and the
-          SendNOTIFICATIONwithoutOPEN session attribute is set,</trigger> <action>the
-          local system sends a NOTIFICATION with a Cease,</action></control>
+        - If the DelayOpenTimer is running and the
+          SendNOTIFICATIONwithoutOPEN session attribute is set, the
+          local system sends a NOTIFICATION with a Cease,
 
-        - <action>releases all BGP resources</action> <timer>including stopping the
-          DelayOpenTimer</timer>
+        - releases all BGP resources including stopping the
+          DelayOpenTimer
 
-        - <action>drops the TCP connection,</action>
+        - drops the TCP connection,
 
-        - <variable>sets ConnectRetryCounter to zero,</variable>
+        - sets ConnectRetryCounter to zero,
 
-        - <timer>stops the ConnectRetryTimer</timer> and <timer>sets the ConnectRetryTimer to
-          zero,</timer> and
+        - stops the ConnectRetryTimer and sets the ConnectRetryTimer to
+          zero, and
 
-        - <transition>changes its state to <ref_state id="1">Idle</ref_state>.</transition></control>
+        - changes its state to Idle.
 
-      <control relevant="true"><trigger>In response to a <ref_event type="receive" id="9">ConnectRetryTimer_Expires</ref_event> event (Event 9), the
-      local system:</trigger>
+      In response to a ConnectRetryTimer_Expires event (Event 9), the
+      local system:
 
-        - <timer>restarts the ConnectRetryTimer (with initial value),</timer>
+        - restarts the ConnectRetryTimer (with initial value),
 
-        - <action>initiates a TCP connection to the other BGP peer,</action>
+        - initiates a TCP connection to the other BGP peer,
 
-        - <action>continues to listen for a TCP connection that may be initiated
-          by a remote BGP peer,</action> and
+        - continues to listen for a TCP connection that may be initiated
+          by a remote BGP peer, and
 
-        - <transition>changes its state to <ref_state id="2">Connect</ref_state>.</transition></control>
+        - changes its state to Connect.
 
-      <control relevant="true"><trigger>If the local system receives a <ref_event type="receive" id="12">DelayOpenTimer_Expires</ref_event> event (Event
-      12), the local system:</trigger>
+      If the local system receives a DelayOpenTimer_Expires event (Event
+      12), the local system:
 
-        - <timer>sets the ConnectRetryTimer to zero,</timer>
+        - sets the ConnectRetryTimer to zero,
 
-        - <timer>stops and clears the DelayOpenTimer (set to zero),</timer>
+        - stops and clears the DelayOpenTimer (set to zero),
 
-        - <action>completes the BGP initialization,</action>
+        - completes the BGP initialization,
 
-        - <action>sends the OPEN message to its remote peer,</action>
+        - sends the OPEN message to its remote peer,
 
 
 
@@ -3306,54 +3308,54 @@ Rekhter, et al.             Standards Track                    [Page 59]
 RFC 4271                         BGP-4                      January 2006
 
 
-        - <timer>sets its hold timer to a large value,</timer> and
+        - sets its hold timer to a large value, and
 
-        - <transition>changes its state to <ref_state id="4">OpenSent</ref_state>.</transition></control>
+        - changes its state to OpenSent.
 
       A HoldTimer value of 4 minutes is also suggested for this state
       transition.
 
-      <control relevant="false"><trigger>If the local system receives a <ref_event type="receive" id="14">TcpConnection_Valid</ref_event> event (Event
-      14),</trigger> <action>the local system processes the TCP connection flags</action> and <transition>stays
-      in the <ref_state id="3">Active</ref_state> state.</transition></control>
+      If the local system receives a TcpConnection_Valid event (Event
+      14), the local system processes the TCP connection flags and stays
+      in the Active state.
 
-      <control relevant="false"><trigger>If the local system receives a <ref_event type="receive" id="15">Tcp_CR_Invalid</ref_event> event (Event 15),</trigger>
-      <action>the local system rejects the TCP connection</action> and <transition>stays in the
-      <ref_state id="3">Active</ref_state> State.</transition></control>
+      If the local system receives a Tcp_CR_Invalid event (Event 15),
+      the local system rejects the TCP connection and stays in the
+      Active State.
 
-      <control relevant="true"><trigger>In response to the <ref_event type="receive" id="16"><ref_event type="receive" id="17">success of a TCP connection</ref_event></ref_event> (Event 16 or Event
-      17),</trigger> <action>the local system checks the DelayOpen optional attribute
-      prior to processing.</action>
+      In response to the success of a TCP connection (Event 16 or Event
+      17), the local system checks the DelayOpen optional attribute
+      prior to processing.
 
-        <control relevant="true"><trigger>If the DelayOpen attribute is set to TRUE, the local system:</trigger>
+        If the DelayOpen attribute is set to TRUE, the local system:
 
-          - <timer>stops the ConnectRetryTimer</timer> and <timer>sets the ConnectRetryTimer
-            to zero,</timer>
+          - stops the ConnectRetryTimer and sets the ConnectRetryTimer
+            to zero,
 
-          - <timer>sets the DelayOpenTimer to the initial value
-            (DelayOpenTime),</timer> and
+          - sets the DelayOpenTimer to the initial value
+            (DelayOpenTime), and
 
-          - <transition>stays in the <ref_state id="3">Active</ref_state> state.</transition></control>
+          - stays in the Active state.
 
-        <control relevant="true"><trigger>If the DelayOpen attribute is set to FALSE, the local system:</trigger>
+        If the DelayOpen attribute is set to FALSE, the local system:
 
-          - <timer>sets the ConnectRetryTimer to zero,</timer>
+          - sets the ConnectRetryTimer to zero,
 
-          - <action>completes the BGP initialization,</action>
+          - completes the BGP initialization,
 
-          - <action>sends the OPEN message to its peer,</action>
+          - sends the OPEN message to its peer,
 
-          - <timer>sets its HoldTimer to a large value,</timer> and
+          - sets its HoldTimer to a large value, and
 
-          - <transition>changes its state to <ref_state id="4">OpenSent</ref_state>.</transition></control></control>
+          - changes its state to OpenSent.
 
       A HoldTimer value of 4 minutes is suggested as a "large value" for
       the HoldTimer.
 
-      <control relevant="true"><trigger>If the local system receives a <ref_event type="receive" id="18">TcpConnectionFails</ref_event> event (Event
-      18), the local system:</trigger>
+      If the local system receives a TcpConnectionFails event (Event
+      18), the local system:
 
-        - <timer>restarts the ConnectRetryTimer (with the initial value),</timer>
+        - restarts the ConnectRetryTimer (with the initial value),
 
 
 
@@ -3362,51 +3364,51 @@ Rekhter, et al.             Standards Track                    [Page 60]
 RFC 4271                         BGP-4                      January 2006
 
 
-        - <timer>stops and clears the DelayOpenTimer (sets the value to zero),</timer>
+        - stops and clears the DelayOpenTimer (sets the value to zero),
 
-        - <action>releases all BGP resource,</action>
+        - releases all BGP resource,
 
-        - <variable>increments the ConnectRetryCounter by 1,</variable>
+        - increments the ConnectRetryCounter by 1,
 
-        - <control relevant="false"><action>optionally performs peer oscillation damping</action> <trigger>if the
-          DampPeerOscillations attribute is set to TRUE,</trigger></control> and
+        - optionally performs peer oscillation damping if the
+          DampPeerOscillations attribute is set to TRUE, and
 
-        - <transition>changes its state to <ref_state id="1">Idle</ref_state>.</transition></control>
+        - changes its state to Idle.
 
-      <control relevant="true"><trigger>If an <ref_event type="receive" id="20">OPEN message is received and the DelayOpenTimer is running</ref_event>
-      (Event 20), the local system:</trigger>
+      If an OPEN message is received and the DelayOpenTimer is running
+      (Event 20), the local system:
 
-        - <timer>stops the ConnectRetryTimer (if running)</timer> and <timer>sets the
-          ConnectRetryTimer to zero,</timer>
+        - stops the ConnectRetryTimer (if running) and sets the
+          ConnectRetryTimer to zero,
 
-        - <timer>stops and clears the DelayOpenTimer (sets to zero),</timer>
+        - stops and clears the DelayOpenTimer (sets to zero),
 
-        - <action>completes the BGP initialization,</action>
+        - completes the BGP initialization,
 
-        - <action>sends an OPEN message,</action>
+        - sends an OPEN message,
 
-        - <action>sends a KEEPALIVE message,</action>
+        - sends a KEEPALIVE message,
 
-        - <control relevant="true"><trigger>if the HoldTimer value is non-zero,</trigger>
+        - if the HoldTimer value is non-zero,
 
-            - <timer>starts the KeepaliveTimer to initial value,</timer>
+            - starts the KeepaliveTimer to initial value,
 
-            - <timer>resets the HoldTimer to the negotiated value,</timer></control>
+            - resets the HoldTimer to the negotiated value,
 
-          <control relevant="true"><trigger>else if the HoldTimer is zero</trigger>
+          else if the HoldTimer is zero
 
-            - <timer>resets the KeepaliveTimer (set to zero),</timer>
+            - resets the KeepaliveTimer (set to zero),
 
-            - <timer>resets the HoldTimer to zero,</timer> and</control>
+            - resets the HoldTimer to zero, and
 
-        - <transition>changes its state to <ref_state id="5">OpenConfirm</ref_state>.</transition></control>
+        - changes its state to OpenConfirm.
 
-      <control relevant="true"><trigger>If the value of the autonomous system field is the same as the
-      local Autonomous System number,</trigger> <action>set the connection status to an
-      internal connection</action>; <control relevant="false"><trigger>otherwise</trigger> <action>it will be external.</action></control></control>
+      If the value of the autonomous system field is the same as the
+      local Autonomous System number, set the connection status to an
+      internal connection; otherwise it will be external.
 
-      <control relevant="true"><trigger>If <ref_event type="receive" id="21">BGP message header checking</ref_event> (Event 21) or <ref_event type="receive" id="22">OPEN message checking</ref_event>
-      detects an error (Event 22) (see Section 6.2), the local system:</trigger>
+      If BGP message header checking (Event 21) or OPEN message checking
+      detects an error (Event 22) (see Section 6.2), the local system:
 
 
 
@@ -3418,52 +3420,52 @@ Rekhter, et al.             Standards Track                    [Page 61]
 RFC 4271                         BGP-4                      January 2006
 
 
-        - <control relevant="true"><error>(optionally) sends a NOTIFICATION message with the appropriate
-          error code</error> <trigger>if the SendNOTIFICATIONwithoutOPEN attribute is set
-          to TRUE,</trigger></control>
+        - (optionally) sends a NOTIFICATION message with the appropriate
+          error code if the SendNOTIFICATIONwithoutOPEN attribute is set
+          to TRUE,
 
-        - <timer>sets the ConnectRetryTimer to zero,</timer>
+        - sets the ConnectRetryTimer to zero,
 
-        - <action>releases all BGP resources,</action>
+        - releases all BGP resources,
 
-        - <action>drops the TCP connection,</action>
+        - drops the TCP connection,
 
-        - <variable>increments the ConnectRetryCounter by 1,</variable>
+        - increments the ConnectRetryCounter by 1,
 
-        - <control relevant="false">(optionally) <action>performs peer oscillation damping</action> <trigger>if the
-          DampPeerOscillations attribute is set to TRUE,</trigger> and</control>
+        - (optionally) performs peer oscillation damping if the
+          DampPeerOscillations attribute is set to TRUE, and
 
-        - <transition>changes its state to <ref_state id="1">Idle</ref_state>.</transition></control>
+        - changes its state to Idle.
 
-      <control relevant="true"><trigger>If a <ref_event type="receive" id="24">NOTIFICATION message is received with a version error</ref_event> (Event
-      24),</trigger> <action>the local system checks the DelayOpenTimer.</action>  <control relevant="true"><trigger>If the
-      DelayOpenTimer is running, the local system:</trigger>
+      If a NOTIFICATION message is received with a version error (Event
+      24), the local system checks the DelayOpenTimer.  If the
+      DelayOpenTimer is running, the local system:
 
-        - <timer>stops the ConnectRetryTimer (if running)</timer> and <timer>sets the
-          ConnectRetryTimer to zero,</timer>
+        - stops the ConnectRetryTimer (if running) and sets the
+          ConnectRetryTimer to zero,
 
-        - <timer>stops and resets the DelayOpenTimer (sets to zero),</timer>
+        - stops and resets the DelayOpenTimer (sets to zero),
 
-        - <action>releases all BGP resources,</action>
+        - releases all BGP resources,
 
-        - <action>drops the TCP connection,</action> and
+        - drops the TCP connection, and
 
-        - <transition>changes its state to <ref_state id="1">Idle</ref_state>.</transition></control>
+        - changes its state to Idle.
 
-      <control relevant="true"><trigger>If the DelayOpenTimer is not running, the local system:</trigger>
+      If the DelayOpenTimer is not running, the local system:
 
-        - <timer>sets the ConnectRetryTimer to zero,</timer>
+        - sets the ConnectRetryTimer to zero,
 
-        - <action>releases all BGP resources,</action>
+        - releases all BGP resources,
 
-        - <action>drops the TCP connection,</action>
+        - drops the TCP connection,
 
-        - <variable>increments the ConnectRetryCounter by 1,</variable>
+        - increments the ConnectRetryCounter by 1,
 
-        - <control relevant="false"><action>(optionally) performs peer oscillation damping</action> <trigger>if the
-          DampPeerOscillations attribute is set to TRUE,</trigger></control> and
+        - (optionally) performs peer oscillation damping if the
+          DampPeerOscillations attribute is set to TRUE, and
 
-        - <transition>changes its state to <ref_state id="1">Idle</ref_state>.</transition></control></control>
+        - changes its state to Idle.
 
 
 
@@ -3474,54 +3476,54 @@ Rekhter, et al.             Standards Track                    [Page 62]
 RFC 4271                         BGP-4                      January 2006
 
 
-      <control relevant="true"><trigger>In response to <ref_event type="receive" id="8"><ref_event type="receive" id="10"><ref_event type="receive" id="11"><ref_event type="receive" id="13"><ref_event type="receive" id="19"><ref_event type="receive" id="23"><ref_event type="receive" id="25"><ref_event type="receive" id="26"><ref_event type="receive" id="27"><ref_event type="receive" id="28">any other event</ref_event></ref_event></ref_event></ref_event></ref_event></ref_event></ref_event></ref_event></ref_event></ref_event> (Events 8, 10-11, 13, 19, 23,
-      25-28), the local system:</trigger>
+      In response to any other event (Events 8, 10-11, 13, 19, 23,
+      25-28), the local system:
 
-        - <timer>sets the ConnectRetryTimer to zero,</timer>
+        - sets the ConnectRetryTimer to zero,
 
-        - <action>releases all BGP resources,</action>
+        - releases all BGP resources,
 
-        - <action>drops the TCP connection,</action>
+        - drops the TCP connection,
 
-        - <variable>increments the ConnectRetryCounter by one,</variable>
+        - increments the ConnectRetryCounter by one,
 
-        - <control relevant="false"><action>(optionally) performs peer oscillation damping</action> <trigger>if the
-          DampPeerOscillations attribute is set to TRUE,</trigger></control> and
+        - (optionally) performs peer oscillation damping if the
+          DampPeerOscillations attribute is set to TRUE, and
 
-        - <transition>changes its state to <ref_state id="1">Idle</ref_state>.</transition></control></control>
+        - changes its state to Idle.
 
-   <control relevant="true"><trigger><ref_state id="4"><def_state id="4">OpenSent</def_state></ref_state>:</trigger>
+   OpenSent:
 
       In this state, BGP FSM waits for an OPEN message from its peer.
 
       The start events (Events 1, 3-7) are ignored in the OpenSent
       state.
 
-      <control relevant="true"><trigger>If a <ref_event type="receive" id="2">ManualStop</ref_event> event (Event 2) is issued in the <ref_state id="4">OpenSent</ref_state> state,
-      the local system:</trigger>
+      If a ManualStop event (Event 2) is issued in the OpenSent state,
+      the local system:
 
-        - <action>sends the NOTIFICATION with a Cease,</action>
+        - sends the NOTIFICATION with a Cease,
 
-        - <timer>sets the ConnectRetryTimer to zero,</timer>
+        - sets the ConnectRetryTimer to zero,
 
-        - <action>releases all BGP resources,</action>
+        - releases all BGP resources,
 
-        - <action>drops the TCP connection,</action>
+        - drops the TCP connection,
 
-        - <variable>sets the ConnectRetryCounter to zero</variable>, and
+        - sets the ConnectRetryCounter to zero, and
 
-        - <transition>changes its state to <ref_state id="1">Idle</ref_state>.</transition></control>
+        - changes its state to Idle.
 
-      <control relevant="true"><trigger>If an <ref_event type="receive" id="8">AutomaticStop</ref_event> event (Event 8) is issued in the <ref_state id="4">OpenSent</ref_state>
-      state, the local system:</trigger>
+      If an AutomaticStop event (Event 8) is issued in the OpenSent
+      state, the local system:
 
-        - <action>sends the NOTIFICATION with a Cease,</action>
+        - sends the NOTIFICATION with a Cease,
 
-        - <timer>sets the ConnectRetryTimer to zero,</timer>
+        - sets the ConnectRetryTimer to zero,
 
-        - <action>releases all the BGP resources,</action>
+        - releases all the BGP resources,
 
-        - <action>drops the TCP connection,</action>
+        - drops the TCP connection,
 
 
 
@@ -3530,30 +3532,30 @@ Rekhter, et al.             Standards Track                    [Page 63]
 RFC 4271                         BGP-4                      January 2006
 
 
-        - <variable>increments the ConnectRetryCounter by 1,</variable>
+        - increments the ConnectRetryCounter by 1,
 
-        - <control relevant="false"><action>(optionally) performs peer oscillation damping</action> <trigger>if the
-          DampPeerOscillations attribute is set to TRUE,</trigger></control> and
+        - (optionally) performs peer oscillation damping if the
+          DampPeerOscillations attribute is set to TRUE, and
 
-        - <transition>changes its state to <ref_state id="1">Idle</ref_state>.</transition></control>
+        - changes its state to Idle.
 
-      <control relevant="true"><trigger>If the <ref_event type="compute" id="10">HoldTimer_Expires</ref_event> (Event 10), the local system:</trigger>
+      If the HoldTimer_Expires (Event 10), the local system:
 
-        - <error>sends a NOTIFICATION message with the error code Hold Timer
-          Expired,</error>
+        - sends a NOTIFICATION message with the error code Hold Timer
+          Expired,
 
-        - <timer>sets the ConnectRetryTimer to zero,</timer>
+        - sets the ConnectRetryTimer to zero,
 
-        - <action>releases all BGP resources,</action>
+        - releases all BGP resources,
 
-        - <action>drops the TCP connection,</action>
+        - drops the TCP connection,
 
-        - <variable>increments the ConnectRetryCounter,</variable>
+        - increments the ConnectRetryCounter,
 
-        - <control relevant="false"><action>(optionally) performs peer oscillation damping</action> <trigger>if the
-          DampPeerOscillations attribute is set to TRUE,</trigger></control> and
+        - (optionally) performs peer oscillation damping if the
+          DampPeerOscillations attribute is set to TRUE, and
 
-        - <transition>changes its state to <ref_state id="1">Idle</ref_state>.</transition></control>
+        - changes its state to Idle.
 
       If a TcpConnection_Valid (Event 14), Tcp_CR_Acked (Event 16), or a
       TcpConnectionConfirmed event (Event 17) is received, a second TCP
@@ -3564,17 +3566,17 @@ RFC 4271                         BGP-4                      January 2006
       A TCP Connection Request for an Invalid port (Tcp_CR_Invalid
       (Event 15)) is ignored.
 
-      <control relevant="true"><trigger>If a <ref_event type="receive" id="18">TcpConnectionFails</ref_event> event (Event 18) is received, the local
-      system:</trigger>
+      If a TcpConnectionFails event (Event 18) is received, the local
+      system:
 
-        - <action>closes the BGP connection,</action>
+        - closes the BGP connection,
 
-        - <timer>restarts the ConnectRetryTimer,</timer>
+        - restarts the ConnectRetryTimer,
 
-        - <action>continues to listen for a connection that may be initiated by
-          the remote BGP peer,</action> and
+        - continues to listen for a connection that may be initiated by
+          the remote BGP peer, and
 
-        - <transition>changes its state to <ref_state id="3">Active</ref_state>.</transition></control>
+        - changes its state to Active.
 
 
 
@@ -3586,22 +3588,22 @@ Rekhter, et al.             Standards Track                    [Page 64]
 RFC 4271                         BGP-4                      January 2006
 
 
-      <control relevant="true"><trigger>When an OPEN message is received, all fields are checked for
-      correctness.  If there are no <ref_event type="receive" id="19">errors in the OPEN message</ref_event> (Event
-      19), the local system:</trigger>
+      When an OPEN message is received, all fields are checked for
+      correctness.  If there are no errors in the OPEN message (Event
+      19), the local system:
 
-        - <timer>resets the DelayOpenTimer to zero,</timer>
+        - resets the DelayOpenTimer to zero,
 
-        - <timer>sets the BGP ConnectRetryTimer to zero,</timer>
+        - sets the BGP ConnectRetryTimer to zero,
 
-        - <action>sends a KEEPALIVE message,</action> and
+        - sends a KEEPALIVE message, and
 
-        - <timer>sets a KeepaliveTimer (via the text below)</timer>
+        - sets a KeepaliveTimer (via the text below)
 
-        - <timer>sets the HoldTimer according to the negotiated value (see
-          Section 4.2),</timer>
+        - sets the HoldTimer according to the negotiated value (see
+          Section 4.2),
 
-        - <transition>changes its state to <ref_state id="5">OpenConfirm</ref_state>.</transition></control>
+        - changes its state to OpenConfirm.
 
       If the negotiated hold time value is zero, then the HoldTimer and
       KeepaliveTimer are not started.  If the value of the Autonomous
@@ -3610,24 +3612,24 @@ RFC 4271                         BGP-4                      January 2006
       an "external" connection.  (This will impact UPDATE processing as
       described below.)
 
-      <control relevant="true"><trigger>If the <ref_event type="receive" id="21">BGP message header checking</ref_event> (Event 21) or <ref_event type="receive" id="22">OPEN message
-      checking</ref_event> detects an error (Event 22)(see Section 6.2), the local
-      system:</trigger>
+      If the BGP message header checking (Event 21) or OPEN message
+      checking detects an error (Event 22)(see Section 6.2), the local
+      system:
 
-        - <error>sends a NOTIFICATION message with the appropriate error code,</error>
+        - sends a NOTIFICATION message with the appropriate error code,
 
-        - <timer>sets the ConnectRetryTimer to zero,</timer>
+        - sets the ConnectRetryTimer to zero,
 
-        - <action>releases all BGP resources,</action>
+        - releases all BGP resources,
 
-        - <action>drops the TCP connection,</action>
+        - drops the TCP connection,
 
-        - <variable>increments the ConnectRetryCounter by 1,</variable>
+        - increments the ConnectRetryCounter by 1,
 
-        - <control relevant="false"><action>(optionally) performs peer oscillation damping</action> <trigger>if the
-          DampPeerOscillations attribute is TRUE,</trigger></control> and
+        - (optionally) performs peer oscillation damping if the
+          DampPeerOscillations attribute is TRUE, and
 
-        - <transition>changes its state to <ref_state id="1">Idle</ref_state>.</transition></control>
+        - changes its state to Idle.
 
       Collision detection mechanisms (Section 6.8) need to be applied
       when a valid BGP OPEN message is received (Event 19 or Event 20).
@@ -3646,50 +3648,50 @@ RFC 4271                         BGP-4                      January 2006
       determines, by means outside the scope of this document, that a
       connection collision has occurred.
 
-      <control relevant="true"><trigger>If a connection in the <ref_state id="4">OpenSent</ref_state> state is determined to be the
-      connection that must be closed,</trigger> <action>an <ref_event type="send" id="23">OpenCollisionDump</ref_event> (Event 23) is
-      signaled to the state machine.</action>  <control relevant="true"><trigger>If <ref_event type="receive" id="23">such an event</ref_event> is received in
-      the <ref_state id="4">OpenSent</ref_state> state, the local system:</trigger>
+      If a connection in the OpenSent state is determined to be the
+      connection that must be closed, an OpenCollisionDump (Event 23) is
+      signaled to the state machine.  If such an event is received in
+      the OpenSent state, the local system:
 
-        - <action>sends a NOTIFICATION with a Cease,</action>
+        - sends a NOTIFICATION with a Cease,
 
-        - <timer>sets the ConnectRetryTimer to zero,</timer>
+        - sets the ConnectRetryTimer to zero,
 
-        - <action>releases all BGP resources,</action>
+        - releases all BGP resources,
 
-        - <action>drops the TCP connection,</action>
+        - drops the TCP connection,
 
-        - <variable>increments the ConnectRetryCounter by 1</variable>,
+        - increments the ConnectRetryCounter by 1,
 
-        - <control relevant="false"><action>(optionally) performs peer oscillation damping</action> <trigger>if the
-          DampPeerOscillations attribute is set to TRUE,</trigger></control> and
+        - (optionally) performs peer oscillation damping if the
+          DampPeerOscillations attribute is set to TRUE, and
 
-        - <transition>changes its state to <ref_state id="1">Idle</ref_state>.</transition></control></control>
+        - changes its state to Idle.
 
-      <control relevant="true"><trigger>If a <ref_event type="receive" id="24">NOTIFICATION message is received with a version error</ref_event> (Event
-      24), the local system:</trigger>
+      If a NOTIFICATION message is received with a version error (Event
+      24), the local system:
 
-        - <timer>sets the ConnectRetryTimer to zero,</timer>
+        - sets the ConnectRetryTimer to zero,
 
-        - <action>releases all BGP resources,</action>
+        - releases all BGP resources,
 
-        - <action>drops the TCP connection,</action> and
+        - drops the TCP connection, and
 
-        - <transition>changes its state to <ref_state id="1">Idle</ref_state>.</transition></control>
+        - changes its state to Idle.
 
-      <control relevant="true"><trigger>In response to <ref_event type="receive" id="9"><ref_event type="receive" id="11"><ref_event type="receive" id="12"><ref_event type="receive" id="13"><ref_event type="receive" id="20"><ref_event type="receive" id="25"><ref_event type="receive" id="26"><ref_event type="receive" id="27"><ref_event type="receive" id="28">any other events</ref_event></ref_event></ref_event></ref_event></ref_event></ref_event></ref_event></ref_event></ref_event> (Events 9, 11-13, 20, 25-28), the
-      local system:</trigger>
+      In response to any other event (Events 9, 11-13, 20, 25-28), the
+      local system:
 
         - sends the NOTIFICATION with the Error Code Finite State
           Machine Error,
 
-        - <timer>sets the ConnectRetryTimer to zero,</timer>
+        - sets the ConnectRetryTimer to zero,
 
-        - <action>releases all BGP resources,</action>
+        - releases all BGP resources,
 
-        - <action>drops the TCP connection,</action>
+        - drops the TCP connection,
 
-        - <variable>increments the ConnectRetryCounter by 1</variable>,
+        - increments the ConnectRetryCounter by 1,
 
 
 
@@ -3698,53 +3700,53 @@ Rekhter, et al.             Standards Track                    [Page 66]
 RFC 4271                         BGP-4                      January 2006
 
 
-        - <control relevant="false"><action>(optionally) performs peer oscillation damping</action> <trigger>if the
-          DampPeerOscillations attribute is set to TRUE,</trigger></control> and
+        - (optionally) performs peer oscillation damping if the
+          DampPeerOscillations attribute is set to TRUE, and
 
-        - <transition>changes its state to <ref_state id="1">Idle</ref_state>.</transition></control></control>
+        - changes its state to Idle.
 
-   <control relevant="true"><trigger><ref_state id="5"><def_state id="5">OpenConfirm</def_state></ref_state> State:</trigger>
+   OpenConfirm State:
 
       In this state, BGP waits for a KEEPALIVE or NOTIFICATION message.
 
       Any start event (Events 1, 3-7) is ignored in the OpenConfirm
       state.
 
-      <control relevant="true"><trigger>In response to a <ref_event type="receive" id="2">ManualStop</ref_event> event (Event 2) initiated by the
-      operator, the local system:</trigger>
+      In response to a ManualStop event (Event 2) initiated by the
+      operator, the local system:
 
         - sends the NOTIFICATION message with a Cease,
 
-        - <action>releases all BGP resources,</action>
+        - releases all BGP resources,
 
-        - <action>drops the TCP connection,</action>
+        - drops the TCP connection,
 
-        - <variable>sets the ConnectRetryCounter to zero,</variable>
+        - sets the ConnectRetryCounter to zero,
 
-        - <timer>sets the ConnectRetryTimer to zero,</timer> and
+        - sets the ConnectRetryTimer to zero, and
 
-        - <transition>changes its state to <ref_state id="1">Idle</ref_state>.</transition></control>
+        - changes its state to Idle.
 
-      <control relevant="true"><trigger>In response to the <ref_event type="receive" id="8">AutomaticStop</ref_event> event initiated by the system
-      (Event 8), the local system:</trigger>
+      In response to the AutomaticStop event initiated by the system
+      (Event 8), the local system:
 
         - sends the NOTIFICATION message with a Cease,
 
-        - <timer>sets the ConnectRetryTimer to zero,</timer>
+        - sets the ConnectRetryTimer to zero,
 
-        - <action>releases all BGP resources,</action>
+        - releases all BGP resources,
 
-        - <action>drops the TCP connection,</action>
+        - drops the TCP connection,
 
-        - <variable>increments the ConnectRetryCounter by 1</variable>,
+        - increments the ConnectRetryCounter by 1,
 
-        - <control relevant="false"><action>(optionally) performs peer oscillation damping</action> <trigger>if the
-          DampPeerOscillations attribute is set to TRUE,</trigger></control> and
+        - (optionally) performs peer oscillation damping if the
+          DampPeerOscillations attribute is set to TRUE, and
 
-        - <transition>changes its state to <ref_state id="1">Idle</ref_state>.</transition></control>
+        - changes its state to Idle.
 
-      <control relevant="true"><trigger>If the <ref_event type="receive" id="10">HoldTimer_Expires</ref_event> event (Event 10) occurs before a
-      KEEPALIVE message is received, the local system:</trigger>
+      If the HoldTimer_Expires event (Event 10) occurs before a
+      KEEPALIVE message is received, the local system:
 
 
 
@@ -3757,18 +3759,18 @@ RFC 4271                         BGP-4                      January 2006
         - sends the NOTIFICATION message with the Error Code Hold Timer
           Expired,
 
-        - <timer>sets the ConnectRetryTimer to zero,</timer>
+        - sets the ConnectRetryTimer to zero,
 
-        - <action>releases all BGP resources,</action>
+        - releases all BGP resources,
 
-        - <action>drops the TCP connection,</action>
+        - drops the TCP connection,
 
-        - <variable>increments the ConnectRetryCounter by 1,</variable>
+        - increments the ConnectRetryCounter by 1,
 
-        - <control relevant="false"><action>(optionally) performs peer oscillation damping</action> <trigger>if the
-          DampPeerOscillations attribute is set to TRUE,</trigger></control> and
+        - (optionally) performs peer oscillation damping if the
+          DampPeerOscillations attribute is set to TRUE, and
 
-        - <transition>changes its state to <ref_state id="1">Idle</ref_state>.</transition></control>
+        - changes its state to Idle.
 
       If the local system receives a KeepaliveTimer_Expires event (Event
       11), the local system:
@@ -3777,7 +3779,7 @@ RFC 4271                         BGP-4                      January 2006
 
         - restarts the KeepaliveTimer, and
 
-        - <transition>remains in the <ref_state id="5">OpenConfirmed</ref_state> state.</transition>
+        - remains in the OpenConfirmed state.
 
       In the event of a TcpConnection_Valid event (Event 14), or the
       success of a TCP connection (Event 16 or Event 17) while in
@@ -3787,20 +3789,20 @@ RFC 4271                         BGP-4                      January 2006
       If a TCP connection is attempted with an invalid port (Event 15),
       the local system will ignore the second connection attempt.
 
-      <control relevant="true"><trigger>If the local system receives a <ref_event type="receive" id="18">TcpConnectionFails</ref_event> event (Event 18)
-      from the underlying TCP or a <ref_event type="receive" id="25">NOTIFICATION message</ref_event> (Event 25), the
-      local system:</trigger>
+      If the local system receives a TcpConnectionFails event (Event 18)
+      from the underlying TCP or a NOTIFICATION message (Event 25), the
+      local system:
 
-        - <timer>sets the ConnectRetryTimer to zero,</timer>
+        - sets the ConnectRetryTimer to zero,
 
-        - <action>releases all BGP resources,</action>
+        - releases all BGP resources,
 
-        - <action>drops the TCP connection,</action>
+        - drops the TCP connection,
 
-        - <variable>increments the ConnectRetryCounter by 1,</variable>
+        - increments the ConnectRetryCounter by 1,
 
-        - <control relevant="false"><action>(optionally) performs peer oscillation damping</action> <trigger>if the
-          DampPeerOscillations attribute is set to TRUE,</trigger></control> and
+        - (optionally) performs peer oscillation damping if the
+          DampPeerOscillations attribute is set to TRUE, and
 
 
 
@@ -3810,53 +3812,53 @@ Rekhter, et al.             Standards Track                    [Page 68]
 RFC 4271                         BGP-4                      January 2006
 
 
-        - <transition>changes its state to <ref_state id="1">Idle</ref_state>.</transition></control>
+        - changes its state to Idle.
 
-      <control relevant="true"><trigger>If the local system receives a NOTIFICATION message with a version
-      error (<ref_event type="receive" id="24">NotifMsgVerErr</ref_event> (Event 24)), the local system:</trigger>
+      If the local system receives a NOTIFICATION message with a version
+      error (NotifMsgVerErr (Event 24)), the local system:
 
-        - <timer>sets the ConnectRetryTimer to zero,</timer>
+        - sets the ConnectRetryTimer to zero,
 
-        - <action>releases all BGP resources,</action>
+        - releases all BGP resources,
 
-        - <action>drops the TCP connection,</action> and
+        - drops the TCP connection, and
 
-        - <transition>changes its state to <ref_state id="1">Idle</ref_state>.</transition></control>
+        - changes its state to Idle.
 
-      <control relevant="true"><trigger>If the local system receives a valid OPEN message (<ref_event type="receive" id="19">BGPOpen</ref_event> (Event
+      If the local system receives a valid OPEN message (BGPOpen (Event
       19)), the collision detect function is processed per Section 6.8.
       If this connection is to be dropped due to connection collision,
-      the local system:</trigger>
+      the local system:
 
-        - <action>sends a NOTIFICATION with a Cease,</action>
+        - sends a NOTIFICATION with a Cease,
 
-        - <timer>sets the ConnectRetryTimer to zero,</timer>
+        - sets the ConnectRetryTimer to zero,
 
-        - <action>releases all BGP resources,</action>
+        - releases all BGP resources,
 
         - drops the TCP connection (send TCP FIN),
 
-        - <variable>increments the ConnectRetryCounter by 1,</variable>
+        - increments the ConnectRetryCounter by 1,
 
-        - <control relevant="false"><action>(optionally) performs peer oscillation damping</action> <trigger>if the
-          DampPeerOscillations attribute is set to TRUE,</trigger></control> and
+        - (optionally) performs peer oscillation damping if the
+          DampPeerOscillations attribute is set to TRUE, and
 
-        - <transition>changes its state to <ref_state id="1">Idle</ref_state>.</transition></control>
+        - changes its state to Idle.
 
-      <control relevant="true"><trigger>If an OPEN message is received, all fields are checked for
-      correctness.  If the BGP message header checking (<ref_event type="receive" id="21">BGPHeaderErr</ref_event>
+      If an OPEN message is received, all fields are checked for
+      correctness.  If the BGP message header checking (BGPHeaderErr
       (Event 21)) or OPEN message checking detects an error (see Section
-      6.2) (<ref_event type="receive" id="22">BGPOpenMsgErr</ref_event> (Event 22)), the local system:</trigger>
+      6.2) (BGPOpenMsgErr (Event 22)), the local system:
 
         - sends a NOTIFICATION message with the appropriate error code,
 
-        - <timer>sets the ConnectRetryTimer to zero,</timer>
+        - sets the ConnectRetryTimer to zero,
 
-        - <action>releases all BGP resources,</action>
+        - releases all BGP resources,
 
-        - <action>drops the TCP connection,</action>
+        - drops the TCP connection,
 
-        - <variable>increments the ConnectRetryCounter by 1,</variable>
+        - increments the ConnectRetryCounter by 1,
 
 
 
@@ -3866,53 +3868,53 @@ Rekhter, et al.             Standards Track                    [Page 69]
 RFC 4271                         BGP-4                      January 2006
 
 
-        - <control relevant="false"><action>(optionally) performs peer oscillation damping</action> <trigger>if the
-          DampPeerOscillations attribute is set to TRUE,</trigger></control> and
+        - (optionally) performs peer oscillation damping if the
+          DampPeerOscillations attribute is set to TRUE, and
 
-        - <transition>changes its state to <ref_state id="1">Idle</ref_state>></transition></control>
+        - changes its state to Idle.
 
-      <control relevant="true"><trigger>If, during the processing of another OPEN message, the BGP
+      If, during the processing of another OPEN message, the BGP
       implementation determines, by a means outside the scope of this
       document, that a connection collision has occurred and this
       connection is to be closed, the local system will issue an
-      <ref_event type="receive" id="23">OpenCollisionDump</ref_event> event (Event 23).  When the local system
-      receives an <ref_event type="receive" id="23">OpenCollisionDump</ref_event> event (Event 23), the local system:</trigger>
+      OpenCollisionDump event (Event 23).  When the local system
+      receives an OpenCollisionDump event (Event 23), the local system:
 
-        - <action>sends a NOTIFICATION with a Cease,</action>
+        - sends a NOTIFICATION with a Cease,
 
-        - <timer>sets the ConnectRetryTimer to zero,</timer>
+        - sets the ConnectRetryTimer to zero,
 
         - releases all BGP resources
 
-        - <action>drops the TCP connection,</action>
+        - drops the TCP connection,
 
-        - <variable>increments the ConnectRetryCounter by 1,</variable>
+        - increments the ConnectRetryCounter by 1,
 
-        - <control relevant="false"><action>(optionally) performs peer oscillation damping</action> <trigger>if the
-          DampPeerOscillations attribute is set to TRUE,</trigger></control> and
+        - (optionally) performs peer oscillation damping if the
+          DampPeerOscillations attribute is set to TRUE, and
 
-        - <transition>changes its state to <ref_state id="1">Idle</ref_state>.</transition></control>
+        - changes its state to Idle.
 
-      <control relevant="true"><trigger>If the local system receives a KEEPALIVE message (<ref_event type="receive" id="26">KeepAliveMsg</ref_event>
-      (Event 26)), the local system:</trigger>
+      If the local system receives a KEEPALIVE message (KeepAliveMsg
+      (Event 26)), the local system:
 
-        - <timer>restarts the HoldTimer</timer> and
+        - restarts the HoldTimer and
 
-        - <transition>changes its state to <ref_state id="6">Established</ref_state>.</transition></control>
+        - changes its state to Established.
 
-      <control relevant="true"><trigger>In response to <ref_event type="receive" id="9"><ref_event type="receive" id="12"><ref_event type="receive" id="13"><ref_event type="receive" id="20"><ref_event type="receive" id="27"><ref_event type="receive" id="28">any other event</ref_event></ref_event></ref_event></ref_event></ref_event></ref_event> (Events 9, 12-13, 20, 27-28), the
-      local system:</trigger>
+      In response to any other event (Events 9, 12-13, 20, 27-28), the
+      local system:
 
         - sends a NOTIFICATION with a code of Finite State Machine
           Error,
 
-        - <timer>sets the ConnectRetryTimer to zero,</timer>
+        - sets the ConnectRetryTimer to zero,
 
-        - <action>releases all BGP resources,</action>
+        - releases all BGP resources,
 
-        - <action>drops the TCP connection,</action>
+        - drops the TCP connection,
 
-        - <variable>increments the ConnectRetryCounter by 1,</variable>
+        - increments the ConnectRetryCounter by 1,
 
 
 
@@ -3922,12 +3924,12 @@ Rekhter, et al.             Standards Track                    [Page 70]
 RFC 4271                         BGP-4                      January 2006
 
 
-        - <control relevant="false"><action>(optionally) performs peer oscillation damping</action> <trigger>if the
-          DampPeerOscillations attribute is set to TRUE,</trigger></control> and
+        - (optionally) performs peer oscillation damping if the
+          DampPeerOscillations attribute is set to TRUE, and
 
-        - <transition>changes its state to <ref_state id="1">Idle</ref_state>.</transition></control></control>
+        - changes its state to Idle.
 
-   <control><trigger><ref_state id="6"><def_state id="6">Established</def_state></ref_state> State:</trigger>
+   Established State:
 
       In the Established state, the BGP FSM can exchange UPDATE,
       NOTIFICATION, and KEEPALIVE messages with its peer.
@@ -3935,41 +3937,41 @@ RFC 4271                         BGP-4                      January 2006
       Any Start event (Events 1, 3-7) is ignored in the Established
       state.
 
-      <control relevant="true"><trigger>In response to a <ref_event type="receive" id="2">ManualStop</ref_event> event (initiated by an operator)
-      (Event 2), the local system:</trigger>
+      In response to a ManualStop event (initiated by an operator)
+      (Event 2), the local system:
 
         - sends the NOTIFICATION message with a Cease,
 
-        - <timer>sets the ConnectRetryTimer to zero,</timer>
+        - sets the ConnectRetryTimer to zero,
 
-        - <action>deletes all routes associated with this connection,</action>
+        - deletes all routes associated with this connection,
 
-        - <action>releases BGP resources,</action>
+        - releases BGP resources,
 
-        - <action>drops the TCP connection,</action>
+        - drops the TCP connection,
 
-        - <variable>sets the ConnectRetryCounter to zero,</variable> and
+        - sets the ConnectRetryCounter to zero, and
 
-        - <transition>changes its state to <ref_state id="1">Idle</ref_state>.</transition></control>
+         - changes its state to Idle.
 
-      <control relevant="true"><trigger>In response to an <ref_event type="receive" id="8">AutomaticStop</ref_event> event (Event 8), the local system:</trigger>
+      In response to an AutomaticStop event (Event 8), the local system:
 
-        - <action>sends a NOTIFICATION with a Cease,</action>
+        - sends a NOTIFICATION with a Cease,
 
-        - <timer>sets the ConnectRetryTimer to zero,</timer>
+        - sets the ConnectRetryTimer to zero
 
-        - <action>deletes all routes associated with this connection,</action>
+        - deletes all routes associated with this connection,
 
-        - <action>releases all BGP resources,</action>
+        - releases all BGP resources,
 
-        - <action>drops the TCP connection,</action>
+        - drops the TCP connection,
 
-        - <variable>increments the ConnectRetryCounter by 1,</variable>
+        - increments the ConnectRetryCounter by 1,
 
-        - <control relevant="false"><action>(optionally) performs peer oscillation damping</action> <trigger>if the
-          DampPeerOscillations attribute is set to TRUE,</trigger></control> and
+        - (optionally) performs peer oscillation damping if the
+          DampPeerOscillations attribute is set to TRUE, and
 
-        - <transition>changes its state to <ref_state id="1">Idle</ref_state>.</transition></control>
+        - changes its state to Idle.
 
 
 
@@ -3983,36 +3985,36 @@ RFC 4271                         BGP-4                      January 2006
       total prefixes received exceeds the maximum number of prefixes
       configured.  The local system automatically disconnects the peer.
 
-      <control relevant="true"><trigger>If the <ref_event type="receive" id="10">HoldTimer_Expires</ref_event> event occurs (Event 10), the local
-      system:</trigger>
+      If the HoldTimer_Expires event occurs (Event 10), the local
+      system:
 
-        - <error>sends a NOTIFICATION message with the Error Code Hold Timer
-          Expired,</error>
+        - sends a NOTIFICATION message with the Error Code Hold Timer
+          Expired,
 
-        - <timer>sets the ConnectRetryTimer to zero,</timer>
+        - sets the ConnectRetryTimer to zero,
 
-        - <action>releases all BGP resources,</action>
+        - releases all BGP resources,
 
-        - <action>drops the TCP connection,</action>
+        - drops the TCP connection,
 
-        - <variable>increments the ConnectRetryCounter by 1,</variable>
+        - increments the ConnectRetryCounter by 1,
 
-        - <control relevant="false"><action>(optionally) performs peer oscillation damping</action> <trigger>if the
-          DampPeerOscillations attribute is set to TRUE,</trigger></control> and
+        - (optionally) performs peer oscillation damping if the
+          DampPeerOscillations attribute is set to TRUE, and
 
-        - <transition>changes its state to <ref_state id="1">Idle</ref_state>.</transition></control>
+        - changes its state to Idle.
 
-      <control relevant="true"><trigger>If the <ref_event type="receive" id="11">KeepaliveTimer_Expires</ref_event> event occurs (Event 11), the local
-      system:</trigger>
+      If the KeepaliveTimer_Expires event occurs (Event 11), the local
+      system:
 
-        - <action>sends a KEEPALIVE message,</action> and
+        - sends a KEEPALIVE message, and
 
-        - <control relevant="true"><timer>restarts its KeepaliveTimer,</timer> <trigger>unless the negotiated HoldTime
-          value is zero.</trigger></control></control>
+        - restarts its KeepaliveTimer, unless the negotiated HoldTime
+          value is zero.
 
-      <control relevant="true"><trigger>Each time the local system sends a KEEPALIVE or UPDATE message,</trigger> <timer>it
-      restarts its KeepaliveTimer,</timer> <trigger>unless the negotiated HoldTime value
-      is zero.</trigger></control>
+      Each time the local system sends a KEEPALIVE or UPDATE message, it
+      restarts its KeepaliveTimer, unless the negotiated HoldTime value
+      is zero.
 
       A TcpConnection_Valid (Event 14), received for a valid port, will
       cause the second connection to be tracked.
@@ -4034,46 +4036,46 @@ Rekhter, et al.             Standards Track                    [Page 72]
 RFC 4271                         BGP-4                      January 2006
 
 
-      <control relevant="true"><trigger>If a valid OPEN message (<ref_event type="receive" id="19">BGPOpen</ref_event> (Event 19)) is received, and if
-      the CollisionDetectEstablishedState optional attribute is TRUE,</trigger>
-      <action>the OPEN message will be checked to see if it collides (Section
-      6.8) with any other connection.</action>  <control relevant="true"><trigger>If the BGP implementation
-      determines that this connection needs to be terminated,</trigger> <action>it will
-      process an <ref_event type="receive" id="23">OpenCollisionDump</ref_event> event (Event 23).</action></control>  <control relevant="true"><trigger>If this connection
-      needs to be terminated, the local system:</trigger>
+      If a valid OPEN message (BGPOpen (Event 19)) is received, and if
+      the CollisionDetectEstablishedState optional attribute is TRUE,
+      the OPEN message will be checked to see if it collides (Section
+      6.8) with any other connection.  If the BGP implementation
+      determines that this connection needs to be terminated, it will
+      process an OpenCollisionDump event (Event 23).  If this connection
+      needs to be terminated, the local system:
 
-        - <action>sends a NOTIFICATION with a Cease,</action>
+        - sends a NOTIFICATION with a Cease,
 
-        - <timer>sets the ConnectRetryTimer to zero,</timer>
+        - sets the ConnectRetryTimer to zero,
 
-        - <action>deletes all routes associated with this connection,</action>
+        - deletes all routes associated with this connection,
 
-        - <action>releases all BGP resources,</action>
+        - releases all BGP resources,
 
-        - <action>drops the TCP connection,</action>
+        - drops the TCP connection,
 
-        - <variable>increments the ConnectRetryCounter by 1,</variable>
+        - increments the ConnectRetryCounter by 1,
 
-        - <control relevant="false"><action>(optionally) performs peer oscillation damping</action> <trigger>if the
-          DampPeerOscillations is set to TRUE,</trigger></control> and
+        - (optionally) performs peer oscillation damping if the
+          DampPeerOscillations is set to TRUE, and
 
-        - <transition>changes its state to <ref_state id="1">Idle</ref_state>.</transition></control></control>
+        - changes its state to Idle.
 
-      <control relevant="true"><trigger>If the local system <ref_event type="receive" id="24"><ref_event type="receive" id="25">receives a NOTIFICATION message</ref_event></ref_event> (Event 24 or
-      Event 25) or a <ref_event type="receive" id="18">TcpConnectionFails</ref_event> (Event 18) from the underlying
-      TCP, the local system:</trigger>
+      If the local system receives a NOTIFICATION message (Event 24 or
+      Event 25) or a TcpConnectionFails (Event 18) from the underlying
+      TCP, the local system:
 
-        - <timer>sets the ConnectRetryTimer to zero,</timer>
+        - sets the ConnectRetryTimer to zero,
 
-        - <action>deletes all routes associated with this connection,</action>
+        - deletes all routes associated with this connection,
 
-        - <action>releases all the BGP resources,</action>
+        - releases all the BGP resources,
 
-        - <action>drops the TCP connection,</action>
+        - drops the TCP connection,
 
-        - <variable>increments the ConnectRetryCounter by 1,</variable>
+        - increments the ConnectRetryCounter by 1,
 
-        - <transition>changes its state to <ref_state id="1">Idle</ref_state>.</transition></control>
+        - changes its state to Idle.
 
 
 
@@ -4090,54 +4092,54 @@ Rekhter, et al.             Standards Track                    [Page 73]
 RFC 4271                         BGP-4                      January 2006
 
 
-      <control relevant="true"><trigger>If the local system <ref_event type="receive" id="26">receives a KEEPALIVE message</ref_event> (Event 26), the
-      local system:</trigger>
+      If the local system receives a KEEPALIVE message (Event 26), the
+      local system:
 
-        - <control relevant="true"><timer>restarts its HoldTimer,</timer> <trigger>if the negotiated HoldTime value is
-          non-zero,</trigger></control> and
+        - restarts its HoldTimer, if the negotiated HoldTime value is
+          non-zero, and
 
-        - <transition>remains in the <ref_state id="6">Established</ref_state> state.</transition></control>
+        - remains in the Established state.
 
-      <control relevant="true"><trigger>If the local system <ref_event type="receive" id="27">receives an UPDATE message</ref_event> (Event 27), the
-      local system:</trigger>
+      If the local system receives an UPDATE message (Event 27), the
+      local system:
 
-        - <action>processes the message,</action>
+        - processes the message,
 
-        - <control relevant="true"><timer>restarts its HoldTimer,</timer> <trigger>if the negotiated HoldTime value is
-          non-zero,</trigger></control> and
+        - restarts its HoldTimer, if the negotiated HoldTime value is
+          non-zero, and
 
-        - <transition>remains in the <ref_state id="6">Established</ref_state> state.</transition></control>
+        - remains in the Established state.
 
-      <control relevant="true"><trigger>If the local system receives an <ref_event type="receive" id="28">UPDATE message, and the UPDATE
-      message error</ref_event> handling procedure (see Section 6.3) detects an
-      error (Event 28), the local system:</trigger>
+      If the local system receives an UPDATE message, and the UPDATE
+      message error handling procedure (see Section 6.3) detects an
+      error (Event 28), the local system:
 
-        - <error>sends a NOTIFICATION message with an Update error,</error>
+        - sends a NOTIFICATION message with an Update error,
 
-        - <timer>sets the ConnectRetryTimer to zero,</timer>
+        - sets the ConnectRetryTimer to zero,
 
-        - <action>deletes all routes associated with this connection,</action>
+        - deletes all routes associated with this connection,
 
-        - <action>releases all BGP resources,</action>
+        - releases all BGP resources,
 
-        - <action>drops the TCP connection,</action>
+        - drops the TCP connection,
 
-        - <variable>increments the ConnectRetryCounter by 1,</variable>
+        - increments the ConnectRetryCounter by 1,
 
-        - <control relevant="false"><action>(optionally) performs peer oscillation damping</action> <trigger>if the
-          DampPeerOscillations attribute is set to TRUE,</trigger></control> and
+        - (optionally) performs peer oscillation damping if the
+          DampPeerOscillations attribute is set to TRUE, and
 
-        - <transition>changes its state to <ref_state id="1">Idle</ref_state>.</transition></control>
+        - changes its state to Idle.
 
-      <control relevant="true"><trigger>In response to <ref_event type="receive" id="9"><ref_event type="receive" id="12"><ref_event type="receive" id="13"><ref_event type="receive" id="20"><ref_event type="receive" id="21"><ref_event type="receive" id="22">any other event</ref_event></ref_event></ref_event></ref_event></ref_event></ref_event> (Events 9, 12-13, 20-22), the local
-      system:</trigger>
+      In response to any other event (Events 9, 12-13, 20-22), the local
+      system:
 
-        - <error>sends a NOTIFICATION message with the Error Code Finite State
-          Machine Error,</error>
+        - sends a NOTIFICATION message with the Error Code Finite State
+          Machine Error,
 
-        - <action>deletes all routes associated with this connection,</action>
+        - deletes all routes associated with this connection,
 
-        - <timer>sets the ConnectRetryTimer to zero,</timer>
+        - sets the ConnectRetryTimer to zero,
 
 
 
@@ -4146,16 +4148,16 @@ Rekhter, et al.             Standards Track                    [Page 74]
 RFC 4271                         BGP-4                      January 2006
 
 
-        - <action>releases all BGP resources,</action>
+        - releases all BGP resources,
 
-        - <action>drops the TCP connection,</action>
+        - drops the TCP connection,
 
-        - <variable>increments the ConnectRetryCounter by 1,</variable>
+        - increments the ConnectRetryCounter by 1,
 
-        - <control relevant="false"><action>(optionally) performs peer oscillation damping</action> <trigger>if the
-          DampPeerOscillations attribute is set to TRUE,</trigger></control> and
+        - (optionally) performs peer oscillation damping if the
+          DampPeerOscillations attribute is set to TRUE, and
 
-        - <transition>changes its state to <ref_state id="1">Idle</ref_state>.</transition></control></control>
+        - changes its state to Idle.
 
 9.  UPDATE Message Handling
 

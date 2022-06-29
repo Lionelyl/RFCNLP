@@ -1,0 +1,1244 @@
+<p>
+    <def_state id="1">initialising</def_state>
+    <def_state id="2">up</def_state>
+    <def_state id="3">failed</def_state>
+    <def_state id="4">down</def_state>
+    <def_event id="1">esh pdu</def_event>
+    <def_event id="2">ish pdu</def_event>
+    <def_event id="3">iih pdu</def_event>
+    <def_event id="4">level n lan iih pdus</def_event>
+    <def_event id="5">level 1 lan iih pdu</def_event>
+    <def_event id="6">level 2 lan iih pdu</def_event>
+
+    <control relevant="true">
+        <trigger>﻿8 subnetwork dependent functions the subnetwork dependent functions mask the characteristics of the
+            different kinds of subnetworks from the subnetwork independent routeing functions .
+        </trigger>
+        <trigger>the only two types of circuits the subnetwork independent functions recognise are broadcast and general
+            topology .
+        </trigger>
+        <trigger>the subnetwork dependent functions include : - the use of the iso 8473 subnetwork dependent
+            con-vergence functions ( sndcf ) so that this protocol may transmit and receive pdus over the same
+            subnetwork types ,
+        </trigger>
+        <action type="receive">using the same techniques ,</action>
+        <action type="receive">as does iso 8473 .</action>
+        <action type="receive">- co-ordination with the operation of the es–is protocol ( iso 9542 ) in order to
+            determine the network layer addresses ( and on broadcast subnetworks ,
+        </action>
+        <action type="receive">the subnetwork point of attachment address ) and identities ( end system or intermediate
+            system ) of all adjacent neighbours .</action>this information is held in the adjacency database .
+        <trigger>it is used to construct link state pdus .</trigger>
+        <action type="receive">- the exchange of iih pdus .</action>
+        <trigger>while it is possible for an intermediate system to identify that it has an intermediate system
+            neighbour by the receipt of an iso 9542 ish pdu ,
+        </trigger>
+        <trigger>there is no provision within iso 9542 to indicate whether the neighbour is a level 1 or a level 2
+            intermediate system .
+        </trigger>
+        <trigger>specific pdus ( lan level 1 ,</trigger>
+        <trigger>lan level 2 and point-to-point iih pdus ) are defined to convey this information .</trigger>
+    </control>
+
+    <control relevant="true">
+        <trigger>8.1 multi-destination circuits on iss at a domain boundary routeing information ( e.g .</trigger>
+        <trigger>link state pdus ) is not exchanged across a routeing domain boundary .</trigger>
+        <trigger>all routeing information relating to a circuit connected to another routeing domain is therefore
+            entered via the reachable address managed objects .
+        </trigger>
+        <trigger>this information is disseminated to the rest of the routeing domain via link state pdus as described in
+            7.3.3.2 .
+        </trigger>
+        <trigger>this has the effect of causing npdus destined for nsaps which are included in the addressprefix of the
+            reachable addresses to be relayed to that intermediate system at the domain boundary .
+        </trigger>
+        <trigger>on receipt of such an npdu the intermediate system shall forward it onto the appropriate circuit
+            ,</trigger>based on its own link state information .
+        <trigger>however in the case of multi-destination subnetworks ( such as an iso 8208 subnetwork using dynamic
+            assignment ,
+        </trigger>
+        <trigger>a broadcast subnetwork ,</trigger>
+        <trigger>or a connectionless subnetwork ) it is necessary to ascertain additional subnetwork dependent
+            addressing information in order to forward the npdu to a suitable snpa .
+        </trigger>
+        <trigger>( this may be the target end system or an intermediate system within the other domain .</trigger>) in
+        general the snpa address to which an npdu is to be forwarded can be derived from the destination nsap of the
+        npdu .
+        <trigger>it may be possible to perform some algorithmic manipulation of the nsap address in order to derive the
+            snpa address .
+        </trigger>
+        <trigger>however there may be some nsaps where this is not possible .</trigger>
+        <trigger>in these cases it is necessary to have pre-configured information relating an address prefix to a
+            particular snpa address .
+        </trigger>
+        <trigger>this is achieved by additional information contained in the reachable address managed object .
+        </trigger>
+        <trigger>the mappingtype attribute specifies the means by which next hop subnetwork addressing information can
+            be derived for npdus forwarded based upon a given address prefix .
+        </trigger>
+        <trigger>the mappingtype attribute may be specified as : explicit — the snpa address or set of snpa addresses is
+            manually pre-configured as an attribute of the reachable address managed object .
+        </trigger>
+        <trigger>extractidi — the snpa is embedded in the idi of the destination nsap address according to the format
+            and encoding rules of iso 8348 .
+        </trigger>
+        <trigger>this snpa extraction algorithm can be used in conjunction with destination addresses from the x.121 ,
+        </trigger>
+        <trigger>f.69 ,</trigger>
+        <trigger>e.163 ,</trigger>
+        <trigger>and e.164 addressing subdomains .</trigger>
+        <trigger>extractdsp — all or a suffix of the snpa is embedded in the dsp of the destination address .</trigger>
+        <trigger>this snpa extraction algorithm requires manual pre-configuration of snpamask and snpaprefix attributes
+            of the reachable address managed object .
+        </trigger>
+        <trigger>the snpamask attribute is a bit mask with 1s indicating the location of the snpa ( suffix ) within the
+            destination nsap dsp .
+        </trigger>
+        <action type="issue">the part of the snpa extracted from the nsap is appended to the snpaprefix to form <arg>the
+            next hop subnetwork addressing information
+        </arg> .
+        </action>
+        <trigger>an example of a set of reachable addresses is shown in table 3 .</trigger>
+        <trigger>the table is interpreted as follows : a ) for the iso dcc prefix 39 123 ,</trigger>
+        <action type="receive">use the snpa address x. b ) for the x.121 idi address prefix 37 aaaaa ,</action>do not
+        use aaaaa , but use b instead .
+        <trigger>c ) for all idps based on snpas with dnic d ( i.e .</trigger>
+        <action type="receive">with address prefix 37 d ) ,</action>
+        <action type="receive">use the address y ( which would probably be a gateway to a subnetwork with dnic d ) .
+        </action>
+        <trigger>d ) for any other x.121 idi ( i.e .</trigger>
+        <action type="receive">address prefix 37 ) – use the snpa whose address is used as the idi .</action>
+        <action type="issue">e ) for the iso icd prefix 47 0005 c0 use <arg>the snpa address</arg> formed by
+            concatenating z with next 6 octets of the dsp following the 47 0005 c0 prefix .
+        </action>
+        f ) anything else ( * in table 3 ) – use one of the snpa addresses r ,
+        <trigger>s or t. these would typically be the snpa addresses of level 2 intermediate systems through which any
+            other addresses could potentially be reached .
+        </trigger>
+    </control>
+
+    <control relevant="true">
+        <action type="receive">8.2 point-to-point subnetworks this clause describes the identification of neighbours on
+            both point-to-point links and static circuits .
+        </action>
+        <action type="receive">the is shall operate the iso 9542 protocol ,</action>
+        <trigger>shall be able to receive iso 9542 ish pdus from other iss ,</trigger>and shall store the information so
+        obtained in the adjacency database .
+    </control>
+
+    <control relevant="true">
+        <trigger>8.2.1 receipt of esh pdus — database of end systems an is shall enter an end system into the adjacency
+            database when an esh pdu is received on a circuit .
+        </trigger>
+        <trigger>if an esh pdu is received on the same circuit ,</trigger>
+        <action type="receive">but with a different nsap address ,</action>
+        <action type="receive">the new address shall be added to the adjacency ,</action>
+        <timer>with a separate timer .</timer>
+        <trigger>a single esh pdu may contain more than one nsap address .</trigger>
+        <trigger>when a new data link address or nsap address is added to the adjacency database ,</trigger>
+        <trigger>the is shall generate an adjacencystatechange ( <ref_state id="2">up</ref_state> ) event on that
+            adjacency .
+        </trigger>
+        <timer>the is shall set a timer for the value of holding time in the received esh pdu .</timer>
+        <trigger>if another esh pdu is not received from the es before that timer expires ,</trigger>
+        <action type="receive">the es shall be purged from the database ,</action>
+        <trigger>provided that the subnetwork independent functions associated with <ref_state id="1">initialising
+        </ref_state> the adjacency have been completed .
+        </trigger>
+        <action type="receive">otherwise the is shall clear the adjacency as soon as those functions are completed .
+        </action>
+        <trigger>when the adjacency is cleared ,</trigger>
+        <trigger>the subnetwork independent functions shall be informed of an adjacencystatechange ( <ref_state id="4">
+            down
+        </ref_state> ) event ,
+        </trigger>
+        <trigger>and the adjacency can be reused after the sub network independent functions associated with bringing <ref_state
+                id="4">down
+        </ref_state> the adjacency have been completed .
+        </trigger>
+    </control>
+
+    <control relevant="true">
+        <trigger>8.2.2 receiving ish pdus by an intermediate system on receipt of an ish pdu by an intermediate system
+            ,
+        </trigger>
+        <trigger>the is shall create an adjacency ( with adjacencystate <ref_state id="1">initialising</ref_state> and
+            neighboursystemtype unknown ) ,
+        </trigger>
+        <trigger>if one does not already exist ,</trigger>
+        <trigger>and then perform the following actions : a ) if the adjacencystate is up and the id portion of the net
+            field in the ish pdu does not match the neigh-bourid of the adjacency then the is shall 1 ) generate an
+            adjacencystatechange ( down ) event ;
+        </trigger>
+        <action type="receive">2 ) delete the adjacency ;</action>
+        <transition>and 3 ) create a new adjacency with : i. adjacencystate set to initialising ,</transition>
+        <trigger>and ii .</trigger>
+        <trigger>neighboursystemtype set to unknown .</trigger>
+        <action type="receive">4 ) perform the following actions .</action>
+        <trigger>b ) if the adjacencystate is initialising ,</trigger>
+        <trigger>and the neighboursystemtype status is intermediate system ,</trigger>
+        <action type="receive">the ish pdu shall be ignored .</action>
+        <trigger>c ) if the adjacencystate is initialising and the neighboursystemtype status is not intermediate system
+            ,
+        </trigger>
+        <action type="receive">a point-to- point iih pdu shall be transmitted as described in 8.2.4. d ) the
+            neighboursystemtype shall be set to intermediate system indicating that the neighbour is an intermediate
+            system ,</action>but the type ( l1 or l2 ) is ,
+        <action type="receive">as yet ,</action>
+        <action type="receive">unknown .</action>e ) the circuittype field shall be set according to table 4 .
+    </control>
+
+    <control relevant="true">
+        <transition>8.2.3 sending ish pdus by an intermediate system an intermediate system shall cause iso 9542 to send
+            ish pdus whenever a point-to-point circuit is either first enabled or the adjacency on the circuit
+            transitions to the <ref_state id="4">down</ref_state> state . ish pdus shall continue to be sent
+            periodically at an interval specified by the iso 9542 intermediate system configuration timer until an
+            adjacency on the circuit transitions to the <ref_state id="2">up</ref_state> state . ish pdus are not
+            required to be sent when an adjacency on the circuit is in the <ref_state id="2">up</ref_state> state and it
+            is suggested that an implementation not send them in this state .
+        </transition>
+        <trigger>ish pdus received on a point-to-point circuit when an adjacency is in the <ref_state id="2">up
+        </ref_state> state should be ignored .
+        </trigger>
+    </control>
+
+    <control relevant="true">
+        <action type="send">8.2.4 sending <arg>point-to-point iih pdus an is</arg> shall send point-to-point iih pdus on
+            those point-to-point circuits whose externaldomain attribute is set false .
+        </action>
+        <trigger>the iih pdu shall be sent when : a ) the is receives an ish pdu b ) whenever isishellotimer expires the
+            isishellotimer shall be ( re ) started upon transmission of the iih pdu .
+        </trigger>
+        <action type="receive">the iih shall be constructed and transmitted as follows : a ) the circuit type field
+            shall be set according to table 4. b ) the local circuit id field shall be set to a value assigned by this
+            intermediate system when the circuit is created .</action>this value shall be unique among all the circuits
+        of this intermediate system .
+        <trigger>c ) the first point-to-point iih pdu ( i.e .</trigger>
+        <trigger>that transmitted as a result of receiving an ish pdu ,</trigger>
+        <transition>rather than as a result of timer expiration ) shall be padded ( with trailing pad option fields
+            containing arbitrary valued octets ) so that the snsdu containing the iih pdu has a length of at least
+            maxsize - 1 octets1 ) ) where maxsize is the maximum of 1 ) datalinkblocksize 2 ) originatingl1lspbuffersize
+            3 ) originatingl2lspbuffersize this is done to ensure that an adjacency will only be formed between systems
+            which are capable of exchanging pdus of length up to maxsize octets .
+        </transition>
+        <action type="receive">in the absence of this check ,</action>it would be possible for an adjacency to exist
+        with a lower maximum block size ,
+        <trigger>with the result that some lsps and snps ( i.e .</trigger>
+        <trigger>those longer than this maximum ,</trigger>
+        <action type="receive">but less than maxsize ) would not be exchanged .</action>
+        <trigger>note 46 it is necessary for the manager to ensure that the value of datalinkblocksize on a circuit
+            which will be used to form an intermediate system to intermediate system adjacency is set to a value greater
+            than or equal to the maximum of the lspbuffersize characteristics listed above .
+        </trigger>
+        <trigger>if this is not done ,</trigger>
+        <action type="receive">the adjacency will fail to initialise .</action>
+        <trigger>it is not possible to enforce this requirement ,</trigger>
+        <trigger>since it is not known until initialisation time whether or not the neighbour on the circuit will be an
+            end system or an intermediate system .
+        </trigger>
+        <trigger>an end system adjacency may operate with a lower value for datalinkblocksize .</trigger>
+        <trigger>d ) if the value of the circuittransmitpassword for the circuit is non-null ,</trigger>
+        <action type="receive">then the is shall include the authentication information field in the transmitted iih pdu
+            ,
+        </action>
+        <action type="receive">indicating an authentication type of password and containing the circuittransmitpassword
+            as the authentication value .
+        </action>
+        <action type="receive">1 ) the minimum length of pad which may be added is 2 octets ,</action>since that is the
+        size of the option header .
+        <action type="receive">where possible the pdu should be padded to maxsize ,</action>
+        <trigger>but if the pdu length is maxsize – 1 octets no passing is possible ( or required ) .</trigger>
+    </control>
+
+    <control relevant="true">
+        <trigger>8.2.5 receiving point-to-point iih pdus 8.2.5.1 pdu acceptance tests on receipt of a point-to-point iih
+            pdu ,
+        </trigger>
+        <trigger>perform the following pdu acceptance tests : a ) if the iih pdu was received over a circuit whose
+            externaldomain attribute is set true ,
+        </trigger>
+        <action type="receive">the is shall discard the pdu .</action>
+        <trigger>b ) if the id length field of the pdu is not equal to the value of the is ’ s routeingdomainidlength
+            ,
+        </trigger>
+        <action type="issue">the pdu shall be discarded and <arg>an idfieldlengthmismatch event</arg> generated .
+        </action>
+        <trigger>c ) if the value of circuittransmitpassword or the set of circuitreceivepasswords for this circuit is
+            non-null ,
+        </trigger>
+        <action type="issue">then perform the following tests : 1 ) if the pdu does not contain the authentication
+            in-formation field then the pdu shall be discarded and <arg>an authenticationfailure event</arg> generated .
+        </action>
+        <trigger>2 ) if the pdu contains the authentication informa-tion field ,</trigger>
+        <trigger>but the authentication type is not equal to password ,</trigger>
+        <trigger>then : i .</trigger>
+        <trigger>if the is implements the authentication procedure indicated by the authentication type whether the is
+            accepts or ignores the pdu is outside the scope of this international standard .
+        </trigger>
+        <trigger>ii .</trigger>
+        <trigger>if the is does not implement the authentication procedure indicated by the authentication type then the
+            is shall ignore the pdu and generate an authenticationfailure event .
+        </trigger>
+        <trigger>3 ) otherwise ,</trigger>
+        <trigger>the is shall compare the password in the received pdu with the passwords in the set of
+            circuitreceivepasswords for the circuit on which the pdu was received .
+        </trigger>
+        <trigger>if the value in the pdu matches any of these passwords ,</trigger>
+        <action type="receive">the is shall accept the pdu for further processing .</action>
+        <trigger>if the value in the pdu does not match any of the circuit-receivepasswords ,</trigger>
+        <action type="issue">then the is shall ignore the pdu and generate <arg>an authenticationfailure event</arg> .
+        </action>
+    </control>
+
+    <control relevant="true">
+        <trigger>8.2.5.2 iih pdu processing when a point-to-point iih pdu is received by an intermediate system ,
+        </trigger>
+        <action type="receive">the area addresses of the two intermediate systems shall be compared to ascertain the
+            validity of the adjacency .
+        </action>
+        <trigger>if the two intermediate systems have an area address in common and matching values for
+            maximumareaaddresses ,
+        </trigger>
+        <trigger>the adjacency is valid for all combinations of intermediate system types ( except where a level 1
+            intermediate system is con-nected to a level 2 intermediate system with manuall2onlymode set true ) .
+        </trigger>
+        <trigger>however ,</trigger>
+        <trigger>if they have no area address in common ,</trigger>
+        <trigger>the adjacency is only valid if both intermediate systems are level 2 ,</trigger>
+        <action type="receive">and the is shall mark the adjacency as level 2 only .</action>this is described in more
+        detail below .
+        <trigger>on receipt of a point-to-point iih pdu ,</trigger>
+        <action type="receive">each of the area addresses from the pdu shall be compared with the set of area addresses
+            in the manualareaaddresses attribute .
+        </action>
+        <trigger>a ) if a match is detected between any pair the following actions are taken .</trigger>
+        <action type="issue">1 ) if the maximum area addresses field of the pdu is not equal to the value of the is ’ s
+            maximumareaaddresses then the pdu shall be discarded and <arg>a maximumareaaddresses-mismatch event</arg> generated
+            ,
+        </action>
+        <trigger>unless the is only implements a value of three for maximumarea-addresses ,</trigger>
+        <trigger>in which case this check may be omitted .</trigger>
+        <trigger>2 ) if the local system is of istype l1intermediatesystem the is shall perform the action indicated by
+            table 5 .
+        </trigger>
+        <trigger>3 ) if the local system is of istype l2intermediate-system and the circuit manuall2onlymode has the
+            value false ,
+        </trigger>
+        <action type="receive">the is shall perform the action indicated by table 6 .</action>
+        <trigger>4 ) if the local system is of istype l2intermediate-system and the circuit manuall2onlymode has the
+            value true ,
+        </trigger>
+        <trigger>the is shall perform the action indicated by table 7. b ) if a no match is detected between any pair
+            ,
+        </trigger>
+        <action type="receive">the following actions shall be performed .</action>
+        <trigger>1 ) if the local system is of istype l1intermediate-systemand the adjacency is not in state up ,
+        </trigger>
+        <action type="issue">the is shall delete the adjacency ( if any ) and generate <arg>an areamismatch event</arg> .
+        </action>
+        <trigger>2 ) if the local system is of istype l1intermediatesystem and the adjacency is in state up ,</trigger>
+        <trigger>the is shall delete the adjacency and generate an adjacencystatechange ( down – area mismatch ) event
+            .
+        </trigger>
+        <trigger>3 ) if the local system is of istype l2intermediatesystem the is shall perform the action indicated by
+            table 8 ( irrespective of the value of manuall2onlymode for this circuit ) .
+        </trigger>
+        <trigger>c ) if the action taken is up ,</trigger>
+        <action type="receive">as detailed in the tables referenced above ,</action>the is shall compare the source id
+        field of the pdu with the local systemid .
+        <trigger>1 ) if the local intermediate system has the higher source id ,</trigger>
+        <variable>the is shall set the circuit circuitid status to the concatenation of the local systemid and the local
+            circuit id ( as sent in the local circuit id field of point-to-point iih pdus from this intermediate system
+            ) of this circuit .
+        </variable>
+        <trigger>2 ) if the remote intermediate system has the higher source id ,</trigger>
+        <variable>the is shall set the circuit circuitid status to the concatenation of the remote system ’ s source id
+            ( from the source id field of the pdu ) ,
+        </variable>
+        <trigger>and the remote system ’ s local circuit id ( from the local circuit id field of the pdu ) .</trigger>
+        <trigger>3 ) if the two source ids are the same ( i.e .</trigger>
+        <transition>the system is initialising to itself ) ,</transition>
+        <action type="receive">the local systemid is used .</action>
+        <trigger>note 47 the circuitid status is not used to generate the local circuit id to be sent in the local
+            circuit id field of iih pdus transmitted by this intermediate system .
+        </trigger>
+        <trigger>the local circuit id value is assigned once ,</trigger>
+        <trigger>when the circuit is created and is not subsequently changed .</trigger>
+        <trigger>d ) if the action taken is accept and the neighbor system id in the adjacency does not match the source
+            id field from the pdu ,
+        </trigger>
+        <trigger>or the new value computed for the circuit id is different from that in the existing adjacency ,
+        </trigger>
+        <trigger>the is shall 1 ) generate an adjacencystatechange ( down ) event ,</trigger>and 2 ) delete the
+        adjacency .
+        <trigger>e ) if the action taken is up or accept the is shall 1 ) copy the adjacency areaaddressesofneighbour
+            entries from the area addresses field of the pdu ,
+        </trigger>
+        <timer>2 ) set the holdingtimer to the value of the holding time field from the pdu ,</timer>and 3 ) set the
+        neighboursystemid to the value of the source id field from the pdu .
+    </control>
+
+    <control relevant="true">
+        <variable>8.2.6 monitoring point-to-point adjacencies the is shall keep a holding time ( adjacency holdingtimer
+            ) for the point-to-point adjacency .
+        </variable>
+        <timer>the value of the holdingtimer shall be set to the holding time as reported in the holding time field of
+            the pt-pt iih pdu .
+        </timer>
+        <trigger>if a neighbour is not heard from in that time ,</trigger>
+        <action type="receive">the is shall a ) purge it from the database ;</action>
+        <trigger>and b ) generate an adjacencystatechange ( <ref_state id="4">down</ref_state> ) event .
+        </trigger>
+    </control>
+
+    <control relevant="true">
+        <action type="receive">8.3 iso 8208 subnetworks 8.3.1 network layer protocols the way in which the underlying
+            service assumed by iso 8473 is provided for iso 8208 subnetworks is described in clause 8 of iso 8473 .
+        </action>
+        <action type="receive">this defines a set of subnetwork dependent convergence functions ( sndcfs ) that relate
+            the service provided by specific individual iso international standard subnetworks to the abstract
+            underlying service defined in 5.5 of iso 8473 .</action>in particular 8.4.3 describes the subnetwork
+        dependent convergence functions used with iso 8208 subnetworks .
+    </control>
+
+    <control relevant="true">
+        <trigger>8.3.2 svc establishment 8.3.2.1 use of iso 8473 subnetwork dependent convergence functions svcs shall
+            be established according to the procedures defined in the iso 8208 subnetwork dependent convergence
+            functions of iso 8473 ( this may be on system management action or on arrival of data depending on the type
+            of circuit ) .
+        </trigger>
+        <trigger>the call request shall contain a protocol discriminator specifying iso 8473 in the first octet of call
+            userdata .
+        </trigger>
+        <trigger>in the case of a static circuit ,</trigger>
+        <trigger>an svc shall be established only upon system management action .</trigger>the is shall use
+        neighboursnpaaddress as the called snpa address .
+        <trigger>in the case of a da circuit ,</trigger>
+        <trigger>the call establishment procedures are initiated by the arrival of traffic for the circuit .</trigger>
+    </control>
+
+    <control relevant="true">
+        <trigger>8.3.2.2 dynamically assigned circuits a dynamically assigned circuit has multiple adjacencies
+            ,</trigger>and can therefore establish svcs to multiple snpas .
+        <trigger>there are several methods that can be used by an intermediate system to derive the snpa address to
+            which a call is to be established when an npdu is to be forwarded over an iso 8208 subnetwork .</trigger>
+        these include the following : - in some instances ,
+        <trigger>the snpa address to which a call is to be established can be derived from the nsap to which an npdu is
+            to be forwarded .
+        </trigger>
+        <trigger>in the case where all the nsaps accessible over the iso 8208 subnetwork have idis which are their snpa
+            addresses ,
+        </trigger>
+        <action type="receive">the correct snpa can be derived by extracting the idi ,</action>
+        <action type="receive">using the extractidi mapping type described in 8.1 .</action>
+        <trigger>other scenarios may also permit the extraction of the snpa by examining other parts of the nsap address
+            .
+        </trigger>
+        <trigger>in these cases the extractdsp mapping type may be used as described in 8.1 .</trigger>examples of the
+        above methods are illustrated in table 3 .
+        <trigger>- in other cases ,</trigger>
+        <trigger>such as when the idi refers to some other snpa address which is suboptimally connected to the target
+            nsap ( or even not connected at all ) ,
+        </trigger>
+        <trigger>or when the idp does not contain an x.121 address at all ( e.g .</trigger>
+        <trigger>the iso dcc address plan ) ,</trigger>
+        <action type="receive">a method not relying upon information in the destination nsap address must be used .
+        </action>
+        <trigger>if it is feasible for the is to maintain the correspondence between an address prefix and an snpa ( via
+            the reachable address managed object ) then the explicit mapping type may be used as described in 8.1 .
+        </trigger>
+        <trigger>this may not always be desirable because of the need to administer this information individually in
+            each affected intermediate system .
+        </trigger>
+        <trigger>if a snare is available on the subnetwork ,</trigger>
+        <action type="receive">then the is may invoke the appropriate snare functions to obtain the desired snpa address
+            from the nsap address in the npdu to be forwarded .</action>this is achieved , as described in 8.1 ,
+        <trigger>by additional information contained in the reachableaddress managed object .</trigger>
+        <trigger>the address extraction algorithm may be specified to extract the idi or dsp portion where the desired
+            portion of the destination nsap address is the required x.121 address .
+        </trigger>
+        <trigger>an example of a set of reachable addresses is shown in table 3 .</trigger>
+        <trigger>note 48 if a da circuit is defined with a reachable address prefix which includes the addresses
+            reachable over a static circuit ,
+        </trigger>
+        <action type="receive">the cost ( s ) for the da circuit must be greater than those of the static circuit .
+        </action>
+        <trigger>if this is not the case ,</trigger>
+        <trigger>the da circuit may be used to establish a call to the remote snpa supporting the static circuit
+            ,</trigger>which would then ( wrongly ) assume it was the static circuit .
+    </control>
+
+    <control relevant="true">
+        <trigger>8.3.2.3 initiating calls ( level 2 intermediate systems ) when an npdu is to be forwarded on a
+            dynamically assigned circuit ,
+        </trigger>
+        <action type="receive">for destination nsap address d ,</action>
+        <action type="receive">the is shall a ) calculate d ’ s subnetwork address ,</action>
+        <trigger>either as explicitly stated in the reachable address prefix ,</trigger>
+        <trigger>or as extracted from the destination nsap address .</trigger>
+        <trigger>1 ) if this system is an es and there is an entry in the redirectcache or reversepathcache for d ,
+        </trigger>
+        <action type="receive">use the subnetwork address in the cache entry .</action>
+        <trigger>2 ) if this system is an es or level 2 intermediate system ,</trigger>
+        <trigger>and the address matches one of the listed reachable address prefixes ( including * ,</trigger>
+        <trigger>if present ) ,</trigger>
+        <trigger>the subnetwork address is that specified according to the mappingtype attribute ( either explicit ,
+        </trigger>
+        <trigger>indicating that the set of addresses in the snpaaddresses attribute of that reachable address are to be
+            used ,
+        </trigger>
+        <trigger>or algorithm ,</trigger>
+        <action type="receive">indicating that it is to be extracted from the destination nsap address using the
+            specified algorithm ) .
+        </action>
+        <trigger>if multiple snpa addresses are specified ,</trigger>
+        <transition>and there is already an adjacency up to one of those snpa addresses ,</transition>
+        <action type="receive">then choose that subnetwork address ,</action>
+        <action type="receive">otherwise choose the subnetwork address with the oldest timestamp as described in 8.3.2.4
+            .
+        </action>
+        <trigger>3 ) if the address does not match one of the listed reachable address prefixes ( and there is no *
+            entry ) ,
+        </trigger>
+        <action type="receive">invoke the iso 8473 discard pdu function .</action>
+        <action type="receive">b ) scan the adjacencies for one already open to d ’ s subnetwork ddress ( i.e .</action>
+        <timer>reservetimer has not yet expired ) .</timer>
+        <trigger>if one is found ,</trigger>
+        <action type="receive">transmit the npdu on that adjacency .</action>
+        <trigger>c ) if no adjacency has a call established to the required subnetwork ddress ,</trigger>
+        <trigger>but there is a free adjacency ,</trigger>
+        <trigger>attempt to etablish the call using that subnetwork address .</trigger>
+        <trigger>d ) if there is no free adjacency invoke the iso 8473 discard pdu function .</trigger>
+        <trigger>note 49 where possible ,</trigger>
+        <trigger>when an adjacency is reserved ( when an svc has been cleared as a result of the idletimer expiring ,
+        </trigger>
+        <trigger>but the reservetimer has not yet expired ) ,</trigger>
+        <action type="receive">resources within the subnetwork service provider should be reserved ,</action>in order to
+        minimise the probability that the adjacencywill not be able to initiate a call when required .
+    </control>
+
+    <control relevant="true">
+        <trigger>8.3.2.4 call attempt failures the reachable address managed objects may contain a set of snpa addresses
+            ,
+        </trigger>
+        <action type="receive">each of which has an associated timestamp .</action>
+        <timer>the timestamps shall be initialised to infinitely old .</timer>some of the snpas in this set may be
+        unreachable .
+        <trigger>if a call attempt fails to one of the snpa addresses listed ,</trigger>
+        <trigger>the is shall mark that entry in the list with the time of the latest <ref_state id="3">failed
+        </ref_state> attempt .
+        </trigger>
+        <trigger>when an snpa address is to be chosen from the list ,</trigger>
+        <transition>the is shall choose the one with the oldest timestamp ,</transition>
+        <trigger>unless the oldest timestamp is more recent than recalltimer .</trigger>
+        <trigger>if the oldest timestamp is more recent than recalltimer ,</trigger>
+        <action type="receive">all snpas in the set shall be assumed temporarily unreachable and no call attempt is made
+            .
+        </action>
+        <action type="receive">the is shall instead invoke the iso 8473 discard pdu function .</action>
+        <trigger>when attempting to establish a connection to a single specific subnetwork address ( not through one of
+            a set of snpa addresses ) ,
+        </trigger>
+        <trigger>if a call attempt to a particular snpa address ,</trigger>
+        <trigger>a ,</trigger>
+        <trigger>fails for any reason ,</trigger>
+        <action type="receive">the is shall invoke the iso 8473 discard pdu function .</action>
+        <trigger>additionally the adjacency on which the call attempt was placed shall be placed in <ref_state id="3">
+            failed
+        </ref_state> state ,
+        </trigger>
+        <timer>and the recall timer set .</timer>
+        <trigger>until it expires ,</trigger>
+        <trigger>the is shall not attempt call establishment for future npdus to be forwarded over subnetwork address a
+            ,
+        </trigger>
+        <action type="receive">but instead the is shall invoke the iso 8473 discard pdu function .</action>
+        <trigger>when the recall timer expires ,</trigger>
+        <action type="receive">the is shall free the adjacency for calls to a different destination or retry attempts to
+            subnetwork address a .
+        </action>
+        <trigger>note 50 if an implementation can store the knowledge of snpa addresses that have <ref_state id="3">
+            failed
+        </ref_state> along with the time since the attempt was made in a location other than the adjacency on which the
+            call was attempted ,
+        </trigger>
+        then that adjacency can be used for other calls .
+    </control>
+
+    <control relevant="true">
+        <trigger>8.3.3 reverse path forwarding on da circuits where a subdomain is attached to a connection-oriented
+            subnetwork by two or more snpas ,
+        </trigger>
+        <action type="receive">the destination nsap addresses within the subdomain may be chosen to be constructed from
+            the address of one of the points of attachment .</action>( it need not be .
+        <trigger>the whole subdomain could be multi-homed by using both snpa addresses ,</trigger>
+        <trigger>or some other idp could be chosen ;</trigger>e.g .
+        <trigger>iso dcc .</trigger>) traffic to the subdomain from some other snpa will cause a call to be established
+        to the snpa corresponding to the destination nsap address in the subdomain .
+        <trigger>traffic from the subdomain may use either of the snpas depending on the routeing decisions made by the
+            subdomain .</trigger>this is illustrated in figure 6 .
+        <trigger>the subdomain is attached to the connection-oriented subnetwork via snpas a and b .</trigger>
+        <action type="receive">the addresses on the subdomain are constructed using the snpa address of b as the idi .
+        </action>
+        <trigger>if traffic for c.z is sent from b.x ,</trigger>
+        <action type="receive">a call will be established from a to c. the reverse traffic from c.z to b.x will cause
+            another call to be established from c to b .</action>thus two svcs have been established where only one is
+        required .
+        <trigger>this problem is prevented by the local system retaining a cache ( known as the reversepathcache ) of
+            nsap addresses from which traffic has been received over each adjacency .
+        </trigger>
+        <trigger>when it has traffic to forward over the connection-oriented subnetwork ,</trigger>
+        <action type="receive">the is shall it first check to see if the destination nsap is in the cache of any of its
+            adjacencies ,
+        </action>
+        <action type="receive">and if so forwards the traffic over that adjacency .</action>
+        <trigger>an nsap shall only be added to the cache when the remote snpa address of the adjacency over which it is
+            received differs from the snpa address to be called which would be generated by checking against the circuit
+            reachable addresses managed objects .
+        </trigger>
+        <trigger>if the cache is full ,</trigger>
+        <action type="receive">the is shall overwrite the least recently used entry .</action>
+        <transition>the reversepathcache ,</transition>
+        <trigger>if implemented ,</trigger>
+        <variable>shall have a size of at least one entry .</variable>
+        <trigger>the is shall purge the cache when the adjacency is taken <ref_state id="4">down</ref_state> ( i.e .
+        </trigger>
+        <trigger>when the reservetimer expires ) .</trigger>
+    </control>
+
+    <control relevant="true">
+        <action type="receive">figure 6 - example of reverse path forwarding 8.3.4 use of iso 9542 on iso 8208
+            subnetworks static and da circuits are equivalent to point-to-point links ,
+        </action>
+        <action type="receive">and as such permit the operation of iso 9542 as described for point-to-point links in 8.2
+            .
+        </action>
+        <trigger>for da circuits ,</trigger>it is impractical to use iso 9542 to obtain configuration information ,
+        <trigger>such as the location of intermediate systems ,</trigger>since this would require calls to be
+        established to all possible snpa addresses .
+        <trigger>the is shall not send iso 9542 ish pdus on a da circuit .</trigger>
+        <trigger>the is shall take no action on receipt of an esh pdu or ish pdu ,</trigger>
+        <action type="receive">and the circuit shall complete initialisation without waiting for their arrival .
+        </action>
+        <trigger>the is shall not send point-to-point iih pdu on da circuits .</trigger>
+        <trigger>the is shall ignore receipt of point-to-point iih pdus on da circuits .</trigger>
+    </control>
+
+    <control relevant="true">
+        <trigger>8.3.5 interactions with the update process a dynamically assigned circuit contains a list of &lt;
+            reachable address prefix ,
+        </trigger>
+        <action type="receive">cost ,</action>
+        <action type="receive">snpa address &gt; tuples .</action>also ,
+        <trigger>each dynamically assigned circuit has a specified call establishment cost measured by
+            callestablishmentmetrick ( where k indexes the four defined metrics ) .
+        </trigger>
+        <trigger>the call establishment cost is always an internal metric ,</trigger>
+        <trigger>and is therefore directly comparable with the reachable address metric only if the reachable address
+            metric is also internal .
+        </trigger>
+        <trigger>when the circuit is enabled ,</trigger>
+        <action type="receive">the subnetwork dependent functions in an intermediate system shall report ( to the update
+            process ) adjacency cost change events for all address prefixes in the circuit reachable address managed
+            object ,
+        </action>
+        <variable>together with the reachable address metric k + deltak increment .</variable>
+        <trigger>if reachable address metrick is internal ,</trigger>
+        <variable>then deltak = callestab- lishmentmetrick .</variable>
+        <trigger>if reachable address metrick is external ,</trigger>
+        <action type="issue">then deltak = 0 this causes this information to be included in subsequently generated <arg>
+            lsps
+        </arg> as described in 7.3.3.2 .
+        </action>
+        <action type="send">
+            <arg>routeing pdus ( lsps and sequence number pdus )</arg>
+            shall not be sent on dynamically assigned circuits .
+        </action>
+        <trigger>note 51 in the following sub-clauses ,</trigger>it is assumed that the reachable addresses referenced
+        are only those which have been enabled ( i.e .
+        <trigger>that have state on ) ,</trigger>and whose parent circuit is also in state on .
+    </control>
+
+    <control relevant="true">
+        <trigger>8.3.5.1 adjacency creation after an svc to snpa address d is successfully established and a new
+            adjacency created for it ( whether it was initiated by the local or the remote system ) ,
+        </trigger>
+        <trigger>if callestablishment-metrickincrement is greater than 0 ,</trigger>
+        <action type="receive">the is shall scan the circuit reachable address managed objects for all addressprefixes
+            listed with d as ( one of ) the snpaaddress ( es ) .
+        </action>
+        <trigger>for reachable addresses with mappingtype algorithm ,</trigger>
+        <action type="receive">the is shall construct an implied address prefix1 ) from the actual remote snpa address d
+            and the address extraction algorithm .
+        </action>
+        <action type="issue">the is shall generate <arg>an adjacency cost change event for each such address prefix (
+            both actual and implied ) with the reachable address metrick
+        </arg> ( without the added callestablishment- metrickincrement ) .
+        </action>
+        this causes information that those address prefixes are reachable with the lower cost to be included in
+        subsequently generated lsps . the effect of this is to encourage the use of already established svcs where
+        possible .
+    </control>
+
+    <control relevant="true">
+        <trigger>8.3.5.2 adjacency deletion when the adjacency with snpaaddress d is freed ( reservetimer has expired
+            ,
+        </trigger>
+        <trigger>or the adjacency is deleted by system management action ) then if callestablishment-metrickincrement is
+            greater than 0 ,
+        </trigger>
+        <action type="issue">the is shall scan the circuit reachable address managed objects for all those with
+            mappingtype explicit and ( one of ) their snpaaddresses equal to d. the is shall generate <arg>adjacency
+                cost change events to the update process for all such address prefixes
+            </arg> with the reachable address metrick + deltak increment ( where deltak is the same as defined above ) .
+        </action>
+        <trigger>for reachable addresses with an algorithmic extraction mappingtype for which it is possible to
+            construct an implied address prefix as above ,
+        </trigger>
+        <action type="issue">the is shall generate <arg>an adjacencystatechange event</arg> for that implied prefix .
+        </action>
+        <trigger>a cost change event shall only be generated when the count of the number of subnetwork addresses which
+            have an established svc changes between 1 and 0 .
+        </trigger>
+    </control>
+
+    <control relevant="true">
+        <trigger>8.3.5.3 circuit call establishment increment change on a dynamically assigned circuit ,</trigger>
+        <trigger>when system management changes the circuit callestablishmentmetrickiincrement for that circuit ,
+        </trigger>
+        <action type="issue">the is shall generate <arg>adjacency cost change events for all address prefixes affected
+            by the change ( i.e
+        </arg> .
+        </action>
+        <trigger>those for which calls are not currently established ) .</trigger>the is shall scan all the reachable
+        address managed objects of that circuit .
+        <trigger>if the reachable address has an algorithmic extraction mappingtype ,</trigger>
+        <action type="issue">the is shall generate <arg>an adjacency cost change event for that adjacencyid with the
+            reachable address metrick + the new value of deltak
+        </arg> .
+        </action>
+        <trigger>if ( based on the new value of callestablishmentmetrickincrement ) the reachable address has
+            mappingtype explicit ,
+        </trigger>
+        <action type="receive">the is shall scan all the adjacencies of the circuit for an adjacency with snpaaddress
+            equal to ( one of ) the snpaaddresses of that reachable address .
+        </action>
+        <action type="issue">if no such adjacency is found the is shall generate <arg>an adjacency cost change event for
+            that adjacencyid with the reachable address metrick + the new value of deltak ( based on the new value of
+            callestablishmentmetrickincrement )
+        </arg> .
+        </action>
+    </control>
+
+    <control relevant="true">
+        <trigger>8.3.5.4 reachable address cost change when the metrick attribute of a reachableaddress in
+            operationalstate enabled is changed by system management ,
+        </trigger>
+        <action type="issue">the is shall generate <arg>cost change events to the update process</arg> to reflect this
+            change.1 ) i.e .
+        </action>
+        <trigger>some address prefix which matches the addressprefix of the reachable address ,</trigger>
+        <action type="issue">and which would generate <arg>the snpa address d</arg> when the extraction algorithm is
+            applied .
+        </action>
+        <trigger>if the reachableaddress has mappingtype explicit ,</trigger>
+        <trigger>the is shall scan all the adjacencies of the circuit for an adjacency with snpaaddress equal to ( one
+            of ) the snpaaddresses of that reachable address .
+        </trigger>
+        <trigger>if one or more such adjacencies are found ,</trigger>
+        <action type="issue">the is shall generate <arg>an adjacencycostchange event for that reachableaddressid with
+            the new reachable address metrick
+        </arg> .
+        </action>
+        <action type="issue">if no such adjacency is found the is shall generate <arg>an adjacency cost change event for
+            that reachableaddressid with the new reachable address metrick
+        </arg> .
+        </action>
+        <trigger>if the reachableaddress has an algorithmic extraction mappingtype ,</trigger>
+        <action type="issue">the is shall generate <arg>an adjacencycostchange event for that name</arg> with the new
+            reachable address metrick + deltak ( based on the new value of callestablishment- metrickincrement ) .
+        </action>
+        <trigger>in addition ,</trigger>
+        <trigger>for all adjacencies of the circuit with an snpaaddress for which an implied address prefix can be
+            generated for this reachable address ,
+        </trigger>
+        <action type="issue">the is shall generate <arg>an adjacencycostchange event for that implied address prefix and
+            the new reachable address metrick
+        </arg> .
+        </action>
+    </control>
+
+    <control relevant="true">
+        <trigger>8.3.5.5 disabling a reachable address when a reachableaddress managed object is disabled via management
+            action ,
+        </trigger>
+        <action type="issue">the is shall generate <arg>an adjacency-down event to the update process for the
+            adjacencyid of that reachable address and also for any implied prefixes associated with that reachable
+            address
+        </arg> .
+        </action>
+    </control>
+
+    <control relevant="true">
+        <trigger>8.3.5.6 enabling a reachable address when a reachableaddress is enabled via system management action
+            ,
+        </trigger>
+        <action type="issue">the is shall generate <arg>adjacencycostchange events</arg> as described for reachable
+            address cost changes in 8.3.5.4 above .
+        </action>
+    </control>
+
+    <control relevant="true">
+        <trigger>8.4 broadcast subnetworks 8.4.1 enabling of broadcast circuits when the broadcast circuit is enabled on
+            an intermediate system the is shall perform the following actions .
+        </trigger>
+        <action type="send">a ) commence sending <arg>iih pdus</arg> with the lan id field set to the concatenation of
+            its own systemid and its locally assigned one octet local circuit id .
+        </action>
+        <action type="receive">b ) solicit the end system configuration as described in 8.4.6 c ) start listening for
+            iso 9542 esh pdus and acquire adjacencies as appropriate .
+        </action>
+        <trigger>do not run the designated intermediate system election process .</trigger>
+        <trigger>d ) after waiting isishellotimer × 2 seconds ,</trigger>
+        <trigger>run the level 1 and or the level 2 designated intermediate system election process depending on the
+            intermediate system type .
+        </trigger>
+    </control>
+
+    <control relevant="true">
+        <action type="receive">8.4.2 broadcast subnetwork iih pdus all intermediate systems on broadcast circuits ( both
+            level 1 and level 2 ) shall transmit lan iih pdus as described in 8.4.4 .
+        </action>
+        <action type="receive">level 1 intermediate systems shall transmit only level 1 lan iih pdus .</action>
+        <trigger>level 2 intermediate systems on circuits with manuall2onlymode set to the value true ,</trigger>shall
+        transmit only level 2 lan iih pdus .
+        <trigger>level 2 intermediate systems on circuits with manuall2onlymode set to the value false ,</trigger>
+        <action type="receive">shall transmit both .</action>
+        <action type="receive">level n lan iih pdus contain the transmitting intermediate system ’ s id ,</action>
+        <timer>holding timer ,</timer>
+        <trigger>level n priority and manual- areaaddresses ,</trigger>
+        <trigger>plus a list containing the lanaddresses of all the adjacencies of neighboursystemtype ln intermediate
+            system ( in adjacencystate initialising or up ) on this circuit .</trigger>the circuit type field shall be
+        set according to table 4 .
+        <trigger>in a level 1 iih pdu the circuit type shall be either 1 or 3 .</trigger>
+        <trigger>in a level 2 iih pdu the circuit type shall be either 2 or 3 .</trigger>
+    </control>
+
+    <control relevant="true">
+        <trigger>lan iih pdus shall be padded ( with trailing pad option fields containing arbitrary valued octets ) so
+            that the snsdu containing the iih pdu has a length of at least maxsize - 1 octets1 ) where maxsize for level
+            1 iih pdus is the maximum of - datalinkblocksize - originatingl1lspbuffersize 1 ) the minimum length of pad
+            which may be added is 2 octets ,</trigger>since that is the size of the option header .
+        <action type="receive">where possible the pdu should be padded to maxsize ,</action>
+        <trigger>but if the pdu length is maxsize-1 octets no padding is possible ( or required ) .</trigger>
+        <transition>and for level 2 iih pdus is the maximum of - datalinkblocksize - originatingl2lspbuffersize this is
+            done to ensure that an adjacency will only be formed between systems which are capable of exchanging pdus of
+            length <ref_state id="2">up</ref_state> to maxsize octets .
+        </transition>
+        <trigger>in the absence of this check ,</trigger>
+        <trigger>it would be possible for an adjacency to exist with a lower maximum block size ,</trigger>
+        <action type="receive">with the result that some lsps and snps ( i.e .</action>
+        <trigger>those longer than this maximum ,</trigger>
+        <action type="receive">but less than maxsize ) would not be exchanged .</action>note 52 an example of a topology
+        where this could occur is one where an extended lan is constructed from lan segments with different maximum
+        block sizes .
+        <trigger>if ,</trigger>
+        <trigger>as a result of mis-configuration or some dynamic reconfiguration ,</trigger>
+        <trigger>a path exists between two intermediate systems on separate lan segments having a large maximum block
+            size ,
+        </trigger>
+        <trigger>which involves transit of a lan segment with a smaller maximum block size ,</trigger>
+        <trigger>loss of larger pdus will occur if the intermediate systems continue to use the larger maximum block
+            size .
+        </trigger>
+        <transition>it is better to refuse to bring <ref_state id="2">up</ref_state> the adjacency in these
+            circum-stances .
+        </transition>
+        <action type="receive">level 1 intermediate systems shall transmit level 1 lan iih pdus to the multi-destination
+            address alll1iss ,</action>and also listen on that address .
+        <trigger>they shall also listen for esh pdus on the multi-destination address allintermediatesystems .</trigger>
+        <trigger>the list of neighbour intermediate systems shall contain only level 1 intermediate systems within the
+            same area .</trigger>( i.e .
+        <trigger>adjacencies of neighboursystemtype l1 intermediate system .</trigger>
+        <trigger>) level 2 only intermediate systems ( i.e .</trigger>
+        <trigger>level 2 intermediate systems which have the circuit with an associated linkage manuall2onlymode
+            characteristic set to the value true ) shall transmit level 2 lan iih pdus to the multi-destination address
+            alll2iss ,</trigger>and also listen on that address .
+        <trigger>the list of neighbour intermediate systems shall contain only level 2 intermediate systems .</trigger>(
+        i.e .
+        <trigger>adjacencies of neighboursystemtype l2 intermediate system .</trigger>
+        <trigger>) level 2 intermediate systems ( with manuall2onlymode false ) shall perform both of the above actions
+            .
+        </trigger>
+        <action type="send">
+            <arg>separate level 1 and level 2 lan iih pdus</arg>
+            shall be sent to the multi-destination addresses alll1iss and alll2iss describing the neighbour intermediate
+            systems for level 1 and level 2 respectively .
+        </action>
+        <trigger>separate adjacencies shall be created by the receipt of level 1 and level 2 lan iih pdus .</trigger>
+    </control>
+
+    <control relevant="true">
+        <trigger>8.4.2.1 iih pdu acceptance tests on receipt of a broadcast iih pdu ,</trigger>
+        <trigger>perform the following pdu acceptance tests : a ) if the iih pdu was received over a circuit whose
+            externaldomain attribute is true ,
+        </trigger>
+        <action type="receive">the is shall discard the pdu .</action>
+        <trigger>b ) if the id length field of the pdu is not equal to the value of the is ’ s routeingdomainidlength
+            ,
+        </trigger>
+        <action type="issue">the pdu shall be discarded and <arg>an idfieldlengthmismatch event</arg> generated .
+        </action>
+        <trigger>c ) if the value of circuittransmitpassword or the set of circuitreceivepasswords for this circuit is
+            non-null ,
+        </trigger>
+        <action type="issue">then perform the following tests : 1 ) if the pdu does not contain the authentication
+            information field then the pdu shall be discarded and <arg>an authenticationfailure event</arg> generated .
+        </action>
+        <trigger>2 ) if the pdu contains the authentication information field ,</trigger>
+        <trigger>but the authentication type is not equal to password ,</trigger>then i .
+        <trigger>if the is implements the authentication procedure indicated by the authentication type whether the is
+            accepts or ignores the pdu is outside the scope of this international standard .
+        </trigger>
+        <trigger>ii .</trigger>
+        <trigger>if the is does not implement the authentication procedure indicated by the authentication type then the
+            is shall ignore the pdu and generate an authenticationfailure event .
+        </trigger>
+        <trigger>3 ) otherwise ,</trigger>
+        <trigger>the is shall compare the password in the received pdu with the passwords in the set of
+            circuitreceivepasswords for the circuit on which the pdu was received .
+        </trigger>
+        <trigger>if the value in the pdu matches any of these passwords ,</trigger>
+        <action type="receive">the is shall accept the pdu for further processing .</action>
+        <trigger>if the value in the pdu does not match any of the circuitreceivepasswords ,</trigger>
+        <action type="issue">then the is shall ignore the pdu and generate <arg>an authenticationfailure event</arg> .
+        </action>
+    </control>
+
+    <control relevant="true">
+        <trigger>8.4.2.2 receipt of level 1 iih pdus on receipt of a level 1 lan iih pdu on the multi-destination
+            address alll1iss ,
+        </trigger>
+        <action type="receive">the is shall perform the following tests : a ) compare each of the area addresses ,
+        </action>
+        <trigger>from the area addresses field of the received iih pdu with the set of area addresses in the
+            manualareaaddresses attribute .
+        </trigger>
+        <trigger>if a match is not found between any pair ( i.e .</trigger>
+        <trigger>the local and remote system have no area address in common ) ,</trigger>
+        <action type="issue">the is shall reject the adjacency and generate <arg>an areamismatch event</arg> .
+        </action>
+        <action type="issue">b ) if the maximum area addresses field of the pdu is not equal to the value of the is ’ s
+            maximumareaaddresses then the pdu shall be discarded and <arg>a maximumarea-addressesmismatch event</arg> generated
+            ,
+        </action>
+        <trigger>unless the is only implements a value of three for maximumareaaddresses ,</trigger>
+        <trigger>in which case this check may be omitted .</trigger>
+        <trigger>if the above tests succeed ,</trigger>the is shall accept the adjacency and set the adjacency
+        neighboursystemtype to l1 intermediate system .
+    </control>
+
+    <control relevant="true">
+        <trigger>8.4.2.3 receipt of level 2 iih pdus on receipt of a level 2 lan iih pdu on the multi-destination
+            address alll2iss ,
+        </trigger>
+        <action type="receive">the is shall accept the adjacency ,</action>
+        <variable>and set the adjacency neighboursystemtype to l2 intermediate system .</variable>
+    </control>
+
+    <control relevant="true">
+        <trigger>8.4.2.4 existing adjacencies when a level n lan iih pdu ( level 1 or level 2 ) is received from an
+            intermediate system for which there is already an adjacency with a ) the adjacency neighboursnpaaddress
+            equal to the mac source address of the pdu ,
+        </trigger>
+        <trigger>and b ) the adjacency neighboursystemid equal to the source id field from the pdu and c ) the
+            neighboursystemtype equal to ln intermediate system ,
+        </trigger>
+        <timer>the is shall update the holdingtimer ,</timer>
+        <trigger>priorityofneighbour and areaaddressesofneigh-bour according to the values in the pdu .</trigger>
+    </control>
+
+    <control relevant="true">
+        <trigger>8.4.2.5 new adjacencies 8.4.2.5.1 when a ) level n lan iih pdu ( level 1 or level 2 ) is received (
+            from intermediate system r ) ,
+        </trigger>
+        <trigger>and b ) there is no adjacency for which the adjacency neighboursnpaaddress is equal to the mac source
+            address of the pdu ;</trigger>and the is shall create a new adjacency .
+        <trigger>however ,</trigger>
+        <trigger>if there is insufficient space in the adjacency database ,</trigger>
+        <action type="receive">to permit the creation of a new adjacency the is shall instead perform the actions
+            described in 8.4.3 .
+        </action>
+        <variable>the is shall a ) set neighboursystemtype to ln intermediate system ( where n is the level of the iih
+            pdu ) ,
+        </variable>
+        <timer>b ) set the holdingtimer ,</timer>
+        <trigger>priorityofneighbour ,</trigger>
+        <trigger>neighbour-systemid and areaaddressesofneighbour according to the values in the pdu. ,</trigger>
+        <variable>and c ) set the neighboursnpaaddress according to the mac source address of the pdu .</variable>
+        <transition>the is shall set the adjacencystate of the adjacency to initialising ,</transition>
+        <trigger>until it is known that the communication between this system and the source of the pdu ( r ) is two-way
+            .</trigger>however r shall be included in future level n lan iih pdus transmitted by this system .
+        <trigger>when r reports the local system ’ s snpa address in its level n lan iih pdus ,</trigger>
+        <transition>the is shall d ) set the adjacency ’ s adjacencystate to up ,</transition>
+        <trigger>and e ) generate an adjacencystatechange ( up ) event .</trigger>
+    </control>
+
+    <control relevant="true">
+        <variable>8.4.2.5.2 the is shall keep a separate holding time ( adjacency holdingtimer ) for each ln
+            intermediate system adjacency .
+        </variable>
+        <timer>the value of holdingtimer shall be set to the holding time as reported in the holding time field of the
+            level n lan iih pdus .
+        </timer>
+        <trigger>if a neighbour is not heard from in that time ,</trigger>
+        <action type="receive">the is shall a ) purge it from the database ;</action>
+        <trigger>and b ) generate an adjacencystatechange ( <ref_state id="4">down</ref_state> ) event .
+        </trigger>
+    </control>
+
+    <control relevant="true">
+        <trigger>8.4.2.5.3 if a level n lan iih pdu is received from neighbour n ,</trigger>
+        <trigger>and this system ’ s lanaddress is no longer in n ’ s iih pdu ,</trigger>
+        <transition>the is shall a ) set the adjacency ’ s adjacencystate to <ref_state id="1">initialising</ref_state> ,
+        </transition>
+        <trigger>and b ) generate an adjacencystatechange ( <ref_state id="4">down</ref_state> ) event .
+        </trigger>
+    </control>
+
+    <control relevant="true">
+        <trigger>8.4.3 insufficient space in adjacency database if an is needs to create a new intermediate system
+            adjacency ,
+        </trigger>
+        <trigger>but there is insufficient space in the adjacency database ,</trigger>
+        <trigger>the adjacency of neighboursystemtype ln intermediate system with lowest l x intermediatesystempriority
+            ( or if more than one adjacency has the lowest priority ,
+        </trigger>
+        <trigger>the adjacency with the lowest snpaaddress ,</trigger>
+        <action type="receive">from among those with the lowest priority ) shall be purged from the database .</action>
+        <trigger>if the new adjacency would have the lowest priority ,</trigger>
+        <action type="receive">it shall be ignored ,</action>
+        <action type="issue">and <arg>a rejectedadjacency event</arg> generated .
+        </action>
+        <trigger>if an old adjacency must be purged ,</trigger>
+        <transition>the is shall generate an adjacencystatechange ( down ) event for that adjacency .</transition>
+        <trigger>after the subnetwork independent functions issue an adjacency down complete ,</trigger>the is may
+        create a new adjacency .
+    </control>
+
+    <control relevant="true">
+        <trigger>8.4.4 transmission of lan iih pdus a level 1 is shall transmit a level 1 lan iih pdu immediately when
+            any circuit whose externaldomain attribute is false has been enabled .
+        </trigger>
+        <trigger>a level 2 intermediate system shall transmit a level 2 lan iih pdu .</trigger>
+        <trigger>a level 2 intermediate system shall also transmit a level 1 lan iih pdu unless the circuit is marked as
+            manuall2onlymode true .
+        </trigger>
+        <trigger>the is shall also transmit a lan iih pdu when at least 1 second has elapsed since the last transmission
+            of a lan iih pdu of the same type on this circuit by this system and : a ) isishellotimer seconds have
+            elapsed1 ) since the last periodic lan iih pdu transmission .
+        </trigger>
+        <trigger>the holding time is set to isisholdingmultiplier × isishellotimer .</trigger>
+        <trigger>for a designated intermediate system the value of drisishellotimer2 ) is used instead of isishellotimer
+            .
+        </trigger>
+        <variable>the holding time for this pdu shall therefore be set to isisholdingmultiplier × drisis-hellotimer
+            seconds .</variable>this permits failing designated in-termediate systems to be detected more rapidly ,
+        <trigger>or b ) the contents of the next iih pdu to be transmitted would differ from the contents of the
+            previous iih pdu transmitted by this system ,
+        </trigger>
+        <trigger>or c ) this system has determined that it is to become or resign as lan designated intermediate system
+            for that level .
+        </trigger>
+        <trigger>to minimise the possibility of the iih pdu transmissions of all intermediate systems on the lan
+            becoming synchronised ,
+        </trigger>
+        <trigger>the hello timer shall only be reset when a iih pdu is transmitted as a result of timer expiration ,
+        </trigger>
+        <trigger>or on becoming or resigning as designated intermediate system .</trigger>
+        <trigger>where an intermediate system is transmitting both level 1 and level 2 lan iih pdus ,</trigger>
+        <timer>it shall maintain a separate timer ( separately jittered ) for the transmission of the level 1 and level
+            2 iih pdus .</timer>this avoids correlation between the level 1 and level 2 iih pdus and allows the
+        reception buffer requirements to be minimised .
+        <trigger>if the value of the circuittransmitpassword for the circuit is non-null ,</trigger>
+        <action type="receive">then the is shall include the authentication information field in the transmitted iih pdu
+            ,
+        </action>
+        <action type="receive">indicating an authentication type of password and containing the circuittransmitpassword
+            as the authentication value .
+        </action>
+    </control>
+
+    <control relevant="true">
+        <trigger>8.4.5 lan designated intermediate systems a lan designated intermediate system is the highest priority
+            intermediate system in a particular set on the lan ,
+        </trigger>
+        <trigger>with numerically highest mac source snpaaddress breaking ties .</trigger>( see 7.1.8 for how to compare
+        lan addresses . ) 1 ) jitter is applied as described in 10.1 .
+        <trigger>2 ) in this case jitter is not applied ,</trigger>since it would result in intervals of less than one
+        second . there are ,
+        <action type="receive">in general ,</action>
+        <trigger>two lan designated intermediate systems on each lan ,</trigger>
+        <trigger>namely the lan level 1 designated intermediate system and the lan level 2 designated intermediate
+            system .
+        </trigger>
+        <trigger>they are elected as follows .</trigger>
+        <action type="receive">a ) level 1 intermediate systems elect the lan level 1 designated intermediate system .
+        </action>
+        <trigger>b ) level 2 only intermediate systems ( i.e .</trigger>
+        <action type="receive">level 2 intermediate systems which have the circuit manuall2onlymode characteristic set
+            to the value true ) elect the lan level 2 designated intermediate system .
+        </action>
+        <action type="receive">c ) level 2 intermediate systems ( with manuall2onlymode false ) elect both the lan level
+            1 and lan level 2 designated intermediate systems .</action>the set of intermediate systems to be considered
+        includes the local intermediate system ,
+        <trigger>together with all intermediate systems of the appropriate type as follows .</trigger>
+        <trigger>d ) for the lan level 1 designated intermediate system ,</trigger>
+        <transition>it is the set of intermediate systems from which lan level 1 iih pdus are received and to which
+            level 1 adjacencies exist in adjacencystate up .
+        </transition>
+        <trigger>when the local system either becomes or resigns as lan level 1 designated intermediate system ,
+        </trigger>
+        <action type="issue">the is shall generate <arg>a lanlevel1designatedintermediatesystemchange event</arg> .
+        </action>
+        <trigger>in addition ,</trigger>
+        <trigger>when it becomes lan level 1 designated intermediate system ,</trigger>
+        <action type="receive">it shall perform the following actions .</action>
+        <action type="issue">1 ) generate and transmit <arg>level 1 pseudonode lsps</arg> using the existing end system
+            configuration .
+        </action>
+        <action type="issue">2 ) purge <arg>the level 1 pseudonode lsps</arg> issued by the previous lan level 1
+            designated intermediate system ( if any ) as described in 7.2.3 .
+        </action>
+        <action type="receive">3 ) solicit the new end system configuration as described in 8.4.6. e ) for the lan level
+            2 designated intermediate system ,
+        </action>
+        <transition>it is the set of intermediate systems from which lan level 2 iih pdus are received and to which
+            level 2 adjacencies exist in adjacencystate up .
+        </transition>
+        <trigger>when the local system either becomes or resigns as lan level 2 designated intermediate system ,
+        </trigger>
+        <action type="issue">the is shall generate <arg>a lanlevel2designatedintermediatesystemchange event</arg> .
+        </action>
+        <trigger>in addition ,</trigger>
+        <trigger>when it becomes lan level 2 designated intermediate system ,</trigger>
+        <action type="receive">it shall perform the following actions .</action>
+        <action type="issue">1 ) generate and transmit <arg>a level 2 pseudonode lsp</arg> .
+        </action>
+        <action type="issue">2 ) purge <arg>the level 2 pseudonode lsps</arg> issued by the previous lan level 2
+            designated intermediate system ( if any ) as described in 7.2.3 .
+        </action>
+        <trigger>when an intermediate system resigns as lan level 1 or level 2 designated intermediate system it shall
+            perform the actions on link state pdus described in 7.2.3 .
+        </trigger>
+        <trigger>the is shall run the level 1 and/or the level 2 designated intermediate system election process (
+            depending on the intermediate system type ) whenever an iih pdu is received or transmitted as described in
+            8.4.4 .
+        </trigger>
+        <trigger>( for these purposes ,</trigger>
+        <trigger>the transmission of the system ’ s own iih pdu is equivalent to receiving it ) .</trigger>
+        <trigger>if there has been no change to the information on which the election is performed since the last time
+            it was run ,
+        </trigger>
+        <action type="receive">the previous result can be assumed .</action>the relevant information is f ) the set of
+        intermediate system adjacency states ;
+        <trigger>g ) the set of intermediate system priorities ( including this system ’ s ) ;</trigger>
+        <trigger>and h ) the existence ( or otherwise ) of at least one up end system ( not including manual adjacencies
+            ) or intermediate system adjacency on the circuit .
+        </trigger>
+        <transition>an intermediate system shall not declare itself to be a lan designated intermediate system of any
+            type until it has at least one up end system ( not including manual adjacencies ) or intermediate system
+            adjacency on the circuit .
+        </transition>
+        <trigger>( this prevents an intermediate system which has a defective receiver and is incapable of receiving any
+            pdus from erroneously electing itself lan designated intermediate system .
+        </trigger>
+        <trigger>) the lan id field in the lan iih pdus transmitted by this system shall be set to the value of the lan
+            id field reported in the lan iih pdu ( for the appropriate level ) received from the system which this
+            system considers to be the designated intermediate system .
+        </trigger>
+        <trigger>this value shall also be passed to the update process ,</trigger>
+        <action type="receive">as the pseudonode id ,</action>
+        <trigger>to enable link state pdus to be issued for this system claiming connectivity to the pseudonode .
+        </trigger>
+        <trigger>if this system ,</trigger>
+        <trigger>as a result of the designated intermediate system election process ,</trigger>
+        <transition>considers itself to be designated intermediate system ,</transition>
+        <variable>the lan id field shall be set to the concatena\tion of this system ’ s own system id and the locally
+            assigned one octet local circuit id .
+        </variable>
+    </control>
+
+    <control relevant="true">
+        <trigger>8.4.6 soliciting the es configuration when there is a change in the topology or configuration of the
+            lan ( for example the partitioning of a lan into two segments by the failure of a repeater or bridge ) ,
+        </trigger>
+        <trigger>it is desirable for the ( new ) designated intermediate system to acquire the new end system
+            configuration of the lan as quickly as possible in order that it may generate link state pdus which
+            accurately reflect the actual configuration .
+        </trigger>
+        <trigger>this is achieved as follows .</trigger>
+        <trigger>when the circuit is enabled ,</trigger>
+        <trigger>or the intermediate system detects a change in the set of intermediate systems on the lan ,</trigger>
+        <trigger>or a change in the designated intermediate system id ,</trigger>
+        <action type="receive">the is shall initiate a poll of the es configuration by performing the following actions
+            .
+        </action>
+        <timer>a ) delay a random interval between 0 and isishellotimer .</timer>( this is to avoid synchronisation with
+        other intermediate systems which have detected the change .
+        <trigger>) b ) if ( and only if ) an intermediate system had been removed from the set of intermediate systems
+            on the lan ,
+        </trigger>
+        <timer>reset the entryremainingtime field in the neighbour-systemids adjacency database record of all
+            adjacencies on this circuit to the value ( isishellotimer + polleshellorate ) × isisholdingmultiplier or the
+            existing value whichever is the lower .</timer>( this causes any end systems which are no longer present on
+        the lan to be rapidly timed out ,
+        <trigger>but not before they have a chance to respond to the poll .</trigger>
+        <action type="receive">) c ) transmit isisholdingmultiplier ish pdus for each net possessed by the intermediate
+            system with a suggested es configuration timer value of polleshellorate at an interval between them of
+            isishellotimer and a holding time of isconfigurationtimer × isisholdingmultiplier .
+        </action>
+        <timer>d ) resume sending ish pdus at intervals of isconfiguration-timer with a suggested es configuration timer
+            value of defaulteshellotimer .
+        </timer>
+    </control>
+
+    <control relevant="true">
+        <trigger>8.4.7 receipt of esh pdus — database of end systems an is shall enter an end system into the adjacency
+            database when an esh pdu is received from a new data link address .
+        </trigger>
+        <trigger>if an esh pdu is received with the same data link address as a current adjacency ,</trigger>
+        <action type="receive">but with a different nsap address ,</action>
+        <action type="receive">the new address shall be added to the adjacency ,</action>
+        <timer>with a separate timer .</timer>
+        <trigger>a single esh pdu may contain more than one nsap address .</trigger>
+        <trigger>when a new data link address or nsap address is added to the adjacency database ,</trigger>
+        <trigger>the is shall generate an adjacencystatechange ( <ref_state id="2">up</ref_state> ) event on that
+            adjacency .
+        </trigger>
+        <timer>the is shall set a timer for the value of the holding time field in the received esh pdu .</timer>
+        <trigger>if another esh pdu is not received from the es before that timer expires ,</trigger>
+        <action type="receive">the es shall be purged from the database ,</action>
+        <trigger>provided that the subnetwork independent functions associated with <ref_state id="1">initialising
+        </ref_state> the adjacency have been completed .
+        </trigger>
+        <action type="receive">otherwise the is shall clear the adjacency as soon as those functions are completed .
+        </action>
+        <trigger>when the adjacency is cleared ,</trigger>
+        <trigger>the subnetwork independent functions shall be informed of an adjacencystatechange ( <ref_state id="4">
+            down
+        </ref_state> ) event ,
+        </trigger>
+        <trigger>and the adjacency can be re-used after the subnetwork independent functions associated with bringing <ref_state
+                id="4">down
+        </ref_state> the adjacency have been completed .
+        </trigger>
+        <action type="receive">8.4.8 broadcast subnetwork constants the intradomain is-is protocol exploits multicast
+            capabilities for all is-is protocol exchanges on broadcast subnetworks .</action>to ensure interoperability
+        all systems on a given broadcast subnetwork must use the same multi-destination address bindings .
+        <trigger>for iso 8802 subnetworks that supports 48 bit mac addresses ,</trigger>
+        <action type="receive">48 bit mac addressing and the multi-destination address bindings in table 9 below shall
+            be used .
+        </action>
+    </control>
+</p>

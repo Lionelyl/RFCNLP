@@ -28,7 +28,7 @@ def log_sum_exp(vec):
     max_score = vec[0, argmax(vec)]
     max_score_broadcast = max_score.view(1, -1).expand(1, vec.size()[1])
     return max_score + \
-        torch.log(torch.sum(torch.exp(vec - max_score_broadcast)))
+           torch.log(torch.sum(torch.exp(vec - max_score_broadcast)))
 
 class BERT_BiLSTM_CRF(nn.Module):
 
@@ -64,10 +64,10 @@ class BERT_BiLSTM_CRF(nn.Module):
         # Matrix of transition parameters.  Entry i,j is the score of
         # transitioning *to* i *from* j.
         self.transitions = nn.Parameter(
-                torch.randn(output_dim + 2, output_dim + 2))
+            torch.randn(output_dim + 2, output_dim + 2))
 
         # These two statements enforce the constraint that we never transfer
-         # to the start tag and we never transfer from the stop tag
+        # to the start tag and we never transfer from the stop tag
         self.transitions.data[START_TAG, :] = -10000
         self.transitions.data[:, STOP_TAG] = -10000
 
@@ -100,17 +100,17 @@ class BERT_BiLSTM_CRF(nn.Module):
             for next_tag in range(self.output_dim + 2):
                 # broadcast the emission score: it is the same regardless of
                 # the previous tag
-                 emit_score = feat[next_tag].view(
+                emit_score = feat[next_tag].view(
                     1, -1).expand(1, self.output_dim + 2)
-                 # the ith entry of trans_score is the score of transitioning to
-                 # next_tag from i
-                 trans_score = self.transitions[next_tag].view(1, -1)
-                 # The ith entry of next_tag_var is the value for the
-                 # edge (i -> next_tag) before we do log-sum-exp
-                 next_tag_var = forward_var + trans_score +  emit_score
-                 # The forward variable for this tag is log-sum-exp of all the
-                 # scores.
-                 alphas_t.append(log_sum_exp(next_tag_var).view(1))
+                # the ith entry of trans_score is the score of transitioning to
+                # next_tag from i
+                trans_score = self.transitions[next_tag].view(1, -1)
+                # The ith entry of next_tag_var is the value for the
+                # edge (i -> next_tag) before we do log-sum-exp
+                next_tag_var = forward_var + trans_score +  emit_score
+                # The forward variable for this tag is log-sum-exp of all the
+                # scores.
+                alphas_t.append(log_sum_exp(next_tag_var).view(1))
             forward_var = torch.cat(alphas_t).view(1, -1)
         terminal_var = forward_var + self.transitions[STOP_TAG]
         alpha = log_sum_exp(terminal_var)
@@ -232,7 +232,7 @@ class BERT_BiLSTM_CRF(nn.Module):
         tags = torch.cat([temp, tags])
         for i, feat in enumerate(feats):
             score = score + \
-                self.transitions[tags[i + 1], tags[i]] + feat[tags[i + 1]]
+                    self.transitions[tags[i + 1], tags[i]] + feat[tags[i + 1]]
         score = score + self.transitions[STOP_TAG, tags[-1]]
         return score
 
@@ -462,7 +462,7 @@ def hot_start_emissions(args, model, train_dataloader, dev_dataloader, classes, 
         dev_loss, dev_labels, dev_preds = evaluate_emissions(model, dev_dataloader, loss_fn, classes)
         macro_f1 = f1_score(dev_labels, dev_preds, average='macro')
         if macro_f1 > best_f1:
-        #if dev_loss < best_loss:
+            #if dev_loss < best_loss:
             # Save model
             #print("Saving model...")
             torch.save(model.state_dict(), args.savedir_fold)
@@ -486,7 +486,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--hs_emissions', action='store_true')
     parser.add_argument('--use_transition_priors', action='store_true')
-    parser.add_argument('--protocol', type=str,  help='protocol', required=True)
+    # parser.add_argument('--protocol', type=str,  help='protocol', required=True)
     parser.add_argument('--printout', default=False, action='store_true')
     parser.add_argument('--features', default=False, action='store_true')
     parser.add_argument('--token_level', default=False, action='store_true', help='perform prediction at token level')
@@ -511,25 +511,25 @@ def main():
     args = parser.parse_args()
 
     protocols = ["TCP", "SCTP", "PPTP", "LTP", "DCCP", "BGPv4"]
-    if args.protocol not in protocols:
-        print("Specify a valid protocol")
-        exit(-1)
-
-    # if args.cuda_device >= 0:
-    #     is_cuda_avail = torch.cuda.is_available()
-    #     if not is_cuda_avail:
-    #         print("ERROR: There is no CUDA device available, you need a GPU to train this model.")
-    #         exit(-1)
-    #     elif args.cuda_device >= torch.cuda.device_count():
-    #         print("ERROR: Please specify a valid cuda device, you have {} devices".format(torch.cuda.device_count()))
-    #         exit(-1)
-    #     torch.cuda.set_device('cuda:{}'.format(args.cuda_device))
-    #     torch.backends.cudnn.benchmark=True
-    # else:
-    #     print("ERROR: You need a GPU to train this model. Please specify a valid cuda device, you have {} devices".format(torch.cuda.device_count()))
+    # if args.protocol not in protocols:
+    #     print("Specify a valid protocol")
     #     exit(-1)
 
-    args.savedir_fold = os.path.join(args.savedir, "networking_bert_rfcs_only/checkpoint_{}.pt".format(args.protocol))
+    if args.cuda_device >= 0:
+        is_cuda_avail = torch.cuda.is_available()
+        if not is_cuda_avail:
+            print("ERROR: There is no CUDA device available, you need a GPU to train this model.")
+            exit(-1)
+        elif args.cuda_device >= torch.cuda.device_count():
+            print("ERROR: Please specify a valid cuda device, you have {} devices".format(torch.cuda.device_count()))
+            exit(-1)
+        torch.cuda.set_device('cuda:{}'.format(args.cuda_device))
+        torch.backends.cudnn.benchmark=True
+    else:
+        print("ERROR: You need a GPU to train this model. Please specify a valid cuda device, you have {} devices".format(torch.cuda.device_count()))
+        exit(-1)
+
+    args.savedir_fold = os.path.join(args.savedir, "checkpoint_{}.pt".format("trained_by_six_protocols"))
 
     word2id = {}; tag2id = {}; pos2id = {}; id2cap = {}; stem2id = {}; id2word = {}
     transition_counts = {}
@@ -556,7 +556,7 @@ def main():
 
     def_var_ids = [word2id[x.lower()] for x in def_vars if x.lower() in word2id]
     def_state_ids = [word2id[x.lower()] for x in def_states if x.lower() in word2id]
-    def_event_ids = [word2id[x.lower()] for x in def_events if x.lower() in word2id] 
+    def_event_ids = [word2id[x.lower()] for x in def_events if x.lower() in word2id]
 
     max_chunks, max_tokens = data_utils.max_lengths(X_train_data_orig, y_train)
     max_chunks_test, max_tokens_test = data_utils.max_lengths(X_test_data_orig, y_test)
@@ -575,9 +575,9 @@ def main():
     X_test_feats = features.transform_features(X_test_data_orig, vocab_size, pos_size, def_var_ids, def_state_ids, def_event_ids, id2cap, id2word, word2id, True)
 
 
-    X_train_data, y_train, x_len, x_chunk_len =\
+    X_train_data, y_train, x_len, x_chunk_len = \
         data_utils.bert_sequences(X_train_data_orig, y_train, max_chunks, max_tokens, id2word, args.bert_model)
-    X_test_data, y_test, x_len_test, x_chunk_len_test =\
+    X_test_data, y_test, x_len_test, x_chunk_len_test = \
         data_utils.bert_sequences(X_test_data_orig, y_test, max_chunks, max_tokens, id2word, args.bert_model)
 
     X_train_feats = data_utils.pad_features(X_train_feats, max_chunks)
@@ -677,7 +677,7 @@ def main():
             macro_f1 = f1_score(dev_labels, dev_preds, average='macro')
             test_macro_f1 = f1_score(test_labels, test_preds, average='macro')
             if macro_f1 > best_f1:
-            #if dev_loss < best_loss:
+                #if dev_loss < best_loss:
                 # Save model
                 #print("Saving model...")
                 torch.save(model.state_dict(), args.savedir_fold)
@@ -722,17 +722,17 @@ def main():
         data_utils.get_protocol_definitions(args.protocol, def_states_protocol, def_events_constrained_protocol, def_events_protocol, def_variables_protocol)
 
         y_pred_trans_alt = \
-                apply_heuristics(X_test_data_alt, y_test_trans_alt, y_pred_trans_alt,
-                        level_h_alt, level_d_alt,
-                        id2word, def_states_protocol, def_events_protocol, def_variables_protocol,
-                        transitions=args.heuristics, outside=args.heuristics, actions=args.heuristics,
-                        consecutive_trans=True)
+            apply_heuristics(X_test_data_alt, y_test_trans_alt, y_pred_trans_alt,
+                             level_h_alt, level_d_alt,
+                             id2word, def_states_protocol, def_events_protocol, def_variables_protocol,
+                             transitions=args.heuristics, outside=args.heuristics, actions=args.heuristics,
+                             consecutive_trans=True)
 
         X_test_data_orig, y_pred_trans, level_h_trans, level_d_trans = \
             data_utils.alternative_join(
-                    X_test_data_alt, y_pred_trans_alt,
-                    level_h_alt, level_d_alt,
-                    id2word, debug=True)
+                X_test_data_alt, y_pred_trans_alt,
+                level_h_alt, level_d_alt,
+                id2word, debug=True)
 
         if args.heuristics:
             _, y_test_trans_eval = data_utils.expand(X_test_data_old, y_test_trans, id2word, debug=False)

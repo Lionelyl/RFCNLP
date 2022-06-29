@@ -430,7 +430,7 @@ def parseTransition(t, xml, id2reason, id2state, trygoup=True, numup=6):
 
 def guessInitial(xml):
     defStates = [(s, s.text) for s in xml.iter('def_state')]
-    guesses   = { a : 0 for (a, _) in defStates }
+    guesses   = { _ : 0 for (a, _) in defStates }
     for (s, t) in defStates:
         if "initial" in t.lower():
             guesses[t] += 1
